@@ -4,7 +4,7 @@ import (
 	"reflect"
 )
 
-type linqForm[T comparable] struct {
+type linqForm[T any] struct {
 	// source array
 	source *[]T
 	// array type
@@ -15,7 +15,7 @@ type linqForm[T comparable] struct {
 	value reflect.Value
 }
 
-func From[T comparable](source []T) linqForm[T] {
+func From[T any](source []T) linqForm[T] {
 	return linqForm[T]{
 		source: &source,
 	}
@@ -57,11 +57,11 @@ func (receiver linqForm[T]) FindAll(fn whereFunc[T]) []T {
 	return lst
 }
 
-// Remove 移除为nil的元素
-func (receiver linqForm[T]) Remove(val T) []T {
+// RemoveAll 移除条件=true的元素
+func (receiver linqForm[T]) RemoveAll(fn whereFunc[T]) []T {
 	var lst []T
 	for _, item := range *receiver.source {
-		if item != val {
+		if !fn(item) {
 			lst = append(lst, item)
 		}
 	}
