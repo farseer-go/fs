@@ -13,9 +13,3 @@ func init() {
 func Register(constructor any) error {
 	return container.Register(constructor)
 }
-
-// Resolve 从容器中获取实例
-func Resolve[T any]() (t T, err error) {
-	err = container.Resolve(&t)
-	return
-}
