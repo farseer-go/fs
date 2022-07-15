@@ -7,7 +7,7 @@
 
 框架完美支持 **DDD领域驱动** 的技术实现，如`仓储资源库`、`应用层事务`、`领域事件`、`应用层动态WebAPI`。
 
-使用了本框架后，真正实现了只关注您的业务，不用为技术实现而烦恼。
+我们希望，在日常开发中，只需要直接依赖这一套框架便可应付常用的技术组件
 
 它有一个[.net core](https://github.com/FarseerNet/Farseer.Net/tree/dev/Doc) 成熟版本，已经使用了10多年，非常棒
 
@@ -37,12 +37,12 @@
 ### 有哪些功能？
 
 ---
-| 组件名称              | 描述                                                   |
-|-------------------|------------------------------------------------------|
-| fs  | 启动器                                                  |
-| fs/core/container | Ioc容器的注册与获取                                          |
-| fs/mapper         | 对象间的转换，如DO转DTO                                       |
-| fs/utils/directory | 获取目录下的文件                                             |
-| fs/utils/encrypt  | MD5加密                                                |
-| fs/utils/linq     | 支持linq的find、findAll、remove、orderBy、orderByDescending |
-| fs/utils/net      | 获取本机IP                                               |
+| 组件名称             | 描述                                                            |
+|------------------|---------------------------------------------------------------|
+| fs  | 启动器                                                           |
+| fs/core/container | Ioc容器的注册与获取                                                   |
+| fs/mapper        | 对象间的转换，如DO转DTO                                                |
+| fs/linq     | 支持linq的find、findAll、remove、contains、orderBy、orderByDescending |
+| fs/utils/directory | 获取目录下的文件                                                      |
+| fs/utils/encrypt | MD5加密                                                         |
+| fs/utils/net     | 获取本机IP                                                        |
