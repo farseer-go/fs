@@ -37,12 +37,14 @@
 ### 有哪些功能？
 
 ---
-| 组件名称             | 描述                                                            |
-|------------------|---------------------------------------------------------------|
-| fs  | 启动器                                                           |
-| fs/core/container | Ioc容器的注册与获取                                                   |
-| fs/mapper        | 对象间的转换，如DO转DTO                                                |
-| fs/linq     | 支持linq的find、findAll、remove、contains、orderBy、orderByDescending |
-| fs/utils/directory | 获取目录下的文件                                                      |
-| fs/utils/encrypt | MD5加密                                                         |
-| fs/utils/net     | 获取本机IP                                                        |
+| 组件名称               | 描述                                                                                           |
+|--------------------|----------------------------------------------------------------------------------------------|
+| fs                 | 启动器                                                                                          |
+| fs/core/container  | Ioc容器的注册与获取                                                                                  |
+| fs/mapper          | 对象间的转换，如DO转DTO                                                                               |
+| fs/eventBus        | 事件的发布订阅                                                                                      |
+| fs/mq/queue        | 本地队列，多次写入、批量消费，多个订阅者                                                                         |
+| fs/linq            | 支持linq的where、first、toArray、remove、removeAll、contains、orderBy、orderByDescending、min、max、count |
+| fs/utils/directory | 获取目录下的文件                                                                                     |
+| fs/utils/encrypt   | MD5加密                                                                                        |
+| fs/utils/net       | 获取本机IP                                                                                       |
