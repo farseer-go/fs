@@ -25,7 +25,7 @@ var AppIp string
 func Run(appName string) {
 	rand.Seed(time.Now().UnixNano())
 	StartupAt = time.Now()
-	appidString := strings.Join([]string{strconv.FormatInt(StartupAt.UnixNano()/1e6, 10), strconv.Itoa(rand.Intn(999-100) + 100)}, "")
+	appidString := strings.Join([]string{strconv.FormatInt(StartupAt.UnixMicro(), 10), strconv.Itoa(rand.Intn(999-100) + 100)}, "")
 	AppId, _ = strconv.ParseInt(appidString, 10, 64)
 	AppIp = net.Ip
 	AppName = appName
