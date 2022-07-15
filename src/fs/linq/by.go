@@ -21,6 +21,18 @@ func By[T comparable](source []T) linqBy[T] {
 	}
 }
 
+// Where 对数据进行筛选
+func (receiver linqBy[T]) Where(fn whereFunc[T]) linqBy[T] {
+	var lst []T
+	for _, item := range *receiver.source {
+		if fn(item) {
+			lst = append(lst, item)
+		}
+	}
+	receiver.source = &lst
+	return receiver
+}
+
 // Contains 查找数组是否包含某元素
 func (receiver linqBy[T]) Contains(t T) bool {
 	for _, item := range *receiver.source {
@@ -41,4 +53,9 @@ func (receiver linqBy[T]) Remove(val T) []T {
 	}
 	receiver.source = &lst
 	return lst
+}
+
+// Count 获取数量
+func (receiver linqBy[T]) Count() int {
+	return len(*receiver.source)
 }

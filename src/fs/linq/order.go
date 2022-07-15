@@ -4,7 +4,7 @@ import "reflect"
 
 type linqOrder[T1 any, T2 Ordered] struct {
 	// source array
-	source []T1
+	source *[]T1
 	// array type
 	arrayType reflect.Type
 	// element type
@@ -15,15 +15,27 @@ type linqOrder[T1 any, T2 Ordered] struct {
 
 func Order[T1 any, T2 Ordered](source []T1) linqOrder[T1, T2] {
 	return linqOrder[T1, T2]{
-		source: source,
+		source: &source,
 	}
 }
 
 type selectFunc[T any, T2 Ordered] func(item T) T2
 
+// Where 对数据进行筛选
+func (receiver linqOrder[T, T2]) Where(fn whereFunc[T]) linqOrder[T, T2] {
+	var lst []T
+	for _, item := range *receiver.source {
+		if fn(item) {
+			lst = append(lst, item)
+		}
+	}
+	receiver.source = &lst
+	return receiver
+}
+
 // OrderBy 正序排序，fn 返回的是要排序的字段的值
 func (receiver linqOrder[T, T2]) OrderBy(fn selectFunc[T, T2]) []T {
-	lst := receiver.source
+	lst := *receiver.source
 
 	// 首先拿数组第0个出来做为左边值
 	for leftIndex := 0; leftIndex < len(lst); leftIndex++ {
@@ -52,7 +64,7 @@ func (receiver linqOrder[T, T2]) OrderBy(fn selectFunc[T, T2]) []T {
 
 // OrderByDescending 倒序排序，fn 返回的是要排序的字段的值
 func (receiver linqOrder[T, T2]) OrderByDescending(fn selectFunc[T, T2]) []T {
-	lst := receiver.source
+	lst := *receiver.source
 
 	// 首先拿数组第0个出来做为左边值
 	for leftIndex := 0; leftIndex < len(lst); leftIndex++ {

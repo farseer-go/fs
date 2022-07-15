@@ -57,6 +57,20 @@ func (receiver linqForm[T]) FindAll(fn whereFunc[T]) []T {
 	return lst
 }
 
+// First 查找符合条件的元素
+func (receiver linqForm[T]) First() T {
+	if len(*receiver.source) > 0 {
+		return (*receiver.source)[0]
+	}
+	var t T
+	return t
+}
+
+// ToArray 查找符合条件的元素列表
+func (receiver linqForm[T]) ToArray() []T {
+	return *receiver.source
+}
+
 // RemoveAll 移除条件=true的元素
 func (receiver linqForm[T]) RemoveAll(fn whereFunc[T]) []T {
 	var lst []T
@@ -67,4 +81,9 @@ func (receiver linqForm[T]) RemoveAll(fn whereFunc[T]) []T {
 	}
 	receiver.source = &lst
 	return lst
+}
+
+// Count 获取数量
+func (receiver linqForm[T]) Count() int {
+	return len(*receiver.source)
 }
