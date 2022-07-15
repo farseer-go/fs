@@ -1,6 +1,8 @@
 package linq
 
-import "reflect"
+import (
+	"reflect"
+)
 
 type linqOrder[T1 any, T2 Ordered] struct {
 	// source array
@@ -89,6 +91,34 @@ func (receiver linqOrder[T, T2]) OrderByDescending(fn selectFunc[T, T2]) []T {
 		}
 	}
 	return lst
+}
+
+// Min 获取最小值
+func (receiver linqOrder[T, T2]) Min(fn selectFunc[T, T2]) T2 {
+	lst := *receiver.source
+
+	minValue := fn(lst[0])
+	for index := 1; index < len(lst); index++ {
+		value := fn(lst[index])
+		if value < minValue {
+			minValue = value
+		}
+	}
+	return minValue
+}
+
+// Max 获取最大值
+func (receiver linqOrder[T, T2]) Max(fn selectFunc[T, T2]) T2 {
+	lst := *receiver.source
+
+	maxValue := fn(lst[0])
+	for index := 1; index < len(lst); index++ {
+		value := fn(lst[index])
+		if value > maxValue {
+			maxValue = value
+		}
+	}
+	return maxValue
 }
 
 /*
