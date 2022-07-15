@@ -12,18 +12,18 @@ type IQueueSubscribe interface {
 // pullCount = 每次拉取的数量
 func Subscribe(queueName string, pullCount int, fn IQueueSubscribe) {
 	if !linq.Dictionary(queueConsumer).ExistsKey(queueName) {
-		queueConsumer[queueName] = queueList{
-			queueName:        queueName,
-			queue:            nil,
-			consumerIndex:    -1,
-			subscriberQueues: nil,
+		queueConsumer[queueName] = &queueList{
+			queueName:         queueName,
+			queue:             nil,
+			consumerLastIndex: -1,
+			subscriberQueues:  nil,
 		}
 	}
 
 	// 找到对应的队列
 	queueList := queueConsumer[queueName]
 	// 添加订阅者
-	queueList.subscriberQueues = append(queueList.subscriberQueues, subscriberQueue{
+	queueList.subscriberQueues = append(queueList.subscriberQueues, &subscriberQueue{
 		lastConsumerIndex: -1,
 		subscriber:        fn,
 		pullCount:         pullCount,

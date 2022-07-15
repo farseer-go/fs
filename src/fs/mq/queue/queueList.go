@@ -8,9 +8,9 @@ type queueList struct {
 	queue []any
 	// 当前消费到的索引位置（如果是多个消费者，只记录最早的索引位置）
 	// 用于定时移除queue已被消费的数据，以节省内存空间
-	consumerIndex int
+	consumerLastIndex int
 	// 订阅者
-	subscriberQueues []subscriberQueue
+	subscriberQueues []*subscriberQueue
 }
 
 // 订阅者的队列
@@ -26,4 +26,4 @@ type subscriberQueue struct {
 // 队列
 // key = queueName
 // value = 队列
-var queueConsumer map[string]queueList
+var queueConsumer map[string]*queueList
