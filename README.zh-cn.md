@@ -1,6 +1,8 @@
 ## Farseer.Go是什么?
 
 ---
+[English](https://github.com/FarseerGo/Farseer.Go) | [中文](https://github.com/FarseerGo/Farseer.Go/blob/main/README.zh-cn.md)
+
 针对 **golang** 平台下的一套标准制定的框架。
 
 我们为您选型出目前最为流行的组件，并按模块化来提供使用这些组件。
