@@ -1,6 +1,9 @@
-package apiJson
+package core
 
-type ApiResponseJson[TData any] struct {
+type ApiResponseString ApiResponse[string]
+type ApiResponseInt ApiResponse[int]
+
+type ApiResponse[TData any] struct {
 	// 操作是否成功
 	Status bool
 	// 返回状态代码
@@ -12,13 +15,13 @@ type ApiResponseJson[TData any] struct {
 }
 
 // SetData 设置Data字段的值
-func (receiver *ApiResponseJson[TData]) SetData(data TData) {
+func (receiver *ApiResponse[TData]) SetData(data TData) {
 	receiver.Data = data
 }
 
 // Success 接口调用成功后返回的Json
-func Success[TData any](statusMessage string, data TData) ApiResponseJson[TData] {
-	return ApiResponseJson[TData]{
+func Success[TData any](statusMessage string, data TData) ApiResponse[TData] {
+	return ApiResponse[TData]{
 		Status:        true,
 		StatusMessage: statusMessage,
 		StatusCode:    200,
@@ -27,8 +30,8 @@ func Success[TData any](statusMessage string, data TData) ApiResponseJson[TData]
 }
 
 // Error 接口调用失时返回的Json
-func Error(statusMessage string, statusCode int) ApiResponseJson[string] {
-	return ApiResponseJson[string]{
+func Error(statusMessage string, statusCode int) ApiResponse[string] {
+	return ApiResponse[string]{
 		Status:        false,
 		StatusMessage: statusMessage,
 		StatusCode:    statusCode,
@@ -36,8 +39,8 @@ func Error(statusMessage string, statusCode int) ApiResponseJson[string] {
 }
 
 // Error403 接口调用失时返回的Json
-func Error403(statusMessage string) ApiResponseJson[string] {
-	return ApiResponseJson[string]{
+func Error403(statusMessage string) ApiResponse[string] {
+	return ApiResponse[string]{
 		Status:        false,
 		StatusMessage: statusMessage,
 		StatusCode:    403,
