@@ -1,4 +1,4 @@
-package data
+package core
 
 type PageList[TData any] struct {
 	// 总页数
