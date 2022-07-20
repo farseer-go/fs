@@ -22,7 +22,7 @@ func By[T comparable](source []T) linqBy[T] {
 }
 
 // Where 对数据进行筛选
-func (receiver linqBy[T]) Where(fn whereFunc[T]) linqBy[T] {
+func (receiver linqBy[T]) Where(fn WhereFunc[T]) linqBy[T] {
 	var lst []T
 	for _, item := range *receiver.source {
 		if fn(item) {

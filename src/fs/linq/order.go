@@ -24,7 +24,7 @@ func Order[T1 any, T2 Ordered](source []T1) linqOrder[T1, T2] {
 type selectFunc[T any, T2 Ordered] func(item T) T2
 
 // Where 对数据进行筛选
-func (receiver linqOrder[T, T2]) Where(fn whereFunc[T]) linqOrder[T, T2] {
+func (receiver linqOrder[T, T2]) Where(fn WhereFunc[T]) linqOrder[T, T2] {
 	var lst []T
 	for _, item := range *receiver.source {
 		if fn(item) {
