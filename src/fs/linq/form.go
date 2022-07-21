@@ -15,10 +15,8 @@ func From[T any](source []T) linqForm[T] {
 	}
 }
 
-type WhereFunc[T any] func(item T) bool
-
 // Where 对数据进行筛选
-func (receiver linqForm[T]) Where(fn WhereFunc[T]) linqForm[T] {
+func (receiver linqForm[T]) Where(fn func(item T) bool) linqForm[T] {
 	var lst []T
 	for _, item := range receiver.source {
 		if fn(item) {
@@ -30,7 +28,7 @@ func (receiver linqForm[T]) Where(fn WhereFunc[T]) linqForm[T] {
 }
 
 // Find 查找符合条件的元素
-func (receiver linqForm[T]) Find(fn WhereFunc[T]) T {
+func (receiver linqForm[T]) Find(fn func(item T) bool) T {
 	for _, item := range receiver.source {
 		if fn(item) {
 			return item
@@ -41,7 +39,7 @@ func (receiver linqForm[T]) Find(fn WhereFunc[T]) T {
 }
 
 // FindAll 查找符合条件的元素列表
-func (receiver linqForm[T]) FindAll(fn WhereFunc[T]) []T {
+func (receiver linqForm[T]) FindAll(fn func(item T) bool) []T {
 	var lst []T
 	for _, item := range receiver.source {
 		if fn(item) {
@@ -66,7 +64,7 @@ func (receiver linqForm[T]) ToArray() []T {
 }
 
 // RemoveAll 移除条件=true的元素
-func (receiver linqForm[T]) RemoveAll(fn WhereFunc[T]) []T {
+func (receiver linqForm[T]) RemoveAll(fn func(item T) bool) []T {
 	var lst []T
 	for _, item := range receiver.source {
 		if !fn(item) {
