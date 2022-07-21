@@ -1,29 +1,50 @@
 package parse
 
+import (
+	"strconv"
+	"strings"
+)
+
 // Convert 通用的类型转换
 func Convert[T any](source any, defVal T) T {
+	// 根据source值的类型做转换适配
 	switch source.(type) {
 	case int:
-		val := source.(int)
-		var newVal T
-		NumberToType(val, defVal, &newVal)
-		return newVal
+		return convertInt(source.(int), defVal).(T)
+	case string:
+		return convertString(source.(string), defVal).(T)
 	}
-
 	return defVal
 }
 
-// NumberToType 数字转换类型
-func NumberToType[T numberType](source T, defVal any, newVal any) {
+func convertInt(source int, defVal any) any {
 	switch defVal.(type) {
 	case bool:
-		isTrue := source == 1
-		newVal = any(isTrue)
-		return
-	default:
-		newVal = &defVal
+		return any(source == 1)
+	case string:
+		return strconv.Itoa(source)
+	case int64:
+		return int64(source)
 	}
+	return defVal
+}
 
+func convertString(source string, defVal any) any {
+	switch defVal.(type) {
+	case bool:
+		return any(strings.ToLower(source) == "true")
+	case string:
+		return source
+	case int, int32:
+		if result, isOk := strconv.Atoi(source); isOk == nil {
+			return result
+		}
+	case int64:
+		if result, isOk := strconv.ParseInt(source, 10, 64); isOk == nil {
+			return result
+		}
+	}
+	return defVal
 }
 
 type numberType interface {
