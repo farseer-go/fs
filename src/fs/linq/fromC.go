@@ -1,19 +1,19 @@
 package linq
 
-type linqBy[T comparable] struct {
+type linqFromC[C comparable] struct {
 	// source array
-	source []T
+	source []C
 }
 
-func By[T comparable](source []T) linqBy[T] {
-	return linqBy[T]{
+func FromC[C comparable](source []C) linqFromC[C] {
+	return linqFromC[C]{
 		source: source,
 	}
 }
 
 // Where 对数据进行筛选
-func (receiver linqBy[T]) Where(fn func(item T) bool) linqBy[T] {
-	var lst []T
+func (receiver linqFromC[C]) Where(fn func(item C) bool) linqFromC[C] {
+	var lst []C
 	for _, item := range receiver.source {
 		if fn(item) {
 			lst = append(lst, item)
@@ -24,7 +24,7 @@ func (receiver linqBy[T]) Where(fn func(item T) bool) linqBy[T] {
 }
 
 // Contains 查找数组是否包含某元素
-func (receiver linqBy[T]) Contains(t T) bool {
+func (receiver linqFromC[C]) Contains(t C) bool {
 	for _, item := range receiver.source {
 		if item == t {
 			return true
@@ -34,8 +34,8 @@ func (receiver linqBy[T]) Contains(t T) bool {
 }
 
 // Remove 移除指定值的元素
-func (receiver linqBy[T]) Remove(val T) []T {
-	var lst []T
+func (receiver linqFromC[C]) Remove(val C) []C {
+	var lst []C
 	for _, item := range receiver.source {
 		if item != val {
 			lst = append(lst, item)
@@ -46,6 +46,6 @@ func (receiver linqBy[T]) Remove(val T) []T {
 }
 
 // Count 获取数量
-func (receiver linqBy[T]) Count() int {
+func (receiver linqFromC[C]) Count() int {
 	return len(receiver.source)
 }

@@ -1,18 +1,18 @@
 package linq
 
-type linqOrder[T1 any, T2 Ordered] struct {
+type linqFromOrder[T1 any, T2 Ordered] struct {
 	// source array
 	source *[]T1
 }
 
-func Order[T1 any, T2 Ordered](source []T1) linqOrder[T1, T2] {
-	return linqOrder[T1, T2]{
+func FromOrder[T1 any, T2 Ordered](source []T1) linqFromOrder[T1, T2] {
+	return linqFromOrder[T1, T2]{
 		source: &source,
 	}
 }
 
 // Where 对数据进行筛选
-func (receiver linqOrder[T, T2]) Where(fn func(item T) bool) linqOrder[T, T2] {
+func (receiver linqFromOrder[T, T2]) Where(fn func(item T) bool) linqFromOrder[T, T2] {
 	var lst []T
 	for _, item := range *receiver.source {
 		if fn(item) {
@@ -24,7 +24,7 @@ func (receiver linqOrder[T, T2]) Where(fn func(item T) bool) linqOrder[T, T2] {
 }
 
 // OrderBy 正序排序，fn 返回的是要排序的字段的值
-func (receiver linqOrder[T, T2]) OrderBy(fn func(item T) T2) []T {
+func (receiver linqFromOrder[T, T2]) OrderBy(fn func(item T) T2) []T {
 	lst := *receiver.source
 
 	// 首先拿数组第0个出来做为左边值
@@ -53,7 +53,7 @@ func (receiver linqOrder[T, T2]) OrderBy(fn func(item T) T2) []T {
 }
 
 // OrderByDescending 倒序排序，fn 返回的是要排序的字段的值
-func (receiver linqOrder[T, T2]) OrderByDescending(fn func(item T) T2) []T {
+func (receiver linqFromOrder[T, T2]) OrderByDescending(fn func(item T) T2) []T {
 	lst := *receiver.source
 
 	// 首先拿数组第0个出来做为左边值
@@ -82,7 +82,7 @@ func (receiver linqOrder[T, T2]) OrderByDescending(fn func(item T) T2) []T {
 }
 
 // Min 获取最小值
-func (receiver linqOrder[T, T2]) Min(fn func(item T) T2) T2 {
+func (receiver linqFromOrder[T, T2]) Min(fn func(item T) T2) T2 {
 	lst := *receiver.source
 
 	minValue := fn(lst[0])
@@ -96,7 +96,7 @@ func (receiver linqOrder[T, T2]) Min(fn func(item T) T2) T2 {
 }
 
 // Max 获取最大值
-func (receiver linqOrder[T, T2]) Max(fn func(item T) T2) T2 {
+func (receiver linqFromOrder[T, T2]) Max(fn func(item T) T2) T2 {
 	lst := *receiver.source
 
 	maxValue := fn(lst[0])

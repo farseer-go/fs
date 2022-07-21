@@ -7,6 +7,6 @@ import (
 
 func TestRemove(t *testing.T) {
 	lstYaml := []string{"1", "", "2"}
-	item := By(lstYaml).Remove("")
+	item := FromC(lstYaml).Remove("")
 	fmt.Println(item)
 }
