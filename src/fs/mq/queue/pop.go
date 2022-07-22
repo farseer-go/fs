@@ -51,7 +51,7 @@ func (queueList *queueList) iterationSubscriber() {
 		myQueue.offset = endIndex - 1
 		// 每个订阅者的消费都是并行的
 		go func(myQueue *queueSubscriber, curQueue *[]any, remainingCount int) {
-			myQueue.subscriber.Consumer(myQueue.subscribeName, *curQueue, remainingCount)
+			myQueue.subscribeFunc(myQueue.subscribeName, *curQueue, remainingCount)
 			waitGroup.Done()
 		}(myQueue, &curQueue, remainingCount)
 	}

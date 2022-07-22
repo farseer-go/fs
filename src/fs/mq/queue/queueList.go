@@ -20,7 +20,7 @@ type queueSubscriber struct {
 	// 最后消费的位置
 	offset int
 	// 订阅者
-	subscriber IQueueSubscribe
+	subscribeFunc queueSubscribeFunc
 	// 每次拉取的数量
 	pullCount int
 }

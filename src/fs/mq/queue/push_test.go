@@ -7,8 +7,8 @@ import (
 )
 
 func init() {
-	Subscribe("test", "A", 2, testQueue{})
-	Subscribe("test", "B", 4, testQueue{})
+	Subscribe("test", "A", 2, consumer)
+	Subscribe("test", "B", 4, consumer)
 }
 
 func TestPush(t *testing.T) {
@@ -18,8 +18,6 @@ func TestPush(t *testing.T) {
 	time.Sleep(time.Hour)
 }
 
-type testQueue struct{}
-
-func (testQueue) Consumer(subscribeName string, message []any, remainingCount int) {
+func consumer(subscribeName string, message []any, remainingCount int) {
 	fmt.Println("Name=", subscribeName, "，Msg=", message, "RemainingCount=", remainingCount)
 }

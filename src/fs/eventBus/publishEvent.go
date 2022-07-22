@@ -23,8 +23,8 @@ func PublishEvent(eventName string, message any) {
 	}
 
 	// 遍历订阅者，并异步执行事件消费
-	for _, subscribe := range subscriber[eventName] {
-		subscribe.Consumer(message, eventArgs)
+	for _, subscribeFunc := range subscriber[eventName] {
+		subscribeFunc(message, eventArgs)
 	}
 }
 
@@ -44,7 +44,7 @@ func PublishEventAsync(eventName string, message any) {
 	}
 
 	// 遍历订阅者，并异步执行事件消费
-	for _, subscribe := range subscriber[eventName] {
-		go subscribe.Consumer(message, eventArgs)
+	for _, subscribeFunc := range subscriber[eventName] {
+		go subscribeFunc(message, eventArgs)
 	}
 }
