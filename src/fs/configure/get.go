@@ -16,3 +16,8 @@ func init() {
 func GetString(key string) string {
 	return viper.GetString(key)
 }
+
+// SetDefault 设置配置的默认值
+func SetDefault(key string, value interface{}) {
+	viper.SetDefault(key, value)
+}
