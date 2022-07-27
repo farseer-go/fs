@@ -7,15 +7,20 @@ import (
 )
 
 type TableSet[Table any] struct {
-	// 上下文
-	DbContext *DbContext
+	// 上下文（用指针的方式，共享同一个上下文）
+	dbContext *DbContext
 	// 表名
 	tableName string
 	db        *gorm.DB
 	err       error
 }
 
-func (table TableSet[Table]) SetTableName(tableName string) {
+func (table *TableSet[Table]) Init(dbContext *DbContext, tableName string) {
+	table.dbContext = dbContext
+	table.SetTableName(tableName)
+}
+
+func (table *TableSet[Table]) SetTableName(tableName string) {
 	table.tableName = tableName
 	if table.db == nil {
 		return
@@ -23,19 +28,24 @@ func (table TableSet[Table]) SetTableName(tableName string) {
 	table.db.Table(table.tableName)
 }
 
+// GetTableName 获取表名称
+func (table *TableSet[Table]) GetTableName() string {
+	return table.tableName
+}
+
 //// NewTableSet 初始化表模型
-//func NewTableSet[Table any](dbContext *DbContext, tableName string, po Table) TableSet[Table] {
+//func NewTableSet[Table any](dbContext *dbContext, tableName string, po Table) *TableSet[Table] {
 //	return TableSet[Table]{
 //		Po:        po,
-//		DbContext: dbContext,
+//		dbContext: dbContext,
 //		tableName: tableName,
 //	}
 //}
 
 // 初始化Orm
-func (table TableSet[Table]) data() *gorm.DB {
+func (table *TableSet[Table]) data() *gorm.DB {
 	if table.db == nil { // Data Source Name，参考 https://github.com/go-sql-driver/mysql#dsn-data-source-name
-		table.db, table.err = gorm.Open(table.DbContext.getDriver(), &gorm.Config{})
+		table.db, table.err = gorm.Open(table.dbContext.getDriver(), &gorm.Config{})
 		if table.err != nil {
 			panic(table.err.Error())
 		}
@@ -46,59 +56,59 @@ func (table TableSet[Table]) data() *gorm.DB {
 }
 
 // 设置池大小
-func (table TableSet[Table]) setPool() {
+func (table *TableSet[Table]) setPool() {
 	sqlDB, _ := table.db.DB()
 	// SetMaxIdleConns 设置空闲连接池中连接的最大数量
-	if table.DbContext.dbConfig.PoolMinSize > 0 {
-		sqlDB.SetMaxIdleConns(table.DbContext.dbConfig.PoolMinSize)
+	if table.dbContext.dbConfig.PoolMinSize > 0 {
+		sqlDB.SetMaxIdleConns(table.dbContext.dbConfig.PoolMinSize)
 	}
 	// SetMaxOpenConns 设置打开数据库连接的最大数量。
-	if table.DbContext.dbConfig.PoolMaxSize > 0 {
-		sqlDB.SetMaxOpenConns(table.DbContext.dbConfig.PoolMaxSize)
+	if table.dbContext.dbConfig.PoolMaxSize > 0 {
+		sqlDB.SetMaxOpenConns(table.dbContext.dbConfig.PoolMaxSize)
 	}
 	// SetConnMaxLifetime 设置了连接可复用的最大时间。
 	sqlDB.SetConnMaxLifetime(time.Hour)
 }
 
 // Select 筛选字段
-func (table TableSet[Table]) Select(query interface{}, args ...interface{}) TableSet[Table] {
-	table.data().Select(query, args)
+func (table *TableSet[Table]) Select(query interface{}, args ...interface{}) *TableSet[Table] {
+	table.data().Select(query, args...)
 	return table
 }
 
 // Where 条件
-func (table TableSet[Table]) Where(query interface{}, args ...interface{}) TableSet[Table] {
-	table.data().Where(query)
+func (table *TableSet[Table]) Where(query interface{}, args ...interface{}) *TableSet[Table] {
+	table.data().Where(query, args...)
 	return table
 }
 
 // Order 排序
-func (table TableSet[Table]) Order(value interface{}) TableSet[Table] {
+func (table *TableSet[Table]) Order(value interface{}) *TableSet[Table] {
 	table.data().Order(value)
 	return table
 }
 
 // Desc 倒序
-func (table TableSet[Table]) Desc(fieldName string) TableSet[Table] {
+func (table *TableSet[Table]) Desc(fieldName string) *TableSet[Table] {
 	table.data().Order(fieldName + " desc")
 	return table
 }
 
 // Asc 正序
-func (table TableSet[Table]) Asc(fieldName string) TableSet[Table] {
+func (table *TableSet[Table]) Asc(fieldName string) *TableSet[Table] {
 	table.data().Order(fieldName + " asc")
 	return table
 }
 
 // ToList 返回结果集
-func (table TableSet[Table]) ToList() []Table {
+func (table *TableSet[Table]) ToList() []Table {
 	var lst []Table
 	table.data().Find(&lst)
 	return lst
 }
 
 // ToPageList 返回分页结果集
-func (table TableSet[Table]) ToPageList(pageSize int, pageIndex int) core.PageList[Table] {
+func (table *TableSet[Table]) ToPageList(pageSize int, pageIndex int) core.PageList[Table] {
 	offset := (pageIndex - 1) * pageSize
 	var lst []Table
 	table.data().Offset(offset).Limit(pageSize).Find(&lst)
@@ -107,50 +117,50 @@ func (table TableSet[Table]) ToPageList(pageSize int, pageIndex int) core.PageLi
 }
 
 // ToEntity 返回单个对象
-func (table TableSet[Table]) ToEntity() Table {
+func (table *TableSet[Table]) ToEntity() Table {
 	var entity Table
 	table.data().First(&entity)
 	return entity
 }
 
 // Count 返回表中的数量
-func (table TableSet[Table]) Count() int64 {
+func (table *TableSet[Table]) Count() int64 {
 	var count int64
 	table.data().Count(&count)
 	return count
 }
 
 // IsExists 是否存在记录
-func (table TableSet[Table]) IsExists() bool {
+func (table *TableSet[Table]) IsExists() bool {
 	var count int64
 	table.data().Count(&count)
 	return count > 0
 }
 
 // Insert 新增记录
-func (table TableSet[Table]) Insert(po *Table) {
+func (table *TableSet[Table]) Insert(po *Table) {
 	table.data().Create(po)
 }
 
 // Update 修改记录
-func (table TableSet[Table]) Update(po Table) int64 {
+func (table *TableSet[Table]) Update(po Table) int64 {
 	result := table.data().Updates(po)
 	return result.RowsAffected
 }
 
 // UpdateValue 修改单个字段
-func (table TableSet[Table]) UpdateValue(column string, value interface{}) {
+func (table *TableSet[Table]) UpdateValue(column string, value interface{}) {
 	table.data().Update(column, value)
 }
 
 // Delete 删除记录
-func (table TableSet[Table]) Delete() int64 {
+func (table *TableSet[Table]) Delete() int64 {
 	result := table.data().Delete(nil)
 	return result.RowsAffected
 }
 
 // GetString 获取单条记录中的单个string类型字段值
-func (table TableSet[Table]) GetString(fieldName string) string {
+func (table *TableSet[Table]) GetString(fieldName string) string {
 	rows, _ := table.data().Select(fieldName).Limit(1).Rows()
 	defer rows.Close()
 	var val string
@@ -163,7 +173,7 @@ func (table TableSet[Table]) GetString(fieldName string) string {
 }
 
 // GetInt 获取单条记录中的单个int类型字段值
-func (table TableSet[Table]) GetInt(fieldName string) int {
+func (table *TableSet[Table]) GetInt(fieldName string) int {
 	rows, _ := table.data().Select(fieldName).Limit(1).Rows()
 	defer rows.Close()
 	var val int
@@ -176,7 +186,7 @@ func (table TableSet[Table]) GetInt(fieldName string) int {
 }
 
 // GetLong 获取单条记录中的单个int64类型字段值
-func (table TableSet[Table]) GetLong(fieldName string) int64 {
+func (table *TableSet[Table]) GetLong(fieldName string) int64 {
 	rows, _ := table.data().Select(fieldName).Limit(1).Rows()
 	defer rows.Close()
 	var val int64
@@ -189,7 +199,7 @@ func (table TableSet[Table]) GetLong(fieldName string) int64 {
 }
 
 // GetBool 获取单条记录中的单个bool类型字段值
-func (table TableSet[Table]) GetBool(fieldName string) bool {
+func (table *TableSet[Table]) GetBool(fieldName string) bool {
 	rows, _ := table.data().Select(fieldName).Limit(1).Rows()
 	defer rows.Close()
 	var val bool
@@ -202,7 +212,7 @@ func (table TableSet[Table]) GetBool(fieldName string) bool {
 }
 
 // GetFloat32 获取单条记录中的单个float32类型字段值
-func (table TableSet[Table]) GetFloat32(fieldName string) float32 {
+func (table *TableSet[Table]) GetFloat32(fieldName string) float32 {
 	rows, _ := table.data().Select(fieldName).Limit(1).Rows()
 	defer rows.Close()
 	var val float32
@@ -215,7 +225,7 @@ func (table TableSet[Table]) GetFloat32(fieldName string) float32 {
 }
 
 // GetFloat64 获取单条记录中的单个float64类型字段值
-func (table TableSet[Table]) GetFloat64(fieldName string) float64 {
+func (table *TableSet[Table]) GetFloat64(fieldName string) float64 {
 	rows, _ := table.data().Select(fieldName).Limit(1).Rows()
 	defer rows.Close()
 	var val float64
