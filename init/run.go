@@ -1,4 +1,4 @@
-package Farseer_Go
+package init
 
 import (
 	"fmt"
