@@ -12,7 +12,7 @@ import (
 )
 
 // RunShell 执行shell命令
-func RunShell(command string, receiveOutput chan string, environment map[string]string, workingDirectory string, ctx context.Context, done context.CancelFunc) {
+func RunShell(command string, receiveOutput chan string, environment map[string]string, workingDirectory string, ctx context.Context) {
 	cmd := exec.CommandContext(ctx, "bash", "-c", command)
 	cmd.Dir = workingDirectory
 	// 如果设置了环境变量，则追回进来
@@ -32,14 +32,11 @@ func RunShell(command string, receiveOutput chan string, environment map[string]
 	go readInputStream(stdout, receiveOutput, &waitGroup)
 	go readInputStream(stderr, receiveOutput, &waitGroup)
 
-	go func() {
-		err := cmd.Wait()
-		if err != nil && !strings.Contains(err.Error(), "exit status") {
-			receiveOutput <- "wait:" + err.Error()
-		}
-		waitGroup.Wait()
-		done()
-	}()
+	err := cmd.Wait()
+	if err != nil && !strings.Contains(err.Error(), "exit status") {
+		receiveOutput <- "wait:" + err.Error()
+	}
+	waitGroup.Wait()
 }
 
 func readInputStream(out io.ReadCloser, receiveOutput chan string, waitGroup *sync.WaitGroup) {
