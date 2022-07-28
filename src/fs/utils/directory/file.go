@@ -5,7 +5,6 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
 // GetFiles 读取指定目录下的文件
@@ -19,8 +18,14 @@ func GetFiles(path string, searchPattern string, searchSubDir bool) []string {
 			return nil
 		}
 		// 目录不需要判断，filepath.Walk执行就包含递归了
-		if !dirInfo.IsDir() && (searchPattern == "" || strings.Contains(dirInfo.Name(), searchPattern)) {
-			files = append(files, filePath)
+		if !dirInfo.IsDir() {
+			match := true
+			if searchPattern != "" {
+				match, _ = filepath.Match(filepath.Join(filepath.Dir(filePath), searchPattern), filePath)
+			}
+			if match {
+				files = append(files, filePath)
+			}
 		} else if dirInfo.IsDir() && !searchSubDir {
 			return fs.SkipDir
 		}
@@ -37,6 +42,7 @@ func GetFiles(path string, searchPattern string, searchSubDir bool) []string {
 // destPath 复制到位置的目录路径
 func CopyFolder(srcPath string, destPath string) {
 	// 如果位置路径最后不带/，则自动加上
+
 	if srcPath[len(srcPath)-1] != '/' {
 		srcPath += "/"
 	}
