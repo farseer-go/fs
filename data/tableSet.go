@@ -1,7 +1,7 @@
 package data
 
 import (
-	"fs/core"
+	"github.com/farseernet/farseer.go/core"
 	"gorm.io/gorm"
 	"time"
 )

@@ -1,7 +1,7 @@
 package eventBus
 
 import (
-	"fs/linq"
+	"github.com/farseernet/farseer.go/linq"
 	"math/rand"
 	"strconv"
 	"time"

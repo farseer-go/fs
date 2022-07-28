@@ -2,7 +2,7 @@ package data
 
 import (
 	"fmt"
-	"fs/configure"
+	"github.com/farseernet/farseer.go/configure"
 	"testing"
 )
 

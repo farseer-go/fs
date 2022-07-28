@@ -1,8 +1,6 @@
 package linq
 
-import (
-	"fs/core"
-)
+import "github.com/farseernet/farseer.go/core"
 
 type linqForm[T any] struct {
 	// source array

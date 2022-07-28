@@ -1,6 +1,6 @@
 package queue
 
-import "fs/linq"
+import "github.com/farseernet/farseer.go/linq"
 
 // Push 添加数据到队列中
 func Push(queueName string, message any) {

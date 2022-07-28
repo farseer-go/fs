@@ -1,7 +1,7 @@
 package data
 
 import (
-	"fs/configure"
+	"github.com/farseernet/farseer.go/configure"
 	"testing"
 )
 

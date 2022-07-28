@@ -1,6 +1,6 @@
 package queue
 
-import "fs/linq"
+import "github.com/farseernet/farseer.go/linq"
 
 // Consumer 消费
 type queueSubscribeFunc func(subscribeName string, message []any, remainingCount int)
