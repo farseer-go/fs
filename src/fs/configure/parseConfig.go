@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// ParseConfig 解析字符串，转成配置
+// ParseConfig 解析字符串，转成配置对象
 func ParseConfig[TConfig any](configString string) TConfig {
 
 	var config = new(TConfig)
