@@ -1,4 +1,4 @@
-module fs
+module github.com/FarseerNet/farseer.go
 
 go 1.18
 
