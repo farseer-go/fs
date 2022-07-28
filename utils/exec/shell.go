@@ -5,6 +5,7 @@ import (
 	"context"
 	"github.com/farseernet/farseer.go/utils/str"
 	"io"
+	"os"
 	"os/exec"
 	"strings"
 	"sync"
@@ -14,7 +15,10 @@ import (
 func RunShell(command string, receiveOutput chan string, environment map[string]string, workingDirectory string, ctx context.Context, done context.CancelFunc) {
 	cmd := exec.CommandContext(ctx, "bash", "-c", command)
 	cmd.Dir = workingDirectory
-	cmd.Env = str.MapToStringList(environment)
+	// 如果设置了环境变量，则追回进来
+	if environment != nil {
+		cmd.Env = append(os.Environ(), str.MapToStringList(environment)...)
+	}
 	stdout, _ := cmd.StdoutPipe()
 	stderr, _ := cmd.StderrPipe()
 
