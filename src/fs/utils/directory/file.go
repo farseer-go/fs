@@ -42,7 +42,6 @@ func GetFiles(path string, searchPattern string, searchSubDir bool) []string {
 // destPath 复制到位置的目录路径
 func CopyFolder(srcPath string, destPath string) {
 	// 如果位置路径最后不带/，则自动加上
-
 	if srcPath[len(srcPath)-1] != '/' {
 		srcPath += "/"
 	}
@@ -50,16 +49,21 @@ func CopyFolder(srcPath string, destPath string) {
 		destPath += "/"
 	}
 
+	// 先创建目标的目录
+	stat, _ := os.Stat(srcPath)
+	_ = os.MkdirAll(destPath, stat.Mode().Perm())
+
 	err := filepath.WalkDir(srcPath, func(filePath string, dirInfo fs.DirEntry, err error) error {
 		if srcPath == filePath {
 			return nil
 		}
+		newPath := filepath.Join(destPath, filePath[len(srcPath):])
 		if dirInfo.IsDir() { // 如果是目录，则创建目录即可
 			// 创建目标目录
-			_ = os.MkdirAll(destPath+dirInfo.Name(), 0766)
+			perm, _ := dirInfo.Info()
+			_ = os.MkdirAll(newPath, perm.Mode())
 		} else {
-			destName := destPath + dirInfo.Name()
-			CopyFile(filePath, destName)
+			CopyFile(filePath, newPath)
 		}
 		return nil
 	})
@@ -77,7 +81,8 @@ func CopyFile(srcName string, destName string) {
 		return
 	}
 	defer src.Close()
-	dst, err := os.OpenFile(destName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	stat, _ := src.Stat()
+	dst, err := os.OpenFile(destName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, stat.Mode())
 	if err != nil {
 		return
 	}
