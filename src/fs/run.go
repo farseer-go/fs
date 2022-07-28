@@ -2,7 +2,7 @@ package fs
 
 import (
 	"fmt"
-	"fs/utils/net"
+	"github.com/farseernet/farseer.go/utils/net"
 	"math/rand"
 	"os"
 	"strconv"

@@ -1,7 +1,7 @@
 package data
 
 import (
-	"fs/configure"
+	"github.com/farseernet/farseer.go/configure"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
