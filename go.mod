@@ -1,4 +1,4 @@
-module github.com/FarseerNet/farseer.go
+module github.com/farseernet/farseer.go
 
 go 1.18
 
