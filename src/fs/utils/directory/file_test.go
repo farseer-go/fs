@@ -21,3 +21,15 @@ func TestCopyFolder(t *testing.T) {
 
 	CopyFolder(path1, path2)
 }
+
+// ClearFile
+func TestClearFile(t *testing.T) {
+	path := "/Users/steden/Desktop/code/project/Farseer.Go2"
+	ClearFile(path)
+}
+
+// IsExists
+func TestIsExists(t *testing.T) {
+	path := "/Users/steden/Desktop/code/project/Farseer.Go3"
+	fmt.Println(IsExists(path))
+}

@@ -89,3 +89,20 @@ func CopyFile(srcName string, destName string) {
 	defer dst.Close()
 	io.Copy(dst, src)
 }
+
+// ClearFile 清空目录下的所有文件（但不删除path目录本身）
+func ClearFile(path string) {
+	_ = filepath.WalkDir(path, func(filePath string, dirInfo fs.DirEntry, err error) error {
+		if path == filePath {
+			return nil
+		}
+		os.RemoveAll(filePath)
+		return nil
+	})
+}
+
+// IsExists 判断路径是否存在
+func IsExists(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil
+}
