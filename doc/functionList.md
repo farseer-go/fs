@@ -122,18 +122,28 @@
         * CopyFile （复制文件）
         * ClearFile （清空目录下的所有文件）
         * IsExists （判断路径是否存在）
+        * `WriteString （写入文件）`
 
 ---
 ### 常用工具
 * utils/encrypt
-    * Md5 （对字符串做MD5加密）
+  * Md5 （对字符串做MD5加密）
 * utils/exec
-    * RunShell （执行shell命令）
+  * RunShell （执行shell命令）
 * utils/net
-    * LocalIPv4s （获取本机IP地址）
+  * LocalIPv4s （获取本机IP地址）
 * utils/parse
-    * Convert （通用的类型转换）
-    * IsInt （是否为int类型）
+  * Convert （通用的类型转换）
+  * IsInt （是否为int类型）
 * utils/str
-    * CutRight （裁剪末尾标签）
-    * MapToStringList （将map转成字符串数组）
+  * CutRight （裁剪末尾标签）
+  * MapToStringList （将map转成字符串数组）
+* utils/http
+  * `Post （http post，支持超时设置）`
+  * `PostForm （http post，默认x-www-form-urlencoded）`
+  * `PostFormWithoutBody （http post，默认x-www-form-urlencoded）`
+  * `PostJson （Post方式将结果反序列化成TReturn）`
+  * `Get （http get，支持超时设置）`
+  * `GetForm （http get，默认x-www-form-urlencoded）`
+  * `GetFormWithoutBody （http get，默认x-www-form-urlencoded）`
+  * `GetJson （Get方式将结果反序列化成TReturn）`

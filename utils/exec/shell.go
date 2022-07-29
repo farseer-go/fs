@@ -39,7 +39,7 @@ func RunShell(command string, receiveOutput chan string, environment map[string]
 
 	if err != nil {
 		if ex, ok := err.(*exec.ExitError); ok {
-			res = ex.Sys().(syscall.WaitStatus).ExitStatus() //获取命令执行返回状态，相当于shell: echo $?
+			res = ex.Sys().(syscall.WaitStatus).ExitStatus() //获取命令执行返回状态
 		}
 		if !strings.Contains(err.Error(), "exit status") {
 			receiveOutput <- "wait:" + err.Error()
