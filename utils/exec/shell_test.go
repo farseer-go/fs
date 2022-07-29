@@ -8,22 +8,25 @@ import (
 
 func TestRunShell(t *testing.T) {
 	receiveOutput := make(chan string, 100)
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, _ := context.WithCancel(context.Background())
 	env := map[string]string{
 		"a": "b",
 	}
 
 	go func() {
-		for {
-			select {
-			case output := <-receiveOutput:
-				fmt.Println(output)
-			case <-ctx.Done():
-				return
-			}
+		for output := range receiveOutput {
+			fmt.Println(output)
 		}
+		//for {
+		//	select {
+		//	case output := <-receiveOutput:
+		//		fmt.Println(output)
+		//	case <-ctx.Done():
+		//		return
+		//	}
+		//}
 	}()
 
-	RunShell("docker ps", receiveOutput, env, "", ctx)
-	cancel()
+	exitCode := RunShell("go env", receiveOutput, env, "", ctx)
+	fmt.Println(exitCode)
 }
