@@ -1,4 +1,4 @@
-package directory
+package file
 
 import (
 	"fmt"
@@ -13,14 +13,6 @@ func TestGetFiles(t *testing.T) {
 	for _, filepath := range files {
 		fmt.Println(filepath)
 	}
-}
-
-// CopyFolder
-func TestCopyFolder(t *testing.T) {
-	path1 := "/Users/steden/Desktop/code/project/Farseer.Go"
-	path2 := "/Users/steden/Desktop/code/project/Farseer.Go2"
-
-	CopyFolder(path1, path2)
 }
 
 // ClearFile

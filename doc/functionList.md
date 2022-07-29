@@ -115,7 +115,7 @@
 
 ---
 ### 文件操作
-* utils/directory
+* utils/file
     * func
         * GetFiles （读取指定目录下的文件）
         * CopyFolder （复制整个文件夹）
