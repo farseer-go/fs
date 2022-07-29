@@ -11,6 +11,7 @@ import (
 	"strings"
 )
 
+// DbContext 数据库上下文
 type DbContext struct {
 	// 数据库配置
 	dbConfig *dbConfig

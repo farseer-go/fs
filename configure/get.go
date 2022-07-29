@@ -13,6 +13,7 @@ func init() {
 	}
 }
 
+// GetString 获取配置
 func GetString(key string) string {
 	return viper.GetString(key)
 }

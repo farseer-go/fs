@@ -1,10 +1,12 @@
 package linq
 
+// 对集合进行排序
 type linqFromOrder[T1 any, T2 Ordered] struct {
 	// source array
 	source *[]T1
 }
 
+// FromOrder 对集合进行排序
 func FromOrder[T1 any, T2 Ordered](source []T1) linqFromOrder[T1, T2] {
 	return linqFromOrder[T1, T2]{
 		source: &source,
@@ -108,60 +110,3 @@ func (receiver linqFromOrder[T, T2]) Max(fn func(item T) T2) T2 {
 	}
 	return maxValue
 }
-
-/*
-0	3
-1	5
-2	1
-3	8
-4	0
-5	3
-6	7
-7	1
---------------------
-0	1
-1	3
-2	5
-3	8
-4	0
-5	3
-6	7
-7	1
---------------------
-0	0
-1	1
-2	3
-3	5
-4	8
-5	3
-6	7
-7	1*/
-
-/*
-0	3
-1	5
-2	1
-3	8
-4	0
-5	3
-6	7
-7	1
---------------------
-0	0
-1	5
-2	3
-3	8
-4	1
-5	3
-6	7
-7	1
---------------------
-0	3
-1	5
-2	1
-3	8
-4	0
-5	3
-6	7
-7	1
-*/

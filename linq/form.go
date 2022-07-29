@@ -2,11 +2,13 @@ package linq
 
 import "github.com/farseernet/farseer.go/core"
 
+// 数据对集合数据筛选
 type linqForm[T any] struct {
 	// source array
 	source []T
 }
 
+// From 数据对集合数据筛选
 func From[T any](source []T) linqForm[T] {
 	return linqForm[T]{
 		source: source,
@@ -47,7 +49,7 @@ func (receiver linqForm[T]) FindAll(fn func(item T) bool) []T {
 	return lst
 }
 
-// First 查找符合条件的元素
+// First 查找符合条件的第一个元素
 func (receiver linqForm[T]) First() T {
 	if len(receiver.source) > 0 {
 		return (receiver.source)[0]

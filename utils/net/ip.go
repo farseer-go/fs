@@ -11,6 +11,7 @@ func init() {
 	Ip = Ips[0]
 }
 
+// LocalIPv4s 获取本机IP地址
 func LocalIPv4s() ([]string, error) {
 	var ips []string
 	address, err := net.InterfaceAddrs()

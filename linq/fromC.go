@@ -1,5 +1,6 @@
 package linq
 
+// 支持比较的集合
 type linqFromC[C comparable] struct {
 	// source array
 	source []C

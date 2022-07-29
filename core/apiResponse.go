@@ -1,8 +1,12 @@
 package core
 
+// ApiResponseString 标准的API Response结构（默认string值）
 type ApiResponseString ApiResponse[string]
+
+// ApiResponseInt 标准的API Response结构（默认int值）
 type ApiResponseInt ApiResponse[int]
 
+// ApiResponse 标准的API Response结构
 type ApiResponse[TData any] struct {
 	// 操作是否成功
 	Status bool

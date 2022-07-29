@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// TableSet 数据库表操作
 type TableSet[Table any] struct {
 	// 上下文（用指针的方式，共享同一个上下文）
 	dbContext *DbContext
@@ -15,11 +16,13 @@ type TableSet[Table any] struct {
 	err       error
 }
 
+// Init 在反射的时候会调用此方法
 func (table *TableSet[Table]) Init(dbContext *DbContext, tableName string) {
 	table.dbContext = dbContext
 	table.SetTableName(tableName)
 }
 
+// SetTableName 设置表名
 func (table *TableSet[Table]) SetTableName(tableName string) {
 	table.tableName = tableName
 	if table.db == nil {
@@ -32,15 +35,6 @@ func (table *TableSet[Table]) SetTableName(tableName string) {
 func (table *TableSet[Table]) GetTableName() string {
 	return table.tableName
 }
-
-//// NewTableSet 初始化表模型
-//func NewTableSet[Table any](dbContext *dbContext, tableName string, po Table) *TableSet[Table] {
-//	return TableSet[Table]{
-//		Po:        po,
-//		dbContext: dbContext,
-//		tableName: tableName,
-//	}
-//}
 
 // 初始化Orm
 func (table *TableSet[Table]) data() *gorm.DB {

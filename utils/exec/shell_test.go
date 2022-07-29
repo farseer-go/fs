@@ -24,6 +24,6 @@ func TestRunShell(t *testing.T) {
 		}
 	}()
 
-	RunShell("go env", receiveOutput, env, "", ctx)
+	RunShell("docker ps", receiveOutput, env, "", ctx)
 	cancel()
 }

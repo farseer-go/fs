@@ -5,7 +5,7 @@ import "github.com/farseernet/farseer.go/linq"
 // Consumer 消费
 type queueSubscribeFunc func(subscribeName string, message []any, remainingCount int)
 
-// Subscribe 订阅
+// Subscribe 订阅消息
 // queueName = 队列名称
 // subscribeName = 订阅者名称
 // pullCount = 每次拉取的数量

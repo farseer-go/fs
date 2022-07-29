@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// PublishEvent 发布事件
+// PublishEvent 阻塞发布事件
 func PublishEvent(eventName string, message any) {
 	// 首先从订阅者中找到是否存在eventName
 	if !linq.Dictionary(subscriber).ExistsKey(eventName) {
@@ -28,7 +28,7 @@ func PublishEvent(eventName string, message any) {
 	}
 }
 
-// PublishEventAsync 发布事件
+// PublishEventAsync 异步发布事件
 func PublishEventAsync(eventName string, message any) {
 	// 首先从订阅者中找到是否存在eventName
 	if !linq.Dictionary(subscriber).ExistsKey(eventName) {

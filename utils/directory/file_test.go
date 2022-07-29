@@ -2,6 +2,7 @@ package directory
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 )
 
@@ -32,4 +33,8 @@ func TestClearFile(t *testing.T) {
 func TestIsExists(t *testing.T) {
 	path := "/Users/steden/Desktop/code/project/Farseer.Go3"
 	fmt.Println(IsExists(path))
+}
+
+func TestOther(t *testing.T) {
+	fmt.Println(strings.TrimRight("aaaabb", "ab"))
 }
