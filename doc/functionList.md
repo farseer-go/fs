@@ -123,12 +123,14 @@
         * CopyFile （复制文件）
         * ClearFile （清空目录下的所有文件）
         * IsExists （判断路径是否存在）
+        * `Delete （删除文件）`
         * `WriteString （写入文件）`
         * `AppendString （追加文件）`
         * `AppendLine （换行追加文件）`
         * `CreateDir766 （创建所有目录，权限为766）`
         * `CreateDir （创建所有目录）`
         * `ReadString （读文件内容）`
+        * `ReadAllLines （读文件内容，按行返回数组）`
 
 ---
 ### 常用工具
