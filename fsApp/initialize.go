@@ -1,4 +1,4 @@
-package init
+package fsApp
 
 import (
 	"fmt"
@@ -22,7 +22,8 @@ var AppId int64
 // AppIp 应用IP
 var AppIp string
 
-func Run(appName string) {
+// Initialize 初始化框架
+func Initialize(appName string) {
 	rand.Seed(time.Now().UnixNano())
 	StartupAt = time.Now()
 	appidString := strings.Join([]string{strconv.FormatInt(StartupAt.UnixMicro(), 10), strconv.Itoa(rand.Intn(999-100) + 100)}, "")
