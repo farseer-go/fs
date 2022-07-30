@@ -124,6 +124,11 @@
         * ClearFile （清空目录下的所有文件）
         * IsExists （判断路径是否存在）
         * `WriteString （写入文件）`
+        * `AppendString （追加文件）`
+        * `AppendLine （换行追加文件）`
+        * `CreateDir766 （创建所有目录，权限为766）`
+        * `CreateDir （创建所有目录）`
+        * `ReadString （读文件内容）`
 
 ---
 ### 常用工具
@@ -131,6 +136,7 @@
   * Md5 （对字符串做MD5加密）
 * utils/exec
   * RunShell （执行shell命令）
+  * RunShellContext （执行shell命令）
 * utils/net
   * LocalIPv4s （获取本机IP地址）
 * utils/parse

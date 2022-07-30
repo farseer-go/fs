@@ -27,6 +27,6 @@ func TestRunShell(t *testing.T) {
 		//}
 	}()
 
-	exitCode := RunShell("go env", receiveOutput, env, "", ctx)
+	exitCode := RunShellContext("go env", receiveOutput, env, "", ctx)
 	fmt.Println(exitCode)
 }

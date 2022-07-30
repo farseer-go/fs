@@ -2,7 +2,8 @@ package file
 
 import (
 	"fmt"
-	"strings"
+	"github.com/farseernet/farseer.go/utils/str"
+	"path/filepath"
 	"testing"
 )
 
@@ -28,5 +29,8 @@ func TestIsExists(t *testing.T) {
 }
 
 func TestOther(t *testing.T) {
-	fmt.Println(strings.TrimRight("aaaabb", "ab"))
+	git := "https://github.com/FarseerNet/farseer.go.git"
+	git = filepath.Base(git)
+	git = str.CutRight(git, ".git")
+	fmt.Println(git)
 }

@@ -13,7 +13,12 @@ import (
 )
 
 // RunShell 执行shell命令
-func RunShell(command string, receiveOutput chan string, environment map[string]string, workingDirectory string, ctx context.Context) int {
+func RunShell(command string, receiveOutput chan string, environment map[string]string, workingDirectory string) int {
+	return RunShellContext(command, receiveOutput, environment, workingDirectory, context.Background())
+}
+
+// RunShellContext 执行shell命令
+func RunShellContext(command string, receiveOutput chan string, environment map[string]string, workingDirectory string, ctx context.Context) int {
 	cmd := exec.CommandContext(ctx, "bash", "-c", command)
 	cmd.Dir = workingDirectory
 	// 如果设置了环境变量，则追回进来
