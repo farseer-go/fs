@@ -6,6 +6,9 @@ type ApiResponseString ApiResponse[string]
 // ApiResponseInt 标准的API Response结构（默认int值）
 type ApiResponseInt ApiResponse[int]
 
+// ApiResponseLong 标准的API Response结构（默认int值）
+type ApiResponseLong ApiResponse[int64]
+
 // ApiResponse 标准的API Response结构
 type ApiResponse[TData any] struct {
 	// 操作是否成功

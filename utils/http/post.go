@@ -9,7 +9,7 @@ import (
 )
 
 // Post http post，支持请求超时设置，单位：ms
-func Post(url string, body map[string]string, contentType string, requestTimeout int) string {
+func Post(url string, body any, contentType string, requestTimeout int) string {
 	client := http.Client{
 		Timeout: time.Duration(requestTimeout) * time.Millisecond,
 	}
@@ -28,17 +28,17 @@ func Post(url string, body map[string]string, contentType string, requestTimeout
 }
 
 // PostForm http post，application/x-www-form-urlencoded
-func PostForm(url string, body map[string]string, requestTimeout int) string {
+func PostForm(url string, body any, requestTimeout int) string {
 	return Post(url, body, "application/x-www-form-urlencoded", requestTimeout)
 }
 
 // PostFormWithoutBody http post，application/x-www-form-urlencoded
-func PostFormWithoutBody(url string, body map[string]string, requestTimeout int) string {
+func PostFormWithoutBody(url string, body any, requestTimeout int) string {
 	return Post(url, body, "application/x-www-form-urlencoded", requestTimeout)
 }
 
 // PostJson Post方式将结果反序列化成TReturn
-func PostJson[TReturn any](url string, body map[string]string, requestTimeout int) TReturn {
+func PostJson[TReturn any](url string, body any, requestTimeout int) TReturn {
 	rspJson := Post(url, body, "application/json", requestTimeout)
 	var val TReturn
 	json.Unmarshal([]byte(rspJson), &val)

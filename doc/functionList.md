@@ -104,6 +104,7 @@
     * struct
         * ApiResponseString （标准的API输出（默认string值））
         * ApiResponseInt （标准的API输出（默认int值））
+        * ApiResponseLong （标准的API输出（默认int64值））
         * ApiResponse （标准的API输出（泛型））
             * .SetData （设置Data字段的值）
         * PageList （用于分页数组，包含总记录数）
