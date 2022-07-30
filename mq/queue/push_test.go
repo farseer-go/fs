@@ -1,7 +1,7 @@
 package queue
 
 import (
-	"fmt"
+	"log"
 	"testing"
 	"time"
 )
@@ -19,5 +19,5 @@ func TestPush(t *testing.T) {
 }
 
 func consumer(subscribeName string, message []any, remainingCount int) {
-	fmt.Println("Name=", subscribeName, "，Msg=", message, "RemainingCount=", remainingCount)
+	log.Println("Name=", subscribeName, "，Msg=", message, "RemainingCount=", remainingCount)
 }

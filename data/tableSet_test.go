@@ -1,8 +1,8 @@
 package data
 
 import (
-	"fmt"
 	"github.com/farseernet/farseer.go/configure"
+	"log"
 	"testing"
 )
 
@@ -12,5 +12,5 @@ func TestTableSet_ToList(t *testing.T) {
 	context := Init[TestMysqlContext]("test")
 
 	list := context.User.Select("Age").ToList()
-	fmt.Println(list)
+	log.Println(list)
 }

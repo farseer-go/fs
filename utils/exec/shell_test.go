@@ -2,7 +2,7 @@ package exec
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"testing"
 )
 
@@ -15,12 +15,12 @@ func TestRunShell(t *testing.T) {
 
 	go func() {
 		for output := range receiveOutput {
-			fmt.Println(output)
+			log.Println(output)
 		}
 		//for {
 		//	select {
 		//	case output := <-receiveOutput:
-		//		fmt.Println(output)
+		//		log.Println(output)
 		//	case <-ctx.Done():
 		//		return
 		//	}
@@ -28,5 +28,5 @@ func TestRunShell(t *testing.T) {
 	}()
 
 	exitCode := RunShellContext("go env", receiveOutput, env, "", ctx)
-	fmt.Println(exitCode)
+	log.Println(exitCode)
 }

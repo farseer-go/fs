@@ -1,7 +1,7 @@
 package linq
 
 import (
-	"fmt"
+	"log"
 	"testing"
 )
 
@@ -11,7 +11,7 @@ func TestOrderBy(t *testing.T) {
 	item := FromOrder[int, int](lst).OrderBy(func(item int) int {
 		return item
 	})
-	fmt.Println(item)
+	log.Println(item)
 }
 
 // 倒序排序
@@ -20,5 +20,5 @@ func TestOrderByDescending(t *testing.T) {
 	item := FromOrder[int, int](lst).OrderByDescending(func(item int) int {
 		return item
 	})
-	fmt.Println(item)
+	log.Println(item)
 }

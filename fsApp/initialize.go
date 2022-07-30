@@ -1,8 +1,8 @@
 package fsApp
 
 import (
-	"fmt"
 	"github.com/farseernet/farseer.go/utils/net"
+	"log"
 	"math/rand"
 	"os"
 	"strconv"
@@ -31,9 +31,9 @@ func Initialize(appName string) {
 	AppIp = net.Ip
 	AppName = appName
 
-	fmt.Println("系统时间：", StartupAt)
-	fmt.Println("进程ID：", os.Getppid())
-	fmt.Println("应用ID：", AppId)
-	fmt.Println("应用IP：", AppIp)
-	fmt.Println("---------------------------------------")
+	log.Println("系统时间：", StartupAt)
+	log.Println("进程ID：", os.Getppid())
+	log.Println("应用ID：", AppId)
+	log.Println("应用IP：", AppIp)
+	log.Println("---------------------------------------")
 }
