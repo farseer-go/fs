@@ -1,3 +1,7 @@
+### 框架初始化
+* fsApp
+  * `Initialize （Initialize）`
+
 ### 配置读写
 * configure
     * GetString （获取配置）
@@ -67,6 +71,8 @@
             * .OrderByDescending （倒序排序）
             * .Min （获取最小值）
             * .Max （获取最大值）
+        * `linqFormGroupBy`
+          * `GroupBy （将数组进行分组后返回map）`
     * func
         * Dictionary （针对字典的操作）
         * From （数据对集合数据筛选）
@@ -127,6 +133,7 @@
         * `WriteString （写入文件）`
         * `AppendString （追加文件）`
         * `AppendLine （换行追加文件）`
+        * `AppendAllLine （换行追加文件）`
         * `CreateDir766 （创建所有目录，权限为766）`
         * `CreateDir （创建所有目录）`
         * `ReadString （读文件内容）`
@@ -147,6 +154,7 @@
 * utils/str
   * CutRight （裁剪末尾标签）
   * MapToStringList （将map转成字符串数组）
+  * `ToDateTime （将时间转换为yyyy-MM-dd HH:mm:ss）`
 * utils/http
   * `Post （http post，支持超时设置）`
   * `PostForm （http post，默认x-www-form-urlencoded）`
