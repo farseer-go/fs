@@ -41,3 +41,16 @@ func TestAppendLine(t *testing.T) {
 		t.Error(readString)
 	}
 }
+
+func TestAppendAllLine(t *testing.T) {
+	file := "/Users/steden/Desktop/code/project/Farseer.Go/" + strconv.Itoa(rand.Intn(999-100)) + ".txt"
+	defer os.Remove(file)
+
+	WriteString(file, "aaa")
+	str := []string{"bbb", "ccc"}
+	AppendAllLine(file, str)
+	readString := ReadString(file)
+	if readString != "aaa\nbbb\nccc" {
+		t.Error(readString)
+	}
+}
