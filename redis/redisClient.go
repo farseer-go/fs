@@ -43,23 +43,3 @@ func (redisClient *Client) Exists(key string) (bool, error) {
 	result, err := rdb.Exists(ctx, key).Result()
 	return result > 0, err
 }
-
-//
-//// Set 设置缓存
-//func (redisClient *Client) Set(key string, value string) error {
-//	err := rdb.Set(ctx, key, value, 0).Err()
-//	if err != nil {
-//		return err
-//	} else {
-//		return nil
-//	}
-//}
-//
-//// Get 获取缓存
-//func (redisClient *Client) Get(key string) (string, error) {
-//	val, err := rdb.Get(ctx, key).Result()
-//	if err != nil {
-//		return "", err
-//	}
-//	return val, nil
-//}

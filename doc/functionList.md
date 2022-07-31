@@ -164,3 +164,21 @@
   * `GetForm （http get，默认x-www-form-urlencoded）`
   * `GetFormWithoutBody （http get，默认x-www-form-urlencoded）`
   * `GetJson （Get方式将结果反序列化成TReturn）`
+
+---
+### redis
+* redis
+  * Remove（删除key）
+  * Exists（key是否存在）
+* redis/string
+  * Set（设置缓存）
+  * Get（获取缓存）
+  * SetNX（设置过期时间）
+  * TTL（获取过期时间）
+* redis/hash
+  * Set（设置缓存）
+  * SetMap（设置map缓存）
+  * Get（获取单个field值）
+  * GetAll（获取key下所有数据）
+  * Exists（判断单个field是否存在）
+  * Remove（移出指定field成员）

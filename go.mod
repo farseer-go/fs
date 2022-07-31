@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/devfeel/mapper v0.7.10
+	github.com/go-redis/redis/v8 v8.11.5
 	github.com/spf13/viper v1.12.0
 	github.com/studyzy/iocgo v0.0.0-20220102165609-54d474ad4d2a
 	github.com/valyala/fasthttp v1.38.0
@@ -15,16 +16,11 @@ require (
 )
 
 require (
-<<<<<<< HEAD
-	github.com/cespare/xxhash/v2 v2.1.2 // indirect
-=======
 	github.com/andybalholm/brotli v1.0.4 // indirect
->>>>>>> 0bd14a7a3b8e5b9a2e6b4428d7e9e6b7fb482074
+	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/denisenkom/go-mssqldb v0.12.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
-	github.com/go-redis/redis/v8 v8.11.5 // indirect
-	github.com/go-redis/redis/v9 v9.0.0-beta.2 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/golang-sql/civil v0.0.0-20190719163853-cb61b32ac6fe // indirect
 	github.com/golang-sql/sqlexp v0.0.0-20170517235910-f1bb20e5a188 // indirect
@@ -43,6 +39,7 @@ require (
 	github.com/magiconair/properties v1.8.6 // indirect
 	github.com/mattn/go-sqlite3 v1.14.12 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
+	github.com/onsi/gomega v1.20.0 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.1 // indirect
 	github.com/spf13/afero v1.8.2 // indirect
