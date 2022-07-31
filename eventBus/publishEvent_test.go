@@ -1,7 +1,7 @@
 package eventBus
 
 import (
-	"fmt"
+	"log"
 	"testing"
 	"time"
 )
@@ -20,13 +20,13 @@ type testEventPublish struct {
 func Consumer(message any, ea EventArgs) {
 	count++
 	event := message.(testEventPublish)
-	fmt.Println("ID=", ea.Id, "message=", event, "count=", count)
+	log.Println("ID=", ea.Id, "message=", event, "count=", count)
 }
 
 func TestPublishEvent(t *testing.T) {
 	PublishEvent("test_event_subscribe", testEventPublish{Name: "aaa"})
-	fmt.Println("send aaa finished")
+	log.Println("send aaa finished")
 	PublishEventAsync("test_event_subscribe", testEventPublish{Name: "bbb"})
-	fmt.Println("send bbb finished")
+	log.Println("send bbb finished")
 	time.Sleep(2 * time.Second)
 }

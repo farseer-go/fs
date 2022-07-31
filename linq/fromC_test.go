@@ -1,12 +1,12 @@
 package linq
 
 import (
-	"fmt"
+	"log"
 	"testing"
 )
 
 func TestRemove(t *testing.T) {
 	lstYaml := []string{"1", "", "2"}
 	item := FromC(lstYaml).Remove("")
-	fmt.Println(item)
+	log.Println(item)
 }

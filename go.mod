@@ -6,6 +6,7 @@ require (
 	github.com/devfeel/mapper v0.7.10
 	github.com/spf13/viper v1.12.0
 	github.com/studyzy/iocgo v0.0.0-20220102165609-54d474ad4d2a
+	github.com/valyala/fasthttp v1.38.0
 	gorm.io/driver/mysql v1.3.5
 	gorm.io/driver/postgres v1.3.8
 	gorm.io/driver/sqlite v1.3.6
@@ -14,7 +15,11 @@ require (
 )
 
 require (
+<<<<<<< HEAD
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
+=======
+	github.com/andybalholm/brotli v1.0.4 // indirect
+>>>>>>> 0bd14a7a3b8e5b9a2e6b4428d7e9e6b7fb482074
 	github.com/denisenkom/go-mssqldb v0.12.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
@@ -34,6 +39,7 @@ require (
 	github.com/jackc/pgx/v4 v4.16.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
+	github.com/klauspost/compress v1.15.0 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
 	github.com/mattn/go-sqlite3 v1.14.12 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
@@ -44,6 +50,7 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.3.0 // indirect
+	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4 // indirect
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
 	golang.org/x/text v0.3.7 // indirect

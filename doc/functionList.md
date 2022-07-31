@@ -1,3 +1,7 @@
+### 框架初始化
+* fsApp
+  * `Initialize （Initialize）`
+
 ### 配置读写
 * configure
     * GetString （获取配置）
@@ -67,6 +71,8 @@
             * .OrderByDescending （倒序排序）
             * .Min （获取最小值）
             * .Max （获取最大值）
+        * `linqFormGroupBy`
+          * `GroupBy （将数组进行分组后返回map）`
     * func
         * Dictionary （针对字典的操作）
         * From （数据对集合数据筛选）
@@ -104,6 +110,7 @@
     * struct
         * ApiResponseString （标准的API输出（默认string值））
         * ApiResponseInt （标准的API输出（默认int值））
+        * ApiResponseLong （标准的API输出（默认int64值））
         * ApiResponse （标准的API输出（泛型））
             * .SetData （设置Data字段的值）
         * PageList （用于分页数组，包含总记录数）
@@ -115,25 +122,45 @@
 
 ---
 ### 文件操作
-* utils/directory
+* utils/file
     * func
         * GetFiles （读取指定目录下的文件）
         * CopyFolder （复制整个文件夹）
         * CopyFile （复制文件）
         * ClearFile （清空目录下的所有文件）
         * IsExists （判断路径是否存在）
+        * `Delete （删除文件）`
+        * `WriteString （写入文件）`
+        * `AppendString （追加文件）`
+        * `AppendLine （换行追加文件）`
+        * `AppendAllLine （换行追加文件）`
+        * `CreateDir766 （创建所有目录，权限为766）`
+        * `CreateDir （创建所有目录）`
+        * `ReadString （读文件内容）`
+        * `ReadAllLines （读文件内容，按行返回数组）`
 
 ---
 ### 常用工具
 * utils/encrypt
-    * Md5 （对字符串做MD5加密）
+  * Md5 （对字符串做MD5加密）
 * utils/exec
-    * RunShell （执行shell命令）
+  * RunShell （执行shell命令）
+  * RunShellContext （执行shell命令）
 * utils/net
-    * LocalIPv4s （获取本机IP地址）
+  * LocalIPv4s （获取本机IP地址）
 * utils/parse
-    * Convert （通用的类型转换）
-    * IsInt （是否为int类型）
+  * Convert （通用的类型转换）
+  * IsInt （是否为int类型）
 * utils/str
-    * CutRight （裁剪末尾标签）
-    * MapToStringList （将map转成字符串数组）
+  * CutRight （裁剪末尾标签）
+  * MapToStringList （将map转成字符串数组）
+  * `ToDateTime （将时间转换为yyyy-MM-dd HH:mm:ss）`
+* utils/http
+  * `Post （http post，支持超时设置）`
+  * `PostForm （http post，默认x-www-form-urlencoded）`
+  * `PostFormWithoutBody （http post，默认x-www-form-urlencoded）`
+  * `PostJson （Post方式将结果反序列化成TReturn）`
+  * `Get （http get，支持超时设置）`
+  * `GetForm （http get，默认x-www-form-urlencoded）`
+  * `GetFormWithoutBody （http get，默认x-www-form-urlencoded）`
+  * `GetJson （Get方式将结果反序列化成TReturn）`

@@ -9,10 +9,16 @@ import (
 	"os/exec"
 	"strings"
 	"sync"
+	"syscall"
 )
 
 // RunShell 执行shell命令
-func RunShell(command string, receiveOutput chan string, environment map[string]string, workingDirectory string, ctx context.Context) {
+func RunShell(command string, receiveOutput chan string, environment map[string]string, workingDirectory string) int {
+	return RunShellContext(command, receiveOutput, environment, workingDirectory, context.Background())
+}
+
+// RunShellContext 执行shell命令
+func RunShellContext(command string, receiveOutput chan string, environment map[string]string, workingDirectory string, ctx context.Context) int {
 	cmd := exec.CommandContext(ctx, "bash", "-c", command)
 	cmd.Dir = workingDirectory
 	// 如果设置了环境变量，则追回进来
@@ -24,7 +30,7 @@ func RunShell(command string, receiveOutput chan string, environment map[string]
 
 	if err := cmd.Start(); err != nil {
 		receiveOutput <- "执行失败：" + err.Error()
-		return
+		return 0
 	}
 	var waitGroup sync.WaitGroup
 	waitGroup.Add(2)
@@ -32,11 +38,19 @@ func RunShell(command string, receiveOutput chan string, environment map[string]
 	go readInputStream(stdout, receiveOutput, &waitGroup)
 	go readInputStream(stderr, receiveOutput, &waitGroup)
 
+	var res int
 	err := cmd.Wait()
-	if err != nil && !strings.Contains(err.Error(), "exit status") {
-		receiveOutput <- "wait:" + err.Error()
-	}
 	waitGroup.Wait()
+
+	if err != nil {
+		if ex, ok := err.(*exec.ExitError); ok {
+			res = ex.Sys().(syscall.WaitStatus).ExitStatus() //获取命令执行返回状态
+		}
+		if !strings.Contains(err.Error(), "exit status") {
+			receiveOutput <- "wait:" + err.Error()
+		}
+	}
+	return res
 }
 
 func readInputStream(out io.ReadCloser, receiveOutput chan string, waitGroup *sync.WaitGroup) {
