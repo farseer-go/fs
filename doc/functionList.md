@@ -50,29 +50,30 @@
             * .ExistsKey （是否存在KEY）
         * linqForm （数据对集合数据筛选）
             * .Where （对数据进行筛选）
-            * .Find （查找符合条件的元素）
-            * .FindAll （查找符合条件的元素列表）
             * .First （查找符合条件的第一个元素）
             * .ToArray （查找符合条件的元素列表）
             * .RemoveAll （移除条件=true的元素）
+            * .RemoveItem （移除指定值的元素）
             * .Count （获取数量）
             * .ToPageList （数组分页）
             * .Take （返回前多少条数据）
-        * linqFormT （筛选子元素字段）
+            * `.ContainsItem （查找数组是否包含某元素）`
             * .Select （筛选子元素字段）
-        * linqFromC （支持比较的集合）
-            * .Where （对数据进行筛选）
-            * .Contains （查找数组是否包含某元素）
-            * .Remove （移除指定值的元素）
-            * .Count （获取数量）
-        * linqFromOrder （对集合进行排序）
-            * .Where （对数据进行筛选）
             * .OrderBy （正序排序）
+            * `.OrderByItem （正序排序）`
             * .OrderByDescending （倒序排序）
+            * `.OrderByDescendingItem （倒序排序）`
             * .Min （获取最小值）
+            * .MinItem （获取最小值）
             * .Max （获取最大值）
-        * `linqFormGroupBy`
-          * `GroupBy （将数组进行分组后返回map）`
+            * .MaxItem （获取最大值）
+            * `.Sum （求总和）`
+            * `.SumItem （求总和）`
+            * `.Avg （求平均数）`
+            * `.AvgItem （求平均数）`
+            * `GroupBy （将数组进行分组后返回map）`
+            * `Any （是否存在）`
+            * `All （是否所有数据都满足fn条件）`
     * func
         * Dictionary （针对字典的操作）
         * From （数据对集合数据筛选）
@@ -119,6 +120,8 @@
         * Error （接口调用失时返回的Json）
         * Error403 （接口调用失时返回的Json）
         * NewPageList （数据分页列表及总数）
+* `core/eumLogLevel`
+  * `Enum （日志等级）`
 
 ---
 ### 文件操作
