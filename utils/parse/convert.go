@@ -1,52 +1,80 @@
 package parse
 
 import (
-	"strconv"
+	"reflect"
 	"strings"
 )
 
 // Convert 通用的类型转换
 func Convert[T any](source any, defVal T) T {
-	// 根据source值的类型做转换适配
-	switch source.(type) {
-	case int:
-		return convertInt(source.(int), defVal).(T)
-	case string:
-		return convertString(source.(string), defVal).(T)
-	}
-	return defVal
-}
+	sourceKind := reflect.TypeOf(source).Kind()
+	returnKind := reflect.TypeOf(defVal).Kind()
 
-func convertInt(source int, defVal any) any {
-	switch defVal.(type) {
-	case bool:
-		return any(source == 1)
-	case string:
-		return strconv.Itoa(source)
-	case int64:
-		return int64(source)
+	if sourceKind == returnKind {
+		return source.(T)
 	}
-	return defVal
-}
 
-func convertString(source string, defVal any) any {
-	switch defVal.(type) {
-	case bool:
-		return any(strings.ToLower(source) == "true")
-	case string:
-		return source
-	case int, int32:
-		if result, isOk := strconv.Atoi(source); isOk == nil {
-			return result
+	// 数字转...
+	if isNumber(sourceKind) {
+		// 数字转数字
+		if isNumber(returnKind) {
+			return anyToNumber(source, sourceKind, defVal, returnKind).(T)
 		}
-	case int64:
-		if result, isOk := strconv.ParseInt(source, 10, 64); isOk == nil {
-			return result
+
+		// 数字转bool
+		if isBool(returnKind) {
+			var result any = equalTo1(source, sourceKind)
+			return result.(T)
+		}
+
+		// 数字转字符串
+		if isString(returnKind) {
+			return numberToString(source, defVal, sourceKind).(T)
 		}
 	}
+
+	// bool转数字
+	if isBool(sourceKind) {
+		var result any = 0
+		boolSource := source.(bool)
+		if boolSource {
+			result = 1
+		}
+		return result.(T)
+	}
+
+	// 字符串转...
+	if isString(sourceKind) {
+		strSource := source.(string)
+
+		if isBool(returnKind) { // 字符串转bool
+			var result any = strings.EqualFold(strSource, "true")
+			return result.(T)
+		}
+
+		// 字符串转数字
+		if isNumber(returnKind) {
+			return stringToNumber(strSource, defVal, returnKind).(T)
+		}
+	}
 	return defVal
 }
 
-type numberType interface {
-	~int | ~int64 | ~int8 | ~int16 | ~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~float32 | ~float64
+// 数字类型
+func isNumber(kind reflect.Kind) bool {
+	switch kind {
+	case reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Int, reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Float32, reflect.Float64:
+		return true
+	}
+	return false
+}
+
+// 布尔值类型
+func isBool(kind reflect.Kind) bool {
+	return kind == reflect.Bool
+}
+
+// 布尔值类型
+func isString(kind reflect.Kind) bool {
+	return kind == reflect.String
 }
