@@ -3,6 +3,7 @@ package redis
 import (
 	"context"
 	"github.com/farseernet/farseer.go/configure"
+	"github.com/go-redis/redis/v8"
 )
 
 type Client struct {
