@@ -1,26 +1,42 @@
 package redis
 
-import "time"
+import (
+	"github.com/go-redis/redis/v8"
+	"time"
+)
 
 type redisString struct {
+	rdb *redis.Client
 }
 
 // Set 设置缓存
-func (redisString *redisString) Set(key string, value string) error {
-	return rdb.Set(ctx, key, value, 0).Err()
+func (redisString *redisString) Set(key string, value interface{}) error {
+	return redisString.rdb.Set(ctx, key, value, 0).Err()
 }
 
 // Get 获取缓存
 func (redisString *redisString) Get(key string) (string, error) {
-	return rdb.Get(ctx, key).Result()
+	return redisString.rdb.Get(ctx, key).Result()
 }
 
 // SetNX 设置过期时间
 func (redisString *redisString) SetNX(key string, value interface{}, expiration time.Duration) (bool, error) {
-	return rdb.SetNX(ctx, key, value, expiration).Result()
+	return redisString.rdb.SetNX(ctx, key, value, expiration).Result()
 }
 
 // TTL 获取过期时间
 func (redisString *redisString) TTL(key string) (time.Duration, error) {
-	return rdb.TTL(ctx, key).Result()
+	return redisString.rdb.TTL(ctx, key).Result()
+}
+
+// Remove 删除
+func (redisString *redisString) Remove(keys ...string) (bool, error) {
+	result, err := redisString.rdb.Del(ctx, keys...).Result()
+	return result > 0, err
+}
+
+// Exists key值是否存在
+func (redisString *redisString) Exists(keys ...string) (bool, error) {
+	result, err := redisString.rdb.Exists(ctx, keys...).Result()
+	return result > 0, err
 }
