@@ -4,4 +4,4 @@ ElasticSearch:
   LinkTrack: "Server=http://es:9200,Username=es,Password=123456"
   log_es: "Server=http://es:9200,Username=es,Password=123456,ReplicasCount=1,ShardsCount=1,RefreshInterval=5,IndexFormat=yyyy_MM"
 Redis:
-  default: "Server=redis:6379,DB=15,Password=123123,ConnectTimeout=600000,SyncTimeout=10000,ResponseTimeout=10000"
+  default: "Server=localhost:6379,DB=15,Password=redis123,ConnectTimeout=600000,SyncTimeout=10000,ResponseTimeout=10000"

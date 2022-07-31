@@ -1,0 +1,28 @@
+package redis
+
+import (
+	"fmt"
+	"testing"
+	"time"
+)
+
+//string 测试
+func TestClientString(t *testing.T) {
+	client := NewClient("default")
+	err := client.string.Set("key1", "...3456")
+	if err == nil {
+		fmt.Printf("设置值:%v\n", "...3456")
+	}
+	get, _ := client.string.Get("key1")
+	fmt.Printf("获取值：%v\n", get)
+
+	//如果key值存在，设置这个会返回false
+	nx, _ := client.string.SetNX("key2", "1231", 100*time.Second)
+	fmt.Printf("设置过期时间：%v\n", nx)
+
+	get2, _ := client.string.Get("key2")
+	fmt.Printf("获取值：%v\n", get2)
+
+	ttl, _ := client.string.TTL("key2")
+	fmt.Printf("获取过期时间：%v\n", ttl)
+}
