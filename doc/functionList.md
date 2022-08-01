@@ -45,10 +45,10 @@
 ---    
 ### linq
 * linq
-    * struct
-        * linqDictionary （针对字典的操作）
+    * func
+        * Dictionary （针对字典的操作）
             * .ExistsKey （是否存在KEY）
-        * linqForm （数据对集合数据筛选）
+        * Form （数据对集合数据筛选）
             * .Where （对数据进行筛选）
             * .First （查找符合条件的第一个元素）
             * .ToArray （查找符合条件的元素列表）
@@ -74,12 +74,6 @@
             * `GroupBy （将数组进行分组后返回map）`
             * `Any （是否存在）`
             * `All （是否所有数据都满足fn条件）`
-    * func
-        * Dictionary （针对字典的操作）
-        * From （数据对集合数据筛选）
-        * FromT （筛选子元素字段）
-        * FromC （支持比较的集合）
-        * FromOrder （对集合进行排序）
 
 ---
 ### 事件总线
@@ -167,7 +161,10 @@
   * `GetForm （http get，默认x-www-form-urlencoded）`
   * `GetFormWithoutBody （http get，默认x-www-form-urlencoded）`
   * `GetJson （Get方式将结果反序列化成TReturn）`
-
+* utils/times
+  * `GetTime（根据time.Duration转换成天、小时、分钟、秒）`
+  * `GetDesc（返回时间中文的描述）`
+  * `GetSubDesc（返回时间中文的描述）`
 ---
 ### redis
 * redis
