@@ -9,8 +9,8 @@ import (
 func TestClientHash(t *testing.T) {
 	client := NewClient("default")
 
-	defer client.string.Remove("key_has1")
-	defer client.string.Remove("key_has2")
+	defer client.string.Del("key_has1")
+	defer client.string.Del("key_has2")
 
 	err := client.hash.Set("key_has1", "name", "小丽")
 	err_v2 := client.hash.Set("key_has1", "age", 40, "address", "上海")
@@ -39,7 +39,7 @@ func TestClientHash(t *testing.T) {
 	get2, _ := client.hash.Get("key_has1", "age")
 	fmt.Printf("获取key_has2  单个 age 值成功:%v\n", get2)
 
-	remove, _ := client.hash.Remove("key_has1", "age")
+	remove, _ := client.hash.Del("key_has1", "age")
 	fmt.Printf("移出age成员:%v\n", remove)
 
 	err2 := client.hash.Set("key_has2", "key1", "value1", "key2", 222)

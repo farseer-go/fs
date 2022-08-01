@@ -37,8 +37,8 @@ func (redisHash *redisHash) Exists(key string, field string) (bool, error) {
 	return redisHash.rdb.HExists(ctx, key, field).Result()
 }
 
-// Remove 移除指定成员
-func (redisHash *redisHash) Remove(key string, fields ...string) (bool, error) {
+// Del 移除指定成员
+func (redisHash *redisHash) Del(key string, fields ...string) (bool, error) {
 	result, err := redisHash.rdb.HDel(ctx, key, fields...).Result()
 	return result > 0, err
 }

@@ -19,7 +19,7 @@ func TestClient(t *testing.T) {
 		fmt.Printf("是否存在：%v\n", get)
 	}
 
-	remove, _ := client.string.Remove("key1")
+	remove, _ := client.string.Del("key1")
 	fmt.Printf("是否删除：%v\n", remove)
 
 	s, _ := client.string.Get("key1")
