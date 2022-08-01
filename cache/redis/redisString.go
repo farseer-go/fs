@@ -29,8 +29,8 @@ func (redisString *redisString) TTL(key string) (time.Duration, error) {
 	return redisString.rdb.TTL(ctx, key).Result()
 }
 
-// Remove 删除
-func (redisString *redisString) Remove(keys ...string) (bool, error) {
+// Del 删除
+func (redisString *redisString) Del(keys ...string) (bool, error) {
 	result, err := redisString.rdb.Del(ctx, keys...).Result()
 	return result > 0, err
 }

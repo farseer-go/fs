@@ -9,6 +9,9 @@ import (
 type Client struct {
 	string *redisString
 	hash   *redisHash
+	list   *redisList
+	set    *redisSet
+	zset   *redisZSet
 }
 
 // 上下文定义
@@ -28,5 +31,8 @@ func NewClient(redisName string) *Client {
 	})
 	str := &redisString{rdb: rdb}
 	hash := &redisHash{rdb: rdb}
-	return &Client{string: str, hash: hash}
+	list := &redisList{rdb: rdb}
+	set := &redisSet{rdb: rdb}
+	zset := &redisZSet{rdb: rdb}
+	return &Client{string: str, hash: hash, list: list, set: set, zset: zset}
 }
