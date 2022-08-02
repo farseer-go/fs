@@ -10,7 +10,7 @@ import (
 // PublishEvent 阻塞发布事件
 func PublishEvent(eventName string, message any) {
 	// 首先从订阅者中找到是否存在eventName
-	if !linq.Dictionary(subscriber).ExistsKey(eventName) {
+	if !linq.Map(subscriber).ExistsKey(eventName) {
 		panic("未找到事件名称：" + eventName + "，需要先通过订阅事件后，才能发布事件")
 	}
 
@@ -31,7 +31,7 @@ func PublishEvent(eventName string, message any) {
 // PublishEventAsync 异步发布事件
 func PublishEventAsync(eventName string, message any) {
 	// 首先从订阅者中找到是否存在eventName
-	if !linq.Dictionary(subscriber).ExistsKey(eventName) {
+	if !linq.Map(subscriber).ExistsKey(eventName) {
 		panic("未找到事件名称：" + eventName + "，需要先通过订阅事件后，才能发布事件")
 	}
 

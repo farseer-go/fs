@@ -10,7 +10,7 @@ type queueSubscribeFunc func(subscribeName string, message []any, remainingCount
 // subscribeName = 订阅者名称
 // pullCount = 每次拉取的数量
 func Subscribe(queueName string, subscribeName string, pullCount int, fn queueSubscribeFunc) {
-	if !linq.Dictionary(queueConsumer).ExistsKey(queueName) {
+	if !linq.Map(queueConsumer).ExistsKey(queueName) {
 		queueConsumer[queueName] = &queueList{
 			queueName:        queueName,
 			queue:            nil,
