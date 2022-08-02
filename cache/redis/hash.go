@@ -35,7 +35,7 @@ func (redisHash *redisHash) Get(key string, field string) (string, error) {
 
 // ToEntity 获取单个对象
 // 	var client DomainObject
-//	_ = repository.Client.Hash.ToEntity("key", "field", &client)
+//	_ = repository.Client.Hash.ToEntity("redisKey", "field", &client)
 func (redisHash *redisHash) ToEntity(key string, field string, entity any) error {
 	jsonContent, _ := redisHash.rdb.HGet(ctx, key, field).Result()
 	// 反序列

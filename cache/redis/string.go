@@ -23,20 +23,3 @@ func (redisString *redisString) Get(key string) (string, error) {
 func (redisString *redisString) SetNX(key string, value interface{}, expiration time.Duration) (bool, error) {
 	return redisString.rdb.SetNX(ctx, key, value, expiration).Result()
 }
-
-// TTL 获取过期时间
-func (redisString *redisString) TTL(key string) (time.Duration, error) {
-	return redisString.rdb.TTL(ctx, key).Result()
-}
-
-// Del 删除
-func (redisString *redisString) Del(keys ...string) (bool, error) {
-	result, err := redisString.rdb.Del(ctx, keys...).Result()
-	return result > 0, err
-}
-
-// Exists key值是否存在
-func (redisString *redisString) Exists(keys ...string) (bool, error) {
-	result, err := redisString.rdb.Exists(ctx, keys...).Result()
-	return result > 0, err
-}

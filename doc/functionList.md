@@ -173,11 +173,14 @@
       * Remove（删除key）
       * Exists（key是否存在）
   * struct
+    * Key
+      * TTL（获取过期时间）
+      * Del（删除）
+      * Exists（key值是否存在）
     * String
       * Set（设置缓存）
       * Get（获取缓存）
       * SetNX（设置过期时间）
-      * TTL（获取过期时间）
     * Hash
       * Set（设置缓存）
       * SetMap（设置map缓存）

@@ -7,6 +7,7 @@ import (
 )
 
 type Client struct {
+	Key    *redisKey
 	String *redisString
 	Hash   *redisHash
 	List   *redisList
@@ -29,10 +30,11 @@ func NewClient(redisName string) *Client {
 		Password: redisConfig.Password, // no password Set
 		DB:       redisConfig.DB,       // use default DB
 	})
+	key := &redisKey{rdb: rdb}
 	str := &redisString{rdb: rdb}
 	hash := &redisHash{rdb: rdb}
 	list := &redisList{rdb: rdb}
 	set := &redisSet{rdb: rdb}
 	zset := &redisZSet{rdb: rdb}
-	return &Client{String: str, Hash: hash, List: list, Set: set, ZSet: zset}
+	return &Client{Key: key, String: str, Hash: hash, List: list, Set: set, ZSet: zset}
 }
