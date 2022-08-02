@@ -1,6 +1,12 @@
 package redis
 
-import "github.com/go-redis/redis/v8"
+import (
+	"encoding/json"
+	"github.com/farseernet/farseer.go/linq"
+	"github.com/go-redis/redis/v8"
+	"reflect"
+	"strings"
+)
 
 type redisHash struct {
 	rdb *redis.Client
@@ -30,6 +36,31 @@ func (redisHash *redisHash) Get(key string, field string) (string, error) {
 // GetAll 获取所有集合数据
 func (redisHash *redisHash) GetAll(key string) (map[string]string, error) {
 	return redisHash.rdb.HGetAll(ctx, key).Result()
+}
+
+// ToList 将hash.value反序列化成切片对象
+// 	type record struct {
+// 		Id int `json:"id"`
+// 	}
+// 	var records []record
+// 	ToList("test", &records)
+func (redisHash *redisHash) ToList(key string, arrSlice any) error {
+	arrVal := reflect.ValueOf(arrSlice).Elem()
+	if arrVal.Kind() != reflect.Slice {
+		panic("arr入参必须为切片类型")
+	}
+
+	result, err := redisHash.rdb.HGetAll(ctx, key).Result()
+	if err != nil {
+		return err
+	}
+
+	// 转成[]string
+	arrJson := linq.Map(result).ToValue()
+	// 组装成json数组
+	jsonContent := "[" + strings.Join(arrJson, ",") + "]"
+	// 反序列
+	return json.Unmarshal([]byte(jsonContent), arrSlice)
 }
 
 // Exists 成员是否存在
