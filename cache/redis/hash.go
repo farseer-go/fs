@@ -12,7 +12,16 @@ type redisHash struct {
 	rdb *redis.Client
 }
 
+// SetEntity 添加并序列化成json
+func (redisHash *redisHash) SetEntity(key string, field string, entity any) error {
+	jsonContent, _ := json.Marshal(entity)
+	return redisHash.rdb.HSet(ctx, key, field, jsonContent).Err()
+}
+
 // Set 添加
+//   - HSet("myhash", "key1", "value1", "key2", "value2")
+//   - HSet("myhash", []string{"key1", "value1", "key2", "value2"})
+//   - HSet("myhash", map[string]interface{}{"key1": "value1", "key2": "value2"})
 func (redisHash *redisHash) Set(key string, values ...interface{}) error {
 	return redisHash.rdb.HSet(ctx, key, values).Err()
 }

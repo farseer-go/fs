@@ -183,6 +183,7 @@
       * SetNX（设置过期时间）
     * Hash
       * Set（设置缓存）
+      * SetEntity（添加并序列化成json）
       * SetMap（设置map缓存）
       * Get（获取单个field值）
       * GetAll（获取key下所有数据）
