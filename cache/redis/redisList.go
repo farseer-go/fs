@@ -37,7 +37,7 @@ func (redisList *redisList) Range(key string, start int64, stop int64) ([]string
 	return redisList.rdb.LRange(ctx, key, start, stop).Result()
 }
 
-// BLPop pop没有时阻塞
+// BLPop 命令移出并获取列表的第一个元素， 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止。
 func (redisList *redisList) BLPop(timeout time.Duration, keys ...string) ([]string, error) {
 	return redisList.rdb.BLPop(ctx, timeout, keys...).Result()
 }

@@ -185,3 +185,28 @@
   * GetAll（获取key下所有数据）
   * Exists（判断单个field是否存在）
   * Remove（移出指定field成员）
+* redis/list
+  * Push（添加）
+  * Set（设置指定索引的值）
+  * Rem（移除指定索引的值）
+  * Len（获取长度）
+  * Range（获取集合数据）
+  * BLPop（命令移出并获取列表的第一个元素， 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止。）
+* redis/set
+  * Add（添加）
+  * Card（获取数量）
+  * Rem（移除指定成员）
+  * Members（获取所有成员）
+  * IsMember（判断成员是否存在）
+  * Diff（获取差集）
+  * DiffStore（将差集，保存在指定集合中）
+  * Inter（获取交集）
+  * InterStore（将交集，保存在指定集合中）
+  * Union（获取并集）
+  * UnionStore（将并集，保存在指定集合中）
+* redis/zset
+  * Add（添加）
+  * Score（获取指定成员的score)
+  * Range（获取有序集合指定区间内的成员）
+  * RevRange（获取有序集合指定区间内的成员分数从高到低）
+  * RangeByScore（获取指定分数区间的成员列表）
