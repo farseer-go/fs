@@ -64,9 +64,9 @@ func (queueList *queueList) iterationSubscriber() {
 
 // 得到当前所有订阅者的最后消费的位置的最小值
 func (queueList *queueList) statLastIndex() {
-	queueList.minOffset = linq.FromOrder[*queueSubscriber, int](queueList.queueSubscribers).Min(func(item *queueSubscriber) int {
+	queueList.minOffset = linq.From(queueList.queueSubscribers).Min(func(item *queueSubscriber) any {
 		return item.offset
-	})
+	}).(int)
 }
 
 // 缩减使用过的队列

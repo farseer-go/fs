@@ -7,11 +7,11 @@ import (
 )
 
 type Client struct {
-	string *redisString
-	hash   *redisHash
-	list   *redisList
-	set    *redisSet
-	zset   *redisZSet
+	String *redisString
+	Hash   *redisHash
+	List   *redisList
+	Set    *redisSet
+	ZSet   *redisZSet
 }
 
 // 上下文定义
@@ -26,7 +26,7 @@ func NewClient(redisName string) *Client {
 	redisConfig := configure.ParseConfig[redisConfig](configString)
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     redisConfig.Server,   //localhost:6379
-		Password: redisConfig.Password, // no password set
+		Password: redisConfig.Password, // no password Set
 		DB:       redisConfig.DB,       // use default DB
 	})
 	str := &redisString{rdb: rdb}
@@ -34,5 +34,5 @@ func NewClient(redisName string) *Client {
 	list := &redisList{rdb: rdb}
 	set := &redisSet{rdb: rdb}
 	zset := &redisZSet{rdb: rdb}
-	return &Client{string: str, hash: hash, list: list, set: set, zset: zset}
+	return &Client{String: str, Hash: hash, List: list, Set: set, ZSet: zset}
 }

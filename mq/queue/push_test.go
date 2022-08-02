@@ -15,7 +15,7 @@ func TestPush(t *testing.T) {
 	for i := 0; i < 100; i++ {
 		Push("test", i)
 	}
-	time.Sleep(time.Hour)
+	time.Sleep(5 * time.Second)
 }
 
 func consumer(subscribeName string, message []any, remainingCount int) {
