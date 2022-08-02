@@ -33,6 +33,15 @@ func (redisHash *redisHash) Get(key string, field string) (string, error) {
 	return redisHash.rdb.HGet(ctx, key, field).Result()
 }
 
+// ToEntity 获取单个对象
+// 	var client DomainObject
+//	_ = repository.Client.Hash.ToEntity("key", "field", &client)
+func (redisHash *redisHash) ToEntity(key string, field string, entity any) error {
+	jsonContent, _ := redisHash.rdb.HGet(ctx, key, field).Result()
+	// 反序列
+	return json.Unmarshal([]byte(jsonContent), entity)
+}
+
 // GetAll 获取所有集合数据
 func (redisHash *redisHash) GetAll(key string) (map[string]string, error) {
 	return redisHash.rdb.HGetAll(ctx, key).Result()
