@@ -91,3 +91,10 @@ func (redisHash *redisHash) Del(key string, fields ...string) (bool, error) {
 	result, err := redisHash.rdb.HDel(ctx, key, fields...).Result()
 	return result > 0, err
 }
+
+// Count 获取hash的数量
+func (redisHash *redisHash) Count(key string) int {
+	hLen := redisHash.rdb.HLen(ctx, key)
+	count, _ := hLen.Uint64()
+	return int(count)
+}

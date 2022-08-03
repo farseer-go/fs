@@ -191,6 +191,7 @@
       * Remove（移出指定field成员）
       * `ToList（将hash.value反序列化成切片对象）`
       * `ToEntity（获取单个对象）`
+      * `Count（获取hash的数量）`
     * List
       * Push（添加）
       * Set（设置指定索引的值）
