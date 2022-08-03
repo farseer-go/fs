@@ -1,7 +1,9 @@
 ### 框架初始化
 * fsApp
-  * `Initialize （Initialize）`
-
+  * `Initialize （初始化框架）`
+  * 
+* modules
+    * `StartModules （启动模块）`
 ### 配置读写
 * configure
     * GetString （获取配置）
