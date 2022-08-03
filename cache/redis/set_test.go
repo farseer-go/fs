@@ -8,11 +8,11 @@ import (
 func Test_redisSet(t *testing.T) {
 
 	client := NewClient("default")
-	defer client.String.Del("key_set")
-	defer client.String.Del("key_set2")
-	defer client.String.Del("key_set_diff")
-	defer client.String.Del("key_set_inter")
-	defer client.String.Del("key_set_union")
+	defer client.Key.Del("key_set")
+	defer client.Key.Del("key_set2")
+	defer client.Key.Del("key_set_diff")
+	defer client.Key.Del("key_set_inter")
+	defer client.Key.Del("key_set_union")
 	add2, err2 := client.Set.Add("key_set2", "小丽", "小王", "小白", "小赵", "小钱", "小孙")
 	fmt.Println("添加2返回结果：", add2, err2)
 	//添加

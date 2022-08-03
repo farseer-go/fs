@@ -23,6 +23,6 @@ func TestClientString(t *testing.T) {
 	get2, _ := client.String.Get("key2")
 	fmt.Printf("获取值：%v\n", get2)
 
-	ttl, _ := client.String.TTL("key2")
+	ttl, _ := client.Key.TTL("key2")
 	fmt.Printf("获取过期时间：%v\n", ttl)
 }
