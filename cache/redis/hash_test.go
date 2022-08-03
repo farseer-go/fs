@@ -9,8 +9,8 @@ import (
 func TestClientHash(t *testing.T) {
 	client := NewClient("default")
 
-	defer client.String.Del("key_has1")
-	defer client.String.Del("key_has2")
+	defer client.Key.Del("key_has1")
+	defer client.Key.Del("key_has2")
 
 	err := client.Hash.Set("key_has1", "name", "小丽")
 	err_v2 := client.Hash.Set("key_has1", "age", 40, "address", "上海")

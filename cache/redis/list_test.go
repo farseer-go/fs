@@ -9,7 +9,7 @@ import (
 func Test_redisList(t *testing.T) {
 
 	client := NewClient("default")
-	defer client.String.Del("key_list")
+	defer client.Key.Del("key_list")
 
 	//测试push
 	push, err := client.List.Push("key_list", "北京", "上海", "广州", "海南", "河南")
