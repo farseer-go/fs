@@ -23,9 +23,9 @@ func getDependModule(module ...FarseerModule) []FarseerModule {
 }
 
 // StartModules 启动模块
-func StartModules(module ...FarseerModule) {
+func StartModules(module FarseerModule) {
 	log.Println("加载模块...")
-	farseerModules := getDependModule(module...)
+	farseerModules := getDependModule(module)
 	log.Println("加载完毕，共加载 " + strconv.Itoa(len(farseerModules)) + " 个模块")
 	log.Println("---------------------------------------")
 

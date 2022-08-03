@@ -25,7 +25,7 @@ var AppId int64
 var AppIp string
 
 // Initialize 初始化框架
-func Initialize(appName string, module ...modules.FarseerModule) {
+func Initialize[TModule modules.FarseerModule](appName string) {
 	sw := stopwatch.StartNew()
 	rand.Seed(time.Now().UnixNano())
 	StartupAt = time.Now()
@@ -40,6 +40,7 @@ func Initialize(appName string, module ...modules.FarseerModule) {
 	log.Println("应用IP：", AppIp)
 	log.Println("---------------------------------------")
 
-	modules.StartModules(module...)
+	var startupModule TModule
+	modules.StartModules(startupModule)
 	log.Println("初始化完毕，共耗时" + strconv.FormatInt(sw.ElapsedMilliseconds(), 10) + " ms\r\n---------------------------------------")
 }
