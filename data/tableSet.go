@@ -16,7 +16,7 @@ type TableSet[Table any] struct {
 	err       error
 }
 
-// NewContext 在反射的时候会调用此方法
+// Init 在反射的时候会调用此方法
 func (table *TableSet[Table]) Init(dbContext *DbContext, tableName string) {
 	table.dbContext = dbContext
 	table.SetTableName(tableName)
@@ -94,6 +94,12 @@ func (table *TableSet[Table]) Asc(fieldName string) *TableSet[Table] {
 	return table
 }
 
+// Limit 限制记录数
+func (table *TableSet[Table]) Limit(limit int) *TableSet[Table] {
+	table.data().Limit(limit)
+	return table
+}
+
 // ToList 返回结果集
 func (table *TableSet[Table]) ToList() []Table {
 	var lst []Table
@@ -113,7 +119,7 @@ func (table *TableSet[Table]) ToPageList(pageSize int, pageIndex int) core.PageL
 // ToEntity 返回单个对象
 func (table *TableSet[Table]) ToEntity() Table {
 	var entity Table
-	table.data().First(&entity)
+	table.data().Take(&entity)
 	return entity
 }
 

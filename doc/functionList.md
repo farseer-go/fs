@@ -30,6 +30,7 @@
             * .Order （排序）
             * .Desc （倒序）
             * .Asc （正序）
+            * `.Limit （限制记录数）`
             * .ToList （返回结果集）
             * .ToPageList （返回分页结果集）
             * .ToEntity （返回单个对象）
