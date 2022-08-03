@@ -165,6 +165,15 @@
   * `GetTime（根据time.Duration转换成天、小时、分钟、秒）`
   * `GetDesc（返回时间中文的描述）`
   * `GetSubDesc（返回时间中文的描述）`
+* utils/stopwatch
+  * func
+    * StartNew（创建计时器，并开始计时）
+  * struct
+    * Stopwatch
+      * Restart（重置计时器）
+      * Start（继续计时）
+      * Stop（停止计时）
+      * ElapsedMilliseconds（返回当前已计时的时间（毫秒））
 ---
 ### redis
 * cache/redis
