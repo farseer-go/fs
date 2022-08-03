@@ -43,7 +43,7 @@
     * func
         * NewContext （初始化上下文）
 
----    
+---
 ### linq
 * linq
     * func
@@ -166,6 +166,7 @@
   * `GetTime（根据time.Duration转换成天、小时、分钟、秒）`
   * `GetDesc（返回时间中文的描述）`
   * `GetSubDesc（返回时间中文的描述）`
+  * `GetDate（获取当前日期）`
 * `utils/stopwatch`
   * `func`
     * `StartNew（创建计时器，并开始计时）`

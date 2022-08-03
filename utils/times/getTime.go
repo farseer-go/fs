@@ -22,3 +22,9 @@ func GetTime(d time.Duration) (days int, hours int, minutes int, seconds int) {
 
 	return days, hours, minutes, seconds
 }
+
+// GetDate 获取当前日期
+func GetDate() time.Time {
+	now := time.Now()
+	return time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.Local)
+}
