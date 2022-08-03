@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type Stopwatch struct {
+type stopwatch struct {
 	// 执行起点时间
 	startTime time.Time
 	// 是否正在运行
@@ -14,8 +14,8 @@ type Stopwatch struct {
 }
 
 // StartNew 创建计时器，并开始计时
-func StartNew() *Stopwatch {
-	return &Stopwatch{
+func StartNew() *stopwatch {
+	return &stopwatch{
 		startTime:               time.Now(),
 		isRunning:               true,
 		lastElapsedMilliseconds: 0,
@@ -23,26 +23,26 @@ func StartNew() *Stopwatch {
 }
 
 // Restart 重置计时器
-func (sw *Stopwatch) Restart() {
+func (sw *stopwatch) Restart() {
 	sw.startTime = time.Now()
 	sw.isRunning = true
 	sw.lastElapsedMilliseconds = 0
 }
 
 // Start 继续计时
-func (sw *Stopwatch) Start() {
+func (sw *stopwatch) Start() {
 	sw.startTime = time.Now()
 	sw.isRunning = true
 }
 
 // Stop 停止计时
-func (sw *Stopwatch) Stop() {
+func (sw *stopwatch) Stop() {
 	sw.lastElapsedMilliseconds += time.Now().Sub(sw.startTime).Milliseconds()
 	sw.isRunning = false
 }
 
 // ElapsedMilliseconds 返回当前已计时的时间（毫秒）
-func (sw *Stopwatch) ElapsedMilliseconds() int64 {
+func (sw *stopwatch) ElapsedMilliseconds() int64 {
 	elapsedMilliseconds := sw.lastElapsedMilliseconds
 	if sw.isRunning {
 		elapsedMilliseconds += time.Now().Sub(sw.startTime).Milliseconds()
