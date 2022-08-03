@@ -41,8 +41,7 @@
             * .Delete （删除记录）
             * .GetXXX （获取单个XXX类型字段值）
     * func
-        * NewDbContext （初始化上下文）
-        * Init （数据库上下文初始化）
+        * NewContext （初始化上下文）
 
 ---    
 ### linq

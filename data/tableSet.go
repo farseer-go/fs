@@ -16,7 +16,7 @@ type TableSet[Table any] struct {
 	err       error
 }
 
-// Init 在反射的时候会调用此方法
+// NewContext 在反射的时候会调用此方法
 func (table *TableSet[Table]) Init(dbContext *DbContext, tableName string) {
 	table.dbContext = dbContext
 	table.SetTableName(tableName)
