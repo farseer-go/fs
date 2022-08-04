@@ -44,7 +44,8 @@ func NewContext[TDbContext any](dbName string) *TDbContext {
 
 	for i := 0; i < contextValueOf.NumField(); i++ {
 		field := contextValueOf.Field(i)
-		if !field.CanSet() {
+		fieldType := field.Type().String()
+		if !field.CanSet() || !strings.HasPrefix(fieldType, "data.TableSet[") {
 			continue
 		}
 		data := contextValueOf.Type().Field(i).Tag.Get("data")
@@ -53,7 +54,7 @@ func NewContext[TDbContext any](dbName string) *TDbContext {
 			tableName = data[len("name="):]
 		}
 		if tableName == "" {
-			panic("表名未设置，需要设置tag标签:data.name 的value")
+			continue
 		}
 		// 再取tableSet的子属性，并设置值
 		field.Addr().MethodByName("Init").Call([]reflect.Value{reflect.ValueOf(dbConfig), reflect.ValueOf(tableName)})
