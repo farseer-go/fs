@@ -233,7 +233,7 @@
     * Lock
       * struct
         * redisLock
-          * `.GetLocker（获得一个锁）`
+          * `.GetLocker（获得一个锁对象）`
         * lockResult 
           * `.TryLock（尝试加锁）`
-          * `.ReleaseLock（锁放锁）`
+          * `.ReleaseLock（锁释放）`
