@@ -39,14 +39,25 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
 ### What are the functions?
 
 ---
-| Component               | Description                                                                                          |
-|--------------------|------------------------------------------------------------------------------------------------------|
-| fs                 | Starter                                                                                              |
-| fs/core/container  | Registration and acquisition of Ioc containers                                                       |
-| fs/mapper          | Conversions between objects, such as DO to DTO                                                       |
-| fs/eventBus        | Publish subscription for events                                                                      |
-| fs/mq/queue        | Local queue, multiple writes, bulk consumption, multiple subscribers                                 |
-| fs/linq            | Support linq's where、first、toArray、remove、removeAll、contains、orderBy、orderByDescending、min、max、count |
-| fs/utils/directory | Get the files in the directory                                                                                             |
-| fs/utils/encrypt   | MD5 encryption                                                                                                |
-| fs/utils/net       | Get local IP                                                                                               |
+| Component       | Description                                                          |
+|-----------------|----------------------------------------------------------------------|
+| cache/redis     | redis client                                                         |
+| configure       | config read write                                                    |
+| core/container  | Registration and acquisition of Ioc containers                       |
+| data            | Database ORM                                                         |
+| elasticSearch   | elasticSearch client                                                 |
+| eventBus        | Publish subscription for events                                      |
+| fsApp           | Module Starter                                                       |
+| linq            | Support linq methods                                                 |
+| mapper          | Conversions between objects, such as DO to DTO                       |
+| modules         | Module                                                               |
+| mq/queue        | Local queue, multiple writes, bulk consumption, multiple subscribers |
+| utils/encrypt   | encryption eg:md5                                                    |
+| utils/exec      | shell cmd                                                            |
+| utils/file      | File IO operations                                                   |
+| utils/http      | Http GET POST                                                        |
+| utils/net       | Get local IP                                                         |
+| utils/parse     | Universal type conversion                                            |
+| utils/stopwatch | Timer                                                                |
+| utils/str       | String Operations                                                    |
+| utils/times     | time.Time Operations                                                 |
