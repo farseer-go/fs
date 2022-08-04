@@ -13,6 +13,7 @@ type Client struct {
 	List   *redisList
 	Set    *redisSet
 	ZSet   *redisZSet
+	Lock   *redisLock
 }
 
 // 上下文定义
@@ -36,5 +37,6 @@ func NewClient(redisName string) *Client {
 	list := &redisList{rdb: rdb}
 	set := &redisSet{rdb: rdb}
 	zset := &redisZSet{rdb: rdb}
-	return &Client{Key: key, String: str, Hash: hash, List: list, Set: set, ZSet: zset}
+	lock := &redisLock{rdb: rdb}
+	return &Client{Key: key, String: str, Hash: hash, List: list, Set: set, ZSet: zset, Lock: lock}
 }
