@@ -219,7 +219,7 @@ func (receiver linqForm[T]) GroupBy(mapSlice any, getMapKeyFunc func(item T) any
 }
 
 // OrderBy 正序排序，fn 返回的是要排序的字段的值
-func (receiver linqForm[T]) OrderBy(fn func(item T) any) []T {
+func (receiver linqForm[T]) OrderBy(fn func(item T) any) linqForm[T] {
 	lst := receiver.source
 
 	// 首先拿数组第0个出来做为左边值
@@ -243,7 +243,8 @@ func (receiver linqForm[T]) OrderBy(fn func(item T) any) []T {
 			}
 		}
 	}
-	return lst
+	receiver.source = lst
+	return receiver
 }
 
 // OrderByItem 正序排序，fn 返回的是要排序的字段的值
@@ -275,7 +276,7 @@ func (receiver linqForm[T]) OrderByItem() []T {
 }
 
 // OrderByDescending 正序排序，倒序排序，fn 返回的是要排序的字段的值
-func (receiver linqForm[T]) OrderByDescending(fn func(item T) any) []T {
+func (receiver linqForm[T]) OrderByDescending(fn func(item T) any) linqForm[T] {
 	lst := receiver.source
 
 	// 首先拿数组第0个出来做为左边值
@@ -299,7 +300,9 @@ func (receiver linqForm[T]) OrderByDescending(fn func(item T) any) []T {
 			}
 		}
 	}
-	return lst
+
+	receiver.source = lst
+	return receiver
 }
 
 // OrderByDescendingItem 正序排序，倒序排序，fn 返回的是要排序的字段的值
