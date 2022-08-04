@@ -25,7 +25,7 @@ func (r redisLock) GetLocker(key string, expiration time.Duration) lockResult {
 	}
 }
 
-// ReleaseLock 锁放锁
+// TryLock 尝试加锁
 func (r *lockResult) TryLock() bool {
 	cmd := r.rdb.SetNX(ctx, r.key, 1, r.expiration)
 	result, _ := cmd.Result()

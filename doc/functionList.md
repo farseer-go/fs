@@ -230,3 +230,10 @@
       * Range（获取有序集合指定区间内的成员）
       * RevRange（获取有序集合指定区间内的成员分数从高到低）
       * RangeByScore（获取指定分数区间的成员列表）
+    * Lock
+      * struct
+        * redisLock
+          * `.GetLocker（获得一个锁）`
+        * lockResult 
+          * `.TryLock（尝试加锁）`
+          * `.ReleaseLock（锁放锁）`
