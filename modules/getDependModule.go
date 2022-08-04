@@ -36,12 +36,14 @@ func StartModules(module FarseerModule) {
 		farseerModule.PreInitialize()
 		log.Println("耗时：" + strconv.FormatInt(sw.ElapsedMilliseconds(), 10) + " ms " + reflect.TypeOf(farseerModule).String() + ".PreInitialize()")
 	}
+	log.Println("---------------------------------------")
 
 	for _, farseerModule := range farseerModules {
 		sw.Restart()
 		farseerModule.Initialize()
 		log.Println("耗时：" + strconv.FormatInt(sw.ElapsedMilliseconds(), 10) + " ms " + reflect.TypeOf(farseerModule).String() + ".Initialize()")
 	}
+	log.Println("---------------------------------------")
 
 	for _, farseerModule := range farseerModules {
 		sw.Restart()
