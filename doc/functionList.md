@@ -94,6 +94,7 @@
     * func
         * Array （数组转换）
         * Single （单个转换）
+        * `PageList （转换成core.PageList）`
 
 ---
 ### 本地队列
@@ -237,3 +238,13 @@
         * lockResult 
           * `.TryLock（尝试加锁）`
           * `.ReleaseLock（锁释放）`
+
+---
+### 本地JOB
+* `tasks`
+  * `struct`
+    * `TaskContext（运行任务的上下文）`
+      * `.SetNextTime（设置休眠时间）`
+      * `.SetNextDuration（设置休眠时间）`
+  * `func`
+      * `Run （运行一个任务）`
