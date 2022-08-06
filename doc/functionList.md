@@ -77,6 +77,7 @@
             * `.ContainsItem （查找数组是否包含某元素）`
             * .Select （筛选子元素字段）
             * `.SelectMany （筛选子元素字段）`
+            * `.SelectManyItem （筛选子元素字段）`
             * .OrderBy （正序排序）
             * `.OrderByItem （正序排序）`
             * .OrderByDescending （倒序排序）
@@ -89,9 +90,9 @@
             * `.SumItem （求总和）`
             * `.Avg （求平均数）`
             * `.AvgItem （求平均数）`
-            * `GroupBy （将数组进行分组后返回map）`
-            * `Any （是否存在）`
-            * `All （是否所有数据都满足fn条件）`
+            * `.GroupBy （将数组进行分组后返回map）`
+            * `.Any （是否存在）`
+            * `.All （是否所有数据都满足fn条件）`
 
 ---
 ### 事件总线

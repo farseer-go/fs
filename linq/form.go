@@ -207,6 +207,38 @@ func (receiver linqForm[T]) SelectMany(arrSlice any, fn func(item T) any) {
 	arrVal.Set(value)
 }
 
+// SelectManyItem 筛选子元素字段
+//
+// arrSlice：切片数组类型
+//
+// eg:
+//
+//	lstYaml := [][]string{{"1", "2"}, {"3", "4"}}
+//	var lst []string
+//	From(lstYaml).SelectMany(&lst, func(item []string) any {
+//		return item
+//	})
+//
+//	result:
+//	lst = []string { "1", "2", "3", "4" }
+func (receiver linqForm[T]) SelectManyItem(arrSlice any) {
+	arrVal := reflect.ValueOf(arrSlice).Elem()
+	if arrVal.Kind() != reflect.Slice {
+		panic("arrSlice入参必须为切片类型")
+	}
+
+	// 定义反射类型的切片
+	value := reflect.MakeSlice(arrVal.Type(), 0, 0)
+	for _, item := range receiver.source {
+		returnValue := reflect.ValueOf(item)
+		if returnValue.Type() != arrVal.Type() {
+			panic("arrSlice入参类型必须与fn返回的类型一致")
+		}
+		value = reflect.AppendSlice(value, returnValue)
+	}
+	arrVal.Set(value)
+}
+
 // GroupBy 将数组进行分组后返回map
 //
 // eg:

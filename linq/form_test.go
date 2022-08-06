@@ -156,6 +156,20 @@ func Test_linqForm_SelectMany(t *testing.T) {
 	}
 }
 
+func Test_linqForm_SelectManyItem(t *testing.T) {
+	lstYaml := [][]string{{"1", "2"}, {"3", "4"}}
+	var lst []string
+	From(lstYaml).SelectManyItem(&lst)
+
+	if len(lst) != 4 {
+		t.Error("数量不致")
+	}
+
+	if lst[0] != "1" && lst[1] != "2" && lst[2] != "3" && lst[3] != "4" {
+		t.Error("数据不正确")
+	}
+}
+
 func Test_linqForm_GroupBy(t *testing.T) {
 	type testItem struct {
 		name string
