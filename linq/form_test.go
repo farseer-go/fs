@@ -140,6 +140,22 @@ func Test_linqForm_Select(t *testing.T) {
 	}
 }
 
+func Test_linqForm_SelectMany(t *testing.T) {
+	lstYaml := [][]string{{"1", "2"}, {"3", "4"}}
+	var lst []string
+	From(lstYaml).SelectMany(&lst, func(item []string) any {
+		return item
+	})
+
+	if len(lst) != 4 {
+		t.Error("数量不致")
+	}
+
+	if lst[0] != "1" && lst[1] != "2" && lst[2] != "3" && lst[3] != "4" {
+		t.Error("数据不正确")
+	}
+}
+
 func Test_linqForm_GroupBy(t *testing.T) {
 	type testItem struct {
 		name string
@@ -178,7 +194,7 @@ func Test_linqForm_OrderBy(t *testing.T) {
 	lst := []int{3, 5, 6, 2, 1, 8, 7, 4}
 	item := From(lst).OrderBy(func(item int) any {
 		return item
-	})
+	}).ToArray()
 	if item[0] != 1 || item[1] != 2 || item[2] != 3 || item[3] != 4 || item[4] != 5 || item[5] != 6 || item[6] != 7 || item[7] != 8 {
 		t.Error()
 	}
@@ -188,7 +204,7 @@ func Test_linqForm_OrderByDescending(t *testing.T) {
 	lst := []int{3, 5, 6, 2, 1, 8, 7, 4}
 	item := From(lst).OrderByDescending(func(item int) any {
 		return item
-	})
+	}).ToArray()
 	if item[0] != 8 || item[1] != 7 || item[2] != 6 || item[3] != 5 || item[4] != 4 || item[5] != 3 || item[6] != 2 || item[7] != 1 {
 		t.Error()
 	}

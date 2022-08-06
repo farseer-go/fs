@@ -149,15 +149,16 @@ func (receiver linqForm[T]) ContainsItem(t T) bool {
 // arrSlice：切片数组类型
 //
 // eg:
-// 	lstYaml := []string{"1", "", "2"}
-// 	var lst []string
 //
-// 	From(lstYaml).Select(&lst, func(item string) any {
-// 	    return "go:" + item
-// 	})
+//	lstYaml := []string{"1", "", "2"}
+//	var lst []string
 //
-// 	result:
-// 	lst = []string { "go:1", "go:", "go:2" }
+//	From(lstYaml).Select(&lst, func(item string) any {
+//	    return "go:" + item
+//	})
+//
+//	result:
+//	lst = []string { "go:1", "go:", "go:2" }
 func (receiver linqForm[T]) Select(arrSlice any, fn func(item T) any) {
 	arrVal := reflect.ValueOf(arrSlice).Elem()
 	if arrVal.Kind() != reflect.Slice {
@@ -174,29 +175,62 @@ func (receiver linqForm[T]) Select(arrSlice any, fn func(item T) any) {
 	arrVal.Set(value)
 }
 
+// SelectMany 筛选子元素字段
+//
+// arrSlice：切片数组类型
+//
+// eg:
+//
+//	lstYaml := [][]string{{"1", "2"}, {"3", "4"}}
+//	var lst []string
+//	From(lstYaml).SelectMany(&lst, func(item []string) any {
+//		return item
+//	})
+//
+//	result:
+//	lst = []string { "1", "2", "3", "4" }
+func (receiver linqForm[T]) SelectMany(arrSlice any, fn func(item T) any) {
+	arrVal := reflect.ValueOf(arrSlice).Elem()
+	if arrVal.Kind() != reflect.Slice {
+		panic("arrSlice入参必须为切片类型")
+	}
+
+	// 定义反射类型的切片
+	value := reflect.MakeSlice(arrVal.Type(), 0, 0)
+	for _, item := range receiver.source {
+		returnValue := reflect.ValueOf(fn(item))
+		if returnValue.Type() != arrVal.Type() {
+			panic("arrSlice入参类型必须与fn返回的类型一致")
+		}
+		value = reflect.AppendSlice(value, returnValue)
+	}
+	arrVal.Set(value)
+}
+
 // GroupBy 将数组进行分组后返回map
 //
 // eg:
-// 	type testItem struct {
-// 	  name string
-// 	  age  int
+//
+//	type testItem struct {
+//	  name string
+//	  age  int
 //	}
 //	lst := []testItem{{name: "steden", age: 36}, {name: "steden", age: 18}, {name: "steden2", age: 40}}
 //	var lstMap map[string][]testItem
 //	From(lst).GroupBy(&lstMap, func(item testItem) any {
-// 	  return item.name
+//	  return item.name
 //	})
 //
-// 	result:
-// 	lstMap = map[string][]testItem {
-// 	  "steden": {
-// 	    {name: "steden", age: 36},
-// 	    {name: "steden", age: 18},
-// 	  },
-// 	  "steden2": {
-// 	      {name: "steden2", age: 40},
-// 	    },
-// 	  }
+//	result:
+//	lstMap = map[string][]testItem {
+//	  "steden": {
+//	    {name: "steden", age: 36},
+//	    {name: "steden", age: 18},
+//	  },
+//	  "steden2": {
+//	      {name: "steden2", age: 40},
+//	    },
+//	  }
 func (receiver linqForm[T]) GroupBy(mapSlice any, getMapKeyFunc func(item T) any) {
 	mapSliceVal := reflect.ValueOf(mapSlice).Elem()
 	if mapSliceVal.Kind() != reflect.Map {

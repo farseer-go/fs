@@ -76,6 +76,7 @@
             * .Take （返回前多少条数据）
             * `.ContainsItem （查找数组是否包含某元素）`
             * .Select （筛选子元素字段）
+            * `.SelectMany （筛选子元素字段）`
             * .OrderBy （正序排序）
             * `.OrderByItem （正序排序）`
             * .OrderByDescending （倒序排序）
