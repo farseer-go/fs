@@ -15,7 +15,7 @@ It has a [.net core](https://github.com/FarseerNet/Farseer.Net/tree/dev/Doc) Mat
 
 > *The current version of golang is `Alpha`, which means the features are not perfect yet, we are working on adding new features to the framework gradually. You can follow us first*.
 
-### What are the features?
+## What are the features?
 
 ---
 **Elegant**
@@ -36,7 +36,7 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
 
 [FOPS](https://github.com/FarseerNet/FOPS) Project (automatic build, link trace console, K8S cluster log collection) supports code non-intrusive full link real-time monitoring.
 
-### What are the functions?
+## What are the package?
 
 ---
 | Component       | Description                                                          |
@@ -61,3 +61,37 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
 | utils/stopwatch | Timer                                                                |
 | utils/str       | String Operations                                                    |
 | utils/times     | time.Time Operations                                                 |
+
+## What are the functions?
+### 框架初始化
+* fs
+    * `Initialize （初始化框架）`
+
+* modules
+    * `StartModules （启动模块）`
+
+### 配置读写
+* configure
+    * GetString （获取配置）
+    * SetDefault （设置配置的默认值）
+
+---
+### 容器IOC
+* core/container
+    * func
+        * Register （注册接口）
+        * Resolve （从容器中获取实例）
+
+---
+### 异常处理
+* `exception`
+    * `struct`
+        * `RefuseException`
+    * `func`
+        * `ThrowRefuseException （抛出RefuseException异常）`
+        * `ThrowRefuseExceptionf （抛出RefuseException异常）`
+        * `Catch（捕获异常）`
+            * `.RefuseException（捕获RefuseException异常）`
+                * `.ContinueRecover（是否继续让下一个捕获继续处理）`
+            * `.String（捕获String异常）`
+            * `.Any（捕获Any异常）`
