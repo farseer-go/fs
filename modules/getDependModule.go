@@ -1,7 +1,7 @@
 package modules
 
 import (
-	"github.com/farseernet/farseer.go/utils/stopwatch"
+	"github.com/farseer-go/fs/stopwatch"
 	"log"
 	"reflect"
 	"strconv"

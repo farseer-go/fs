@@ -1,7 +1,7 @@
 package configure
 
 import (
-	"github.com/farseernet/farseer.go/utils/parse"
+	"github.com/farseer-go/fs/parse"
 	"reflect"
 	"strings"
 )

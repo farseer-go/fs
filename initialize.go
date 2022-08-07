@@ -1,9 +1,9 @@
-package fsApp
+package fs
 
 import (
-	"github.com/farseernet/farseer.go/modules"
-	"github.com/farseernet/farseer.go/utils/net"
-	"github.com/farseernet/farseer.go/utils/stopwatch"
+	"github.com/farseer-go/fs/modules"
+	"github.com/farseer-go/fs/net"
+	"github.com/farseer-go/fs/stopwatch"
 	"log"
 	"math/rand"
 	"os"
