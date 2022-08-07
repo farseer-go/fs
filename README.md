@@ -63,28 +63,18 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
 | utils/times     | time.Time Operations                                                 |
 
 ## What are the functions?
-### 框架初始化
-* fs
+* fs（框架初始化）
     * `Initialize （初始化框架）`
-
 * modules
     * `StartModules （启动模块）`
-
-### 配置读写
-* configure
+* configure（配置读写）
     * GetString （获取配置）
     * SetDefault （设置配置的默认值）
-
----
-### 容器IOC
-* core/container
+* core/container（容器IOC）
     * func
         * Register （注册接口）
         * Resolve （从容器中获取实例）
-
----
-### 异常处理
-* `exception`
+* `exception`（异常处理）
     * `struct`
         * `RefuseException`
     * `func`
@@ -95,3 +85,32 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
                 * `.ContinueRecover（是否继续让下一个捕获继续处理）`
             * `.String（捕获String异常）`
             * `.Any（捕获Any异常）`
+* parse（类型转换）
+    * Convert （通用的类型转换）
+    * IsInt （是否为int类型）
+* `utils/stopwatch`
+    * `func`
+        * `StartNew（创建计时器，并开始计时）`
+    * `struct`
+        * `Stopwatch`
+            * `Restart（重置计时器）`
+            * `Start（继续计时）`
+            * `Stop（停止计时）`
+            * `ElapsedMilliseconds（返回当前已计时的时间（毫秒））`
+* core（通用类型）
+    * struct
+        * ApiResponseString （标准的API输出（默认string值））
+        * ApiResponseInt （标准的API输出（默认int值））
+        * ApiResponseLong （标准的API输出（默认int64值））
+        * ApiResponse （标准的API输出（泛型））
+            * .SetData （设置Data字段的值）
+        * PageList （用于分页数组，包含总记录数）
+    * func
+        * Success （接口调用成功后返回的Json）
+        * Error （接口调用失时返回的Json）
+        * Error403 （接口调用失时返回的Json）
+        * NewPageList （数据分页列表及总数）
+* `core/eumLogLevel`
+    * `Enum （日志等级）`
+* net
+    * LocalIPv4s （获取本机IP地址）
