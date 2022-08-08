@@ -34,6 +34,7 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 	AppIp = net.Ip
 	AppName = appName
 
+	log.Println("应用名称：", AppName)
 	log.Println("系统时间：", StartupAt)
 	log.Println("进程ID：", os.Getppid())
 	log.Println("应用ID：", AppId)
