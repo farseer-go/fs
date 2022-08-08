@@ -104,12 +104,10 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
         * ApiResponseLong （标准的API输出（默认int64值））
         * ApiResponse （标准的API输出（泛型））
             * .SetData （设置Data字段的值）
-        * PageList （用于分页数组，包含总记录数）
     * func
         * Success （接口调用成功后返回的Json）
         * Error （接口调用失时返回的Json）
         * Error403 （接口调用失时返回的Json）
-        * NewPageList （数据分页列表及总数）
 * `core/eumLogLevel`
     * `Enum （日志等级）`
 * net
