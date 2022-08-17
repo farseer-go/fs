@@ -2,10 +2,10 @@ package container
 
 import "github.com/studyzy/iocgo"
 
-//Container 容器操作
+// Container 容器操作
 var container *iocgo.Container
 
-func init() {
+func InitContainer() {
 	container = iocgo.NewContainer()
 }
 

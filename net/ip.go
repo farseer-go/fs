@@ -6,7 +6,7 @@ import "net"
 var Ip string
 var Ips []string
 
-func init() {
+func InitNet() {
 	Ips, _ = LocalIPv4s()
 	Ip = Ips[0]
 }
