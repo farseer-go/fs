@@ -70,7 +70,7 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
 * configure（配置读写）
     * GetString （获取配置）
     * SetDefault （设置配置的默认值）
-* core/container（容器IOC）
+* container（容器IOC）
     * func
         * Register （注册接口）
         * Resolve （从容器中获取实例）

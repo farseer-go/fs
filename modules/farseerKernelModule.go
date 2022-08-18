@@ -2,7 +2,7 @@ package modules
 
 import (
 	"github.com/farseer-go/fs/configure"
-	"github.com/farseer-go/fs/core/container"
+	"github.com/farseer-go/fs/container"
 	"github.com/farseer-go/fs/net"
 )
 
