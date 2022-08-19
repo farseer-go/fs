@@ -6,7 +6,7 @@ A standard set of frameworks developed for the **golang** platform.
 
 We have selected the most popular components for you and provide the use of these components in a modular way.
 
-The framework perfectly supports **DDD domain-driven** technical implementations such as `repository`, `application-layer transactions`, `domain events`, `application-layer dynamic WebAPI`.
+The framework perfectly supports **DDD domain-driven** technical implementations such as `repository`, `application-layer transactions`, `domain events`, `application-layer`, `dynamic WebAPI`.
 
 We hope that in the daily development, only need to directly rely on this set of frameworks can cope with the common technical components
 
