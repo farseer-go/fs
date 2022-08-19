@@ -1,6 +1,5 @@
 ## What is Farseer.Go?
 
----
 [English](https://github.com/FarseerGo/Farseer.Go) | [中文](https://github.com/FarseerGo/Farseer.Go/blob/main/README.zh-cn.md)
 
 A standard set of frameworks developed for the **golang** platform.
@@ -17,7 +16,6 @@ It has a [.net core](https://github.com/FarseerNet/Farseer.Net/tree/dev/Doc) Mat
 
 ## What are the features?
 
----
 **Elegant**
 
 We use `IOC` technology throughout the framework and your business systems.
@@ -38,7 +36,6 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
 
 ## What are the package?
 
----
 | Component     | Description                                                          |
 |---------------|----------------------------------------------------------------------|
 | cache         | Multi-level cache                                                    |
