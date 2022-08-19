@@ -39,28 +39,23 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
 ## What are the package?
 
 ---
-| Component       | Description                                                          |
-|-----------------|----------------------------------------------------------------------|
-| cache/redis     | redis client                                                         |
-| configure       | config read write                                                    |
-| core/container  | Registration and acquisition of Ioc containers                       |
-| data            | Database ORM                                                         |
-| elasticSearch   | elasticSearch client                                                 |
-| eventBus        | Publish subscription for events                                      |
-| fsApp           | Module Starter                                                       |
-| linq            | Support linq methods                                                 |
-| mapper          | Conversions between objects, such as DO to DTO                       |
-| modules         | Module                                                               |
-| mq/queue        | Local queue, multiple writes, bulk consumption, multiple subscribers |
-| utils/encrypt   | encryption eg:md5                                                    |
-| utils/exec      | shell cmd                                                            |
-| utils/file      | File IO operations                                                   |
-| utils/http      | Http GET POST                                                        |
-| utils/net       | Get local IP                                                         |
-| utils/parse     | Universal type conversion                                            |
-| utils/stopwatch | Timer                                                                |
-| utils/str       | String Operations                                                    |
-| utils/times     | time.Time Operations                                                 |
+| Component     | Description                                                          |
+|---------------|----------------------------------------------------------------------|
+| cache         | Multi-level cache                                                    |
+| collections   | Support for List collections and linq syntax                         |
+| data          | Database ORM                                                         |
+| elasticSearch | elasticSearch client                                                 |
+| eventBus      | Publish subscription for events                                      |
+| fs            | Farseer Basic                                                        |
+| fss           | fss client                                                           |
+| linq          | Support linq methods                                                 |
+| mapper        | Conversions between objects, such as DO to DTO                       |
+| memoryCache   | Memory Cache                                                         |
+| queue         | Local queue, multiple writes, bulk consumption, multiple subscribers |
+| rabbit        | rabbit client                                                        |
+| redis         | redis client                                                         |
+| tasks         | Local job                                                            |
+| utils         | General Tools                                                        |
 
 ## What are the functions?
 * fs（框架初始化）
@@ -73,7 +68,12 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
 * container（容器IOC）
     * func
         * Register （注册接口）
+          * Transient（临时模式（默认为单例模式））
+          * Name（Ioc别名）
+          * UseInstance（使用已存在的实例）
+          * UseFunc（使用函数注册）
         * Resolve （从容器中获取实例）
+        * ResolveName （指定ioc别名从容器中获取实例）
 * `exception`（异常处理）
     * `struct`
         * `RefuseException`
@@ -88,7 +88,7 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
 * parse（类型转换）
     * Convert （通用的类型转换）
     * IsInt （是否为int类型）
-* `utils/stopwatch`
+* `stopwatch`
     * `func`
         * `StartNew（创建计时器，并开始计时）`
     * `struct`
