@@ -34,7 +34,7 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
 
 [FOPS](https://github.com/FarseerNet/FOPS) Project (automatic build, link trace console, K8S cluster log collection) supports code non-intrusive full link real-time monitoring.
 
-## What are the package?
+## What packages are available?
 
 | Component     | Description                                                          |
 |---------------|----------------------------------------------------------------------|
