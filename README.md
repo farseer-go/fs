@@ -55,7 +55,7 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
 | [utils](https://github.com/farseer-go/utils)                 | General Tools                                                        |
 
 ## What are the functions?
-* fs（框架初始化）
+* [fs（框架初始化）](#how-to-start)
     * Initialize （初始化框架）
 * [modules](modules/)
     * StartModules （启动模块）
