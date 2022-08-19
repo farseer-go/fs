@@ -62,7 +62,7 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
 * configure（配置读写）
     * GetString （获取配置）
     * SetDefault （设置配置的默认值）
-* [container（容器IOC）](https://github.com/FarseerGo/Farseer.Go/blob/main/ioc.md)
+* [container（容器IOC）](https://github.com/FarseerGo/Farseer.Go/blob/main/container/README.md)
     * func
         * Use （自定义注册）
           * Transient（临时模式（默认为单例模式））
