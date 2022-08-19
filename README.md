@@ -109,3 +109,10 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
     * Enum （日志等级）
 * [net](net/)
     * LocalIPv4s （获取本机IP地址）
+
+## How to start？
+StartupModule is the startup module you define, as detailed in：[modules](modules/)
+```go
+// The framework starts and performs module initialization
+fs.Initialize[StartupModule]("FOPS")
+```
