@@ -6,7 +6,7 @@ import (
 )
 
 func InitConfigure() {
-	viper.SetConfigFile("../../doc/farseer.yaml")
+	viper.SetConfigFile("./farseer.yaml")
 	err := viper.ReadInConfig() //找到并读取配置文件
 	if err != nil {             // 捕获读取中遇到的error
 		log.Printf("读取配置文件farseer.yaml时发生错误: %s \n", err)

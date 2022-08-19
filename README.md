@@ -57,9 +57,9 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
 ## What are the functions?
 * fs（框架初始化）
     * Initialize （初始化框架）
-* modules
+* [modules](modules/)
     * StartModules （启动模块）
-* configure（配置读写）
+* [configure（配置读写）](configure/)
     * GetString （获取配置）
     * SetDefault （设置配置的默认值）
 * [container（容器IOC）](container/)
@@ -71,7 +71,7 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
         * Register （单例且没有别名注册到容器）
         * Resolve （从容器中获取实例）
         * ResolveName （指定ioc别名从容器中获取实例）
-* exception（异常处理）
+* [exception（异常处理）](exception/)
     * struct
         * RefuseException
     * func
@@ -82,10 +82,10 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
                 * .ContinueRecover（是否继续让下一个捕获继续处理）
             * .String（捕获String异常）
             * .Any（捕获Any异常）
-* parse（类型转换）
+* [parse（类型转换）](parse/)
     * Convert （通用的类型转换）
     * IsInt （是否为int类型）
-* stopwatch
+* [stopwatch](stopwatch/)
     * func
         * StartNew（创建计时器，并开始计时）
     * struct
@@ -94,7 +94,7 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
             * Start（继续计时）
             * Stop（停止计时）
             * ElapsedMilliseconds（返回当前已计时的时间（毫秒））
-* core（通用类型）
+* [core（通用类型）](core/)
     * struct
         * ApiResponseString （标准的API输出（默认string值））
         * ApiResponseInt （标准的API输出（默认int值））
@@ -107,5 +107,5 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
         * Error403 （接口调用失时返回的Json）
 * core/eumLogLevel
     * Enum （日志等级）
-* net
+* [net](net/)
     * LocalIPv4s （获取本机IP地址）
