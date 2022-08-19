@@ -38,7 +38,7 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
 
 | Component                         | Description                                                          |
 |-----------------------------------|----------------------------------------------------------------------|
-| [cache](../cache)                 | Multi-level cache                                                    |
+| [cache](/farseer-go/cache)        | Multi-level cache                                                    |
 | [collections](../collections)     | Support for List collections and linq syntax                         |
 | [data](../data)                   | Database ORM                                                         |
 | [elasticSearch](../elasticSearch) | elasticSearch client                                                 |
