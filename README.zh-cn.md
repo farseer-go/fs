@@ -1,7 +1,7 @@
 ## Farseer.Go是什么?
 
 ---
-[English](https://github.com/FarseerGo/Farseer.Go) | [中文](https://github.com/FarseerGo/Farseer.Go/blob/main/README.zh-cn.md)
+[English](https://github.com/farseer-go/fs) | [中文](https://github.com/farseer-go/fs/blob/main/README.zh-cn.md)
 
 针对 **golang** 平台下的一套标准制定的框架。
 

@@ -1,6 +1,6 @@
 ## What is Farseer.Go?
 
-[English](https://github.com/FarseerGo/Farseer.Go) | [中文](https://github.com/FarseerGo/Farseer.Go/blob/main/README.zh-cn.md)
+[English](https://github.com/farseer-go/fs) | [中文](https://github.com/farseer-go/fs/blob/main/README.zh-cn.md)
 
 A standard set of frameworks developed for the **golang** platform.
 
@@ -36,23 +36,23 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
 
 ## What packages are available?
 
-| Component                         | Description                                                          |
-|-----------------------------------|----------------------------------------------------------------------|
-| [cache](/farseer-go/cache)        | Multi-level cache                                                    |
-| [collections](../collections)     | Support for List collections and linq syntax                         |
-| [data](../data)                   | Database ORM                                                         |
-| [elasticSearch](../elasticSearch) | elasticSearch client                                                 |
-| [eventBus](../eventBus)           | Publish subscription for events                                      |
-| [fs](../fs)                       | Farseer Basic                                                        |
-| [fss](../fss)                     | fss client                                                           |
-| [linq](../linq)                   | Support linq methods                                                 |
-| [mapper](../mapper)               | Conversions between objects, such as DO to DTO                       |
-| [memoryCache](../memoryCache)     | Memory Cache                                                         |
-| [queue](../queue)                 | Local queue, multiple writes, bulk consumption, multiple subscribers |
-| [rabbit](../rabbit)               | rabbit client                                                        |
-| [redis](../redis)                 | redis client                                                         |
-| [tasks](../tasks)                 | Local job                                                            |
-| [utils](../utils)                 | General Tools                                                        |
+| Component                                                    | Description                                                          |
+|--------------------------------------------------------------|----------------------------------------------------------------------|
+| [cache](https://github.com/farseer-go/cache)                 | Multi-level cache                                                    |
+| [collections](https://github.com/farseer-go/collections)     | Support for List collections and linq syntax                         |
+| [data](https://github.com/farseer-go/data)                   | Database ORM                                                         |
+| [elasticSearch](https://github.com/farseer-go/elasticSearch) | elasticSearch client                                                 |
+| [eventBus](https://github.com/farseer-go/eventBus)           | Publish subscription for events                                      |
+| [fs](https://github.com/farseer-go/fs)                       | Farseer Basic                                                        |
+| [fss](https://github.com/farseer-go/fss)                     | fss client                                                           |
+| [linq](https://github.com/farseer-go/linq)                   | Support linq methods                                                 |
+| [mapper](https://github.com/farseer-go/mapper)               | Conversions between objects, such as DO to DTO                       |
+| [memoryCache](https://github.com/farseer-go/memoryCache)     | Memory Cache                                                         |
+| [queue](https://github.com/farseer-go/queue)                 | Local queue, multiple writes, bulk consumption, multiple subscribers |
+| [rabbit](https://github.com/farseer-go/rabbit)               | rabbit client                                                        |
+| [redis](https://github.com/farseer-go/redis)                 | redis client                                                         |
+| [tasks](https://github.com/farseer-go/tasks)                 | Local job                                                            |
+| [utils](https://github.com/farseer-go/utils)                 | General Tools                                                        |
 
 ## What are the functions?
 * fs（框架初始化）
