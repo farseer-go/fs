@@ -5,12 +5,12 @@ Use instead of `func init() { }` to accomplish what you expect by an explicit in
 
 ## What modules are available for farseer-go？
 * cache.Module
+* cacheMemory.Module
+* redis.Module
 * data.Module
 * elasticSearch.Module
 * eventBus.Module
-* memoryCache.Module
 * queue.Module
-* redis.Module
 * rabbit.Module
 * tasks.Module
 

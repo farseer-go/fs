@@ -39,6 +39,7 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
 | Component                                                    | Description                                                          |
 |--------------------------------------------------------------|----------------------------------------------------------------------|
 | [cache](https://github.com/farseer-go/cache)                 | Multi-level cache                                                    |
+| [cacheMemory](https://github.com/farseer-go/cacheMemory)     | Memory Cache                                                         |
 | [collections](https://github.com/farseer-go/collections)     | Support for List collections and linq syntax                         |
 | [data](https://github.com/farseer-go/data)                   | Database ORM                                                         |
 | [elasticSearch](https://github.com/farseer-go/elasticSearch) | elasticSearch client                                                 |
@@ -47,7 +48,6 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
 | [fss](https://github.com/farseer-go/fss)                     | fss client                                                           |
 | [linq](https://github.com/farseer-go/linq)                   | Support linq methods                                                 |
 | [mapper](https://github.com/farseer-go/mapper)               | Conversions between objects, such as DO to DTO                       |
-| [memoryCache](https://github.com/farseer-go/memoryCache)     | Memory Cache                                                         |
 | [queue](https://github.com/farseer-go/queue)                 | Local queue, multiple writes, bulk consumption, multiple subscribers |
 | [rabbit](https://github.com/farseer-go/rabbit)               | rabbit client                                                        |
 | [redis](https://github.com/farseer-go/redis)                 | redis client                                                         |
