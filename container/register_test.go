@@ -19,7 +19,7 @@ func (r testStruct) TestCall() string {
 func Test_ioc_UseInstance(t *testing.T) {
 	InitContainer()
 	test := testStruct{}
-	Register[ITest]().Name("test1").Transient().UseInstance(test)
+	Use[ITest](test).Name("test1").Transient().Register()
 
 	iocInstance := ResolveName[ITest]("test")
 	assert.Nil(t, iocInstance)
@@ -30,11 +30,22 @@ func Test_ioc_UseInstance(t *testing.T) {
 
 func Test_ioc_UseFunc(t *testing.T) {
 	InitContainer()
-	Register[ITest]().Name("test1").UseFunc(func() ITest { return testStruct{} })
+	Use[ITest](func() ITest { return testStruct{} }).Name("test1").Register()
 
 	iocInstance := ResolveName[ITest]("test")
 	assert.Nil(t, iocInstance)
 	iocInstance = ResolveName[ITest]("test1")
+	assert.NotNil(t, iocInstance)
+	assert.Equal(t, iocInstance.TestCall(), "hello world")
+}
+
+func TestRegister(t *testing.T) {
+	InitContainer()
+	Register(func() ITest { return testStruct{} })
+
+	iocInstance := ResolveName[ITest]("test")
+	assert.Nil(t, iocInstance)
+	iocInstance = Resolve[ITest]()
 	assert.NotNil(t, iocInstance)
 	assert.Equal(t, iocInstance.TestCall(), "hello world")
 }

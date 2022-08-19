@@ -59,44 +59,44 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
 
 ## What are the functions?
 * fs（框架初始化）
-    * `Initialize （初始化框架）`
+    * Initialize （初始化框架）
 * modules
-    * `StartModules （启动模块）`
+    * StartModules （启动模块）
 * configure（配置读写）
     * GetString （获取配置）
     * SetDefault （设置配置的默认值）
 * container（容器IOC）
     * func
-        * Register （注册接口）
+        * Use （自定义注册）
           * Transient（临时模式（默认为单例模式））
           * Name（Ioc别名）
-          * UseInstance（使用已存在的实例）
-          * UseFunc（使用函数注册）
+          * Register （注册到容器）
+        * Register （单例且没有别名注册到容器）
         * Resolve （从容器中获取实例）
         * ResolveName （指定ioc别名从容器中获取实例）
-* `exception`（异常处理）
-    * `struct`
-        * `RefuseException`
-    * `func`
-        * `ThrowRefuseException （抛出RefuseException异常）`
-        * `ThrowRefuseExceptionf （抛出RefuseException异常）`
-        * `Catch（捕获异常）`
-            * `.RefuseException（捕获RefuseException异常）`
-                * `.ContinueRecover（是否继续让下一个捕获继续处理）`
-            * `.String（捕获String异常）`
-            * `.Any（捕获Any异常）`
+* exception（异常处理）
+    * struct
+        * RefuseException
+    * func
+        * ThrowRefuseException （抛出RefuseException异常）
+        * ThrowRefuseExceptionf （抛出RefuseException异常）
+        * Catch（捕获异常）
+            * .RefuseException（捕获RefuseException异常）
+                * .ContinueRecover（是否继续让下一个捕获继续处理）
+            * .String（捕获String异常）
+            * .Any（捕获Any异常）
 * parse（类型转换）
     * Convert （通用的类型转换）
     * IsInt （是否为int类型）
-* `stopwatch`
-    * `func`
-        * `StartNew（创建计时器，并开始计时）`
-    * `struct`
-        * `Stopwatch`
-            * `Restart（重置计时器）`
-            * `Start（继续计时）`
-            * `Stop（停止计时）`
-            * `ElapsedMilliseconds（返回当前已计时的时间（毫秒））`
+* stopwatch
+    * func
+        * StartNew（创建计时器，并开始计时）
+    * struct
+        * Stopwatch
+            * Restart（重置计时器）
+            * Start（继续计时）
+            * Stop（停止计时）
+            * ElapsedMilliseconds（返回当前已计时的时间（毫秒））
 * core（通用类型）
     * struct
         * ApiResponseString （标准的API输出（默认string值））
@@ -108,7 +108,7 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
         * Success （接口调用成功后返回的Json）
         * Error （接口调用失时返回的Json）
         * Error403 （接口调用失时返回的Json）
-* `core/eumLogLevel`
-    * `Enum （日志等级）`
+* core/eumLogLevel
+    * Enum （日志等级）
 * net
     * LocalIPv4s （获取本机IP地址）
