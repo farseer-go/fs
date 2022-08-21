@@ -85,6 +85,7 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
 * [parse（类型转换）](parse/)
     * Convert （通用的类型转换）
     * IsInt （是否为int类型）
+    * IsEqual（两个any值是否相等）
 * [stopwatch](stopwatch/)
     * func
         * StartNew（创建计时器，并开始计时）
