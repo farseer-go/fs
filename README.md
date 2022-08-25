@@ -46,7 +46,6 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
 | [eventBus](https://github.com/farseer-go/eventBus)           | Publish subscription for events                                      |
 | [fs](https://github.com/farseer-go/fs)                       | Farseer Basic                                                        |
 | [fss](https://github.com/farseer-go/fss)                     | fss client                                                           |
-| [linq](https://github.com/farseer-go/linq)                   | Support linq methods                                                 |
 | [mapper](https://github.com/farseer-go/mapper)               | Conversions between objects, such as DO to DTO                       |
 | [queue](https://github.com/farseer-go/queue)                 | Local queue, multiple writes, bulk consumption, multiple subscribers |
 | [rabbit](https://github.com/farseer-go/rabbit)               | rabbit client                                                        |
