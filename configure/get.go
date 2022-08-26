@@ -18,6 +18,21 @@ func GetString(key string) string {
 	return viper.GetString(key)
 }
 
+// GetInt 获取配置
+func GetInt(key string) int {
+	return viper.GetInt(key)
+}
+
+// GetInt64 获取配置
+func GetInt64(key string) int64 {
+	return viper.GetInt64(key)
+}
+
+// GetBool 获取配置
+func GetBool(key string) bool {
+	return viper.GetBool(key)
+}
+
 // GetSubNodes 获取所有子节点
 func GetSubNodes(key string) map[string]string {
 	return viper.GetStringMapString(key)

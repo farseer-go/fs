@@ -7,7 +7,7 @@ In the root of your executable
 
 ## Get Configuration
 ```go
-configString := configure.GetString("Database.default")
+configure.GetString("Database.default")
 ```
 
 ## Get child nodes
