@@ -4,6 +4,8 @@ import (
 	"github.com/farseer-go/fs/configure"
 	"github.com/farseer-go/fs/container"
 	"github.com/farseer-go/fs/net"
+	"math/rand"
+	"time"
 )
 
 type FarseerKernelModule struct {
@@ -14,6 +16,7 @@ func (module FarseerKernelModule) DependsModule() []FarseerModule {
 }
 
 func (module FarseerKernelModule) PreInitialize() {
+	rand.Seed(int64(time.Now().Nanosecond()))
 	container.InitContainer()
 	configure.InitConfigure()
 	net.InitNet()
