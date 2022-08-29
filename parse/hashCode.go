@@ -18,6 +18,11 @@ func HashCode(s string) int {
 	return 0
 }
 
+// HashCode64 获取哈希值
+func HashCode64(s string) int64 {
+	return int64(HashCode(s))
+}
+
 // HashCodes 获取哈希值
 func HashCodes(strings []string) string {
 	var buf bytes.Buffer
