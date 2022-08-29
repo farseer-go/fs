@@ -3,6 +3,7 @@ package configure
 import (
 	"github.com/spf13/viper"
 	"log"
+	"strings"
 )
 
 func InitConfigure() {
@@ -16,6 +17,11 @@ func InitConfigure() {
 // GetString 获取配置
 func GetString(key string) string {
 	return viper.GetString(key)
+}
+
+// GetStrings 获取配置
+func GetStrings(key string) []string {
+	return strings.Split(GetString(key), ",")
 }
 
 // GetInt 获取配置
