@@ -74,5 +74,22 @@ func Criticalf(format string, a ...any) {
 
 // Log 打印日志
 func Log(logLevel eumLogLevel.Enum, content string) {
-	fmt.Printf("%s [%s] %s", time.Now().Format("2006-01-02 15:04:05"), logLevel.ToString(), content)
+	fmt.Printf("%s [%s] %s\r\n", time.Now().Format("2006-01-02 15:04:05"), logLevel.ToString(), content)
+}
+
+// Print 打印日志
+func Print(content string) {
+	fmt.Printf("%s %s", time.Now().Format("2006-01-02 15:04:05"), content)
+}
+
+// Println 打印日志
+func Println(a ...any) {
+	content := fmt.Sprintln(a...)
+	fmt.Printf("%s %s", time.Now().Format("2006-01-02 15:04:05"), content)
+}
+
+// Printf 打印日志
+func Printf(format string, a ...any) {
+	content := fmt.Sprintf(format, a)
+	fmt.Printf("%s %s", time.Now().Format("2006-01-02 15:04:05"), content)
 }

@@ -70,6 +70,16 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
         * Register （单例且没有别名注册到容器）
         * Resolve （从容器中获取实例）
         * ResolveName （指定ioc别名从容器中获取实例）
+* [flog（日志打印）](flog/)
+  * func
+    * Trace（打印Trace日志）
+    * Debug（打印Debug日志）
+    * Info（打印Info日志）
+    * Warning（打印Warning日志）
+    * Error（打印Error日志）
+    * Critical（打印Critical日志）
+    * Log（打印日志）
+    * Print（打印日志）
 * [exception（异常处理）](exception/)
     * struct
         * RefuseException

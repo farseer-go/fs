@@ -1,10 +1,10 @@
 package fs
 
 import (
+	"github.com/farseer-go/fs/flog"
 	"github.com/farseer-go/fs/modules"
 	"github.com/farseer-go/fs/net"
 	"github.com/farseer-go/fs/stopwatch"
-	"log"
 	"math/rand"
 	"os"
 	"strconv"
@@ -32,27 +32,27 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 	sw := stopwatch.StartNew()
 	rand.Seed(time.Now().UnixNano())
 	StartupAt = time.Now()
-	appidString := strings.Join([]string{strconv.FormatInt(StartupAt.UnixMicro(), 10), strconv.Itoa(rand.Intn(999-100) + 100)}, "")
+	appidString := strings.Join([]string{strconv.FormatInt(StartupAt.UnixMilli(), 10), strconv.Itoa(rand.Intn(999-100) + 100)}, "")
 	AppId, _ = strconv.ParseInt(appidString, 10, 64)
 	AppIp = net.Ip
 	AppName = appName
 
-	log.Println("应用名称：", AppName)
-	log.Println("系统时间：", StartupAt)
-	log.Println("进程ID：", os.Getppid())
-	log.Println("应用ID：", AppId)
-	log.Println("应用IP：", AppIp)
-	log.Println("---------------------------------------")
+	flog.Println("应用名称：", AppName)
+	flog.Println("系统时间：", StartupAt)
+	flog.Println("进程ID：", os.Getppid())
+	flog.Println("应用ID：", AppId)
+	flog.Println("应用IP：", AppIp)
+	flog.Println("---------------------------------------")
 
 	var startupModule TModule
-	log.Println("加载模块...")
+	flog.Println("加载模块...")
 	dependModules = modules.GetDependModule(startupModule)
-	log.Println("加载完毕，共加载 " + strconv.Itoa(len(dependModules)) + " 个模块")
-	log.Println("---------------------------------------")
+	flog.Println("加载完毕，共加载 " + strconv.Itoa(len(dependModules)) + " 个模块")
+	flog.Println("---------------------------------------")
 
 	modules.StartModules(dependModules)
-	log.Println("初始化完毕，共耗时" + strconv.FormatInt(sw.ElapsedMilliseconds(), 10) + " ms")
-	log.Println("---------------------------------------")
+	flog.Println("初始化完毕，共耗时" + strconv.FormatInt(sw.ElapsedMilliseconds(), 10) + " ms")
+	flog.Println("---------------------------------------")
 }
 
 // Exit 应用退出

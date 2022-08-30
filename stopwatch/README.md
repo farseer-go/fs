@@ -9,7 +9,7 @@ sw := stopwatch.StartNew()
 time.Sleep(time.Second)
 
 // print:finish，use：1000 ms
-log.Println("finish，use：" + strconv.FormatInt(sw.ElapsedMilliseconds(), 10) + " ms")
+flog.Println("finish，use：" + strconv.FormatInt(sw.ElapsedMilliseconds(), 10) + " ms")
 ```
 
 ```go
