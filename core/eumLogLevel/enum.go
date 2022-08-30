@@ -13,6 +13,24 @@ const (
 	NoneLevel
 )
 
+func (r Enum) ToString() string {
+	switch r {
+	case Trace:
+		return "Trace"
+	case Debug:
+		return "Debug"
+	case Information:
+		return "Info"
+	case Warning:
+		return "Warn"
+	case Error:
+		return "Error"
+	case Critical:
+		return "Critical"
+	}
+	return "Info"
+}
+
 // GetName 获取标签名称
 func GetName(eum Enum) string {
 	switch eum {
