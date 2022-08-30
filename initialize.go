@@ -24,6 +24,9 @@ var AppId int64
 // AppIp 应用IP
 var AppIp string
 
+// 依赖的模块
+var dependModules []modules.FarseerModule
+
 // Initialize 初始化框架
 func Initialize[TModule modules.FarseerModule](appName string) {
 	sw := stopwatch.StartNew()
@@ -42,7 +45,12 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 	log.Println("---------------------------------------")
 
 	var startupModule TModule
-	modules.StartModules(startupModule)
+	log.Println("加载模块...")
+	dependModules = modules.GetDependModule(startupModule)
+	log.Println("加载完毕，共加载 " + strconv.Itoa(len(dependModules)) + " 个模块")
+	log.Println("---------------------------------------")
+
+	modules.StartModules(dependModules)
 	log.Println("初始化完毕，共耗时" + strconv.FormatInt(sw.ElapsedMilliseconds(), 10) + " ms")
 	log.Println("---------------------------------------")
 }
