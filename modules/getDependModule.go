@@ -55,7 +55,7 @@ func ShutdownModules(farseerModules []FarseerModule) {
 	for _, farseerModule := range farseerModules {
 		sw.Restart()
 		farseerModule.Shutdown()
-		log.Println("耗时：" + strconv.FormatInt(sw.ElapsedMilliseconds(), 10) + " ms " + reflect.TypeOf(farseerModule).String() + ".PreInitialize()")
+		log.Println("耗时：" + strconv.FormatInt(sw.ElapsedMilliseconds(), 10) + " ms " + reflect.TypeOf(farseerModule).String() + ".Shutdown()")
 	}
 	log.Println("---------------------------------------")
 }

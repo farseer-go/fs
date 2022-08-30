@@ -54,3 +54,8 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 	log.Println("初始化完毕，共耗时" + strconv.FormatInt(sw.ElapsedMilliseconds(), 10) + " ms")
 	log.Println("---------------------------------------")
 }
+
+// Exit 应用退出
+func Exit() {
+	modules.ShutdownModules(dependModules)
+}
