@@ -22,6 +22,15 @@ func StartNew() *Watch {
 	}
 }
 
+// New 创建计时器，并开始计时
+func New() *Watch {
+	return &Watch{
+		startTime:               time.Time{},
+		isRunning:               false,
+		lastElapsedMilliseconds: 0,
+	}
+}
+
 // Restart 重置计时器
 func (sw *Watch) Restart() {
 	sw.startTime = time.Now()

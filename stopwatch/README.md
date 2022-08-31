@@ -13,11 +13,11 @@ flog.Println("finish，use：" + strconv.FormatInt(sw.ElapsedMilliseconds(), 10)
 ```
 
 ```go
-sw := stopwatch.StartNew()
+sw := stopwatch.New()
+// Start or Continue timing
+sw.Start
 // Reset Timer
 sw.Restart()
-// Continue timing
-sw.Start
 // Timer pause
 sw.Stop
 // Return to timed time
