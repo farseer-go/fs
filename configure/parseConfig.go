@@ -37,13 +37,10 @@ func ParseConfig[TConfig any](configString string) TConfig {
 				switch configRefVal.Type().Field(i).Type.Kind() {
 				case reflect.Int:
 					configRefVal.Field(i).SetInt(parse.Convert(s, int64(0)))
-					break
 				case reflect.Bool:
 					configRefVal.Field(i).SetBool(parse.Convert(s, false))
-					break
 				default:
 					configRefVal.Field(i).Set(reflect.ValueOf(s))
-					break
 				}
 
 			}

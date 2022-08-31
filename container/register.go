@@ -58,9 +58,7 @@ func (receiver *ioc[TInterface]) Register() {
 	switch reflect.TypeOf(receiver.constructor).Kind() {
 	case reflect.Struct:
 		_ = container.RegisterInstance(receiver.inter, receiver.constructor, options...)
-		break
 	case reflect.Func:
 		_ = container.Register(receiver.constructor, options...)
-		break
 	}
 }
