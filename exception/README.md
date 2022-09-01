@@ -1,24 +1,45 @@
-# Getting Started with exception
-## ThrowException
+## What are the functions?
+* exception
+  * func
+    * ThrowRefuseException （抛出RefuseException异常）
+    * ThrowRefuseExceptionf （抛出RefuseException异常）
+    * Try（执行有可能发生异常的代码块）
+    * CatchRefuseException（捕获RefuseException异常）
+    * CatchStringException（捕获String异常）
+    * CatchException（捕获任意类型的异常）
+      
+## Getting Started
+
 ```go
-exception.ThrowRefuseException("error message")
+try := exception.Try(func() {
+    panic("panic throw")
+})
+try.CatchRefuseException(func(exp *exception.RefuseException) {
+    flog.Warning(exp.Message)   // Type does not match, will not run
+})
+try.CatchStringException(func(exp string) {
+    flog.Info(exp)  // this will run
+})
+try.CatchException(func(exp any) {
+    flog.Error(exp) // StringException is match, will not run
+})
+
+// print: [Info] panic throw
 ```
 
-## Catch
 ```go
-// Different types of exceptions can be caught at the same time
-defer exception.Catch().
-    RefuseException(func(exp *exception.RefuseException) {
-        if taskGroupDO.Id > 0 {
-            log.TaskLogAddService(dto.TaskGroupId, taskGroupDO.JobName, taskGroupDO.Caption, eumLogLevel.Warning, exp.Message)
-        }
-        exp.ContinueRecover(exp.Message)
-    }).
-    String(func(exp string) {
-        if taskGroupDO.Id > 0 {
-            taskGroupDO.Cancel()
-            r.repository.Save(taskGroupDO)
-            log.TaskLogAddService(taskGroupDO.Id, taskGroupDO.JobName, taskGroupDO.Caption, eumLogLevel.Error, exp)
-        }
-    })
+try := exception.Try(func() {
+    exception.ThrowRefuseException("test is throw")
+})
+try.CatchStringException(func(exp string) {
+    flog.Info(exp)  // Type does not match, will not run
+})
+try.CatchRefuseException(func(exp *exception.RefuseException) {
+    flog.Warning(exp.Message)   // this will run
+})
+try.CatchException(func(exp any) {
+    flog.Error(exp) // RefuseException is match, will not run
+})
+
+// print: [Warn] test is throw
 ```

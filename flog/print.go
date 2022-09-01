@@ -13,7 +13,7 @@ func Trace(content any) {
 
 // Tracef 打印Trace日志
 func Tracef(format string, a ...any) {
-	content := fmt.Sprintf(format, a)
+	content := fmt.Sprintf(format, a...)
 	Log(eumLogLevel.Trace, content)
 }
 
@@ -24,7 +24,7 @@ func Debug(content any) {
 
 // Debugf 打印Debug日志
 func Debugf(format string, a ...any) {
-	content := fmt.Sprintf(format, a)
+	content := fmt.Sprintf(format, a...)
 	Log(eumLogLevel.Debug, content)
 }
 
@@ -35,7 +35,7 @@ func Info(content any) {
 
 // Infof 打印Info日志
 func Infof(format string, a ...any) {
-	content := fmt.Sprintf(format, a)
+	content := fmt.Sprintf(format, a...)
 	Log(eumLogLevel.Information, content)
 }
 
@@ -46,7 +46,7 @@ func Warning(content any) {
 
 // Warningf 打印Warning日志
 func Warningf(format string, a ...any) {
-	content := fmt.Sprintf(format, a)
+	content := fmt.Sprintf(format, a...)
 	Log(eumLogLevel.Warning, content)
 }
 
@@ -57,7 +57,7 @@ func Error(content any) {
 
 // Errorf 打印Error日志
 func Errorf(format string, a ...any) {
-	content := fmt.Sprintf(format, a)
+	content := fmt.Sprintf(format, a...)
 	Log(eumLogLevel.Error, content)
 }
 
@@ -68,7 +68,7 @@ func Critical(content any) {
 
 // Criticalf 打印Critical日志
 func Criticalf(format string, a ...any) {
-	content := fmt.Sprintf(format, a)
+	content := fmt.Sprintf(format, a...)
 	Log(eumLogLevel.Critical, content)
 }
 
@@ -90,6 +90,6 @@ func Println(a ...any) {
 
 // Printf 打印日志
 func Printf(format string, a ...any) {
-	content := fmt.Sprintf(format, a)
+	content := fmt.Sprintf(format, a...)
 	fmt.Printf("%s %s", time.Now().Format("2006-01-02 15:04:05"), content)
 }

@@ -1,41 +1,35 @@
 package exception
 
-import "fmt"
-
 type RefuseException struct {
 	// 异常信息
 	Message string
 	r       any
 }
 
-// ThrowRefuseException 抛出RefuseException异常
-func ThrowRefuseException(err string) {
-	panic(RefuseException{Message: err})
-}
-
-// ThrowRefuseExceptionf 抛出RefuseException异常
-func ThrowRefuseExceptionf(format string, a ...any) {
-	panic(RefuseException{Message: fmt.Sprintf(format, a...)})
-}
-
 type catchException struct {
-	r any
+	exp any
 }
 
-// Catch 捕获异常
-func Catch() *catchException {
-	return &catchException{r: recover()}
+// Try 执行有可能发生异常的代码块
+func Try(fn func()) (catch *catchException) {
+	catch = &catchException{}
+	defer func() {
+		catch.exp = recover()
+	}()
+	fn()
+	return
 }
 
-// RefuseException 捕获RefuseException异常
-func (catch *catchException) RefuseException(expFn func(exp *RefuseException)) *catchException {
-	if catch.r == nil {
+// CatchRefuseException 捕获RefuseException异常
+func (catch *catchException) CatchRefuseException(expFn func(exp *RefuseException)) *catchException {
+	if catch.exp == nil {
 		return catch
 	}
-	if exp, ok := catch.r.(RefuseException); ok {
+	if exp, ok := catch.exp.(RefuseException); ok {
 		expFn(&exp)
+		catch.exp = nil
 		if exp.r != nil {
-			catch.r = exp.r
+			catch.exp = exp.r
 		}
 	}
 	return catch
@@ -46,21 +40,23 @@ func (exp *RefuseException) ContinueRecover(r any) {
 	exp.r = &r
 }
 
-// String 捕获String异常
-func (catch *catchException) String(expFn func(exp string)) *catchException {
-	if catch.r == nil {
+// CatchStringException 捕获String异常
+func (catch *catchException) CatchStringException(expFn func(exp string)) *catchException {
+	if catch.exp == nil {
 		return catch
 	}
-	if exp, ok := catch.r.(string); ok {
+	if exp, ok := catch.exp.(string); ok {
 		expFn(exp)
+		catch.exp = nil
 	}
 	return catch
 }
 
-// Any 捕获Any异常
-func (catch *catchException) Any(expFn func(exp any)) {
-	if catch.r == nil {
+// CatchException 捕获Any异常
+func (catch *catchException) CatchException(expFn func(exp any)) {
+	if catch.exp == nil {
 		return
 	}
-	expFn(catch.r)
+	expFn(catch.exp)
+	catch.exp = nil
 }
