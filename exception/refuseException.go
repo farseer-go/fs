@@ -26,18 +26,11 @@ func (catch *catchException) CatchRefuseException(expFn func(exp *RefuseExceptio
 		return catch
 	}
 	if exp, ok := catch.exp.(RefuseException); ok {
-		expFn(&exp)
-		catch.exp = nil
-		if exp.r != nil {
-			catch.exp = exp.r
-		}
+		catch.exp = Try(func() {
+			expFn(&exp)
+		}).exp
 	}
 	return catch
-}
-
-// ContinueRecover 是否继续让下一个捕获继续处理
-func (exp *RefuseException) ContinueRecover(r any) {
-	exp.r = &r
 }
 
 // CatchStringException 捕获String异常
@@ -46,17 +39,20 @@ func (catch *catchException) CatchStringException(expFn func(exp string)) *catch
 		return catch
 	}
 	if exp, ok := catch.exp.(string); ok {
-		expFn(exp)
-		catch.exp = nil
+		catch.exp = Try(func() {
+			expFn(exp)
+		}).exp
 	}
 	return catch
 }
 
 // CatchException 捕获Any异常
-func (catch *catchException) CatchException(expFn func(exp any)) {
+func (catch *catchException) CatchException(expFn func(exp any)) *catchException {
 	if catch.exp == nil {
-		return
+		return nil
 	}
-	expFn(catch.exp)
-	catch.exp = nil
+	catch.exp = Try(func() {
+		expFn(catch.exp)
+	}).exp
+	return catch
 }
