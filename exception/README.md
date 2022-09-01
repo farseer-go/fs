@@ -3,10 +3,13 @@
   * func
     * ThrowRefuseException （抛出RefuseException异常）
     * ThrowRefuseExceptionf （抛出RefuseException异常）
+    * ThrowException （抛出Exception异常）
+    * ThrowExceptionf （抛出Exception异常）
     * Try（执行有可能发生异常的代码块）
-    * CatchRefuseException（捕获RefuseException异常）
-    * CatchStringException（捕获String异常）
-    * CatchException（捕获任意类型的异常）
+      * CatchRefuseException（捕获RefuseException异常）
+      * CatchStringException（捕获String异常）
+      * CatchException（捕获任意类型的异常）
+      * ThrowUnCatch（异常没有捕获到时，向上层抛出异常）
       
 ## Getting Started
 

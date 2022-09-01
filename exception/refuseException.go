@@ -56,3 +56,10 @@ func (catch *catchException) CatchException(expFn func(exp any)) *catchException
 	}).exp
 	return catch
 }
+
+// ThrowUnCatch 抛出未捕获的异常
+func (catch *catchException) ThrowUnCatch() {
+	if catch.exp != nil {
+		panic(catch.exp)
+	}
+}
