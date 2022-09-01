@@ -46,3 +46,14 @@ try.CatchException(func(exp any) {
 
 // print: [Warn] test is throw
 ```
+
+```go
+try := exception.Try(func() {
+    exception.ThrowRefuseException("test is throw")
+})
+try.CatchStringException(func(exp string) {
+    flog.Info(exp)  // Type does not match, will not run
+})
+
+try.ThrowUnCatch()  // will Throw Not Match RefuseException 
+```
