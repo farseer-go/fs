@@ -7,7 +7,7 @@ import (
 )
 
 // Trace 打印Trace日志
-func Trace(content any) {
+func Trace(content ...any) {
 	Log(eumLogLevel.Trace, content)
 }
 
@@ -18,7 +18,7 @@ func Tracef(format string, a ...any) {
 }
 
 // Debug 打印Debug日志
-func Debug(content any) {
+func Debug(content ...any) {
 	Log(eumLogLevel.Debug, content)
 }
 
@@ -29,7 +29,7 @@ func Debugf(format string, a ...any) {
 }
 
 // Info 打印Info日志
-func Info(content any) {
+func Info(content ...any) {
 	Log(eumLogLevel.Information, content)
 }
 
@@ -40,7 +40,7 @@ func Infof(format string, a ...any) {
 }
 
 // Warning 打印Warning日志
-func Warning(content any) {
+func Warning(content ...any) {
 	Log(eumLogLevel.Warning, content)
 }
 
@@ -51,7 +51,7 @@ func Warningf(format string, a ...any) {
 }
 
 // Error 打印Error日志
-func Error(content any) {
+func Error(content ...any) {
 	Log(eumLogLevel.Error, content)
 }
 
@@ -62,7 +62,7 @@ func Errorf(format string, a ...any) {
 }
 
 // Critical 打印Critical日志
-func Critical(content any) {
+func Critical(content ...any) {
 	Log(eumLogLevel.Critical, content)
 }
 
@@ -73,12 +73,14 @@ func Criticalf(format string, a ...any) {
 }
 
 // Log 打印日志
-func Log(logLevel eumLogLevel.Enum, content any) {
+func Log(logLevel eumLogLevel.Enum, contents ...any) {
+	content := fmt.Sprint(contents...)
 	fmt.Printf("%s [%s] %s\r\n", time.Now().Format("2006-01-02 15:04:05"), logLevel.ToString(), content)
 }
 
 // Print 打印日志
-func Print(content any) {
+func Print(contents ...any) {
+	content := fmt.Sprint(contents...)
 	fmt.Printf("%s %s", time.Now().Format("2006-01-02 15:04:05"), content)
 }
 
