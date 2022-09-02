@@ -7,6 +7,7 @@ import (
 	"github.com/farseer-go/fs/stopwatch"
 	"math/rand"
 	"os"
+	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -27,6 +28,8 @@ var AppIp string
 // 依赖的模块
 var dependModules []modules.FarseerModule
 
+var callbackFnList []func()
+
 // Initialize 初始化框架
 func Initialize[TModule modules.FarseerModule](appName string) {
 	sw := stopwatch.StartNew()
@@ -46,16 +49,30 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 
 	var startupModule TModule
 	flog.Println("加载模块...")
-	dependModules = modules.GetDependModule(startupModule)
+	dependModules = modules.Distinct(modules.GetDependModule(startupModule))
 	flog.Println("加载完毕，共加载 " + strconv.Itoa(len(dependModules)) + " 个模块")
 	flog.Println("---------------------------------------")
 
 	modules.StartModules(dependModules)
 	flog.Println("初始化完毕，共耗时" + strconv.FormatInt(sw.ElapsedMilliseconds(), 10) + " ms")
 	flog.Println("---------------------------------------")
+
+	if len(callbackFnList) > 0 {
+		for index, fn := range callbackFnList {
+			sw.Restart()
+			fn()
+			flog.Println("运行" + strconv.Itoa(index+1) + "：" + reflect.TypeOf(fn).String() + "，共耗时" + strconv.FormatInt(sw.ElapsedMilliseconds(), 10) + " ms")
+			flog.Println("---------------------------------------")
+		}
+	}
 }
 
 // Exit 应用退出
 func Exit() {
 	modules.ShutdownModules(dependModules)
+}
+
+// AddInitCallback 添加框架启动完后执行的函数
+func AddInitCallback(fn func()) {
+	callbackFnList = append(callbackFnList, fn)
 }

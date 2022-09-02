@@ -22,6 +22,27 @@ func GetDependModule(module ...FarseerModule) []FarseerModule {
 	return modules
 }
 
+// Distinct 模块去重
+func Distinct(modules []FarseerModule) []FarseerModule {
+	var lst []FarseerModule
+	for _, module := range modules {
+		if !exists(lst, module) {
+			lst = append(lst, module)
+		}
+	}
+	return append([]FarseerModule{FarseerKernelModule{}}, lst...)
+}
+
+// 判断模块是否存在于数组中
+func exists(lst []FarseerModule, module FarseerModule) bool {
+	for _, farseerModule := range lst {
+		if farseerModule == module {
+			return true
+		}
+	}
+	return false
+}
+
 // StartModules 启动模块
 func StartModules(farseerModules []FarseerModule) {
 	flog.Println("Modules模块初始化...")
