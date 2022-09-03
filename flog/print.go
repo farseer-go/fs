@@ -8,7 +8,7 @@ import (
 
 // Trace 打印Trace日志
 func Trace(content ...any) {
-	Log(eumLogLevel.Trace, content)
+	Log(eumLogLevel.Trace, content...)
 }
 
 // Tracef 打印Trace日志
@@ -19,7 +19,7 @@ func Tracef(format string, a ...any) {
 
 // Debug 打印Debug日志
 func Debug(content ...any) {
-	Log(eumLogLevel.Debug, content)
+	Log(eumLogLevel.Debug, content...)
 }
 
 // Debugf 打印Debug日志
@@ -30,7 +30,7 @@ func Debugf(format string, a ...any) {
 
 // Info 打印Info日志
 func Info(content ...any) {
-	Log(eumLogLevel.Information, content)
+	Log(eumLogLevel.Information, content...)
 }
 
 // Infof 打印Info日志
@@ -41,7 +41,7 @@ func Infof(format string, a ...any) {
 
 // Warning 打印Warning日志
 func Warning(content ...any) {
-	Log(eumLogLevel.Warning, content)
+	Log(eumLogLevel.Warning, content...)
 }
 
 // Warningf 打印Warning日志
@@ -52,7 +52,7 @@ func Warningf(format string, a ...any) {
 
 // Error 打印Error日志
 func Error(content ...any) {
-	Log(eumLogLevel.Error, content)
+	Log(eumLogLevel.Error, content...)
 }
 
 // Errorf 打印Error日志
@@ -63,7 +63,7 @@ func Errorf(format string, a ...any) {
 
 // Critical 打印Critical日志
 func Critical(content ...any) {
-	Log(eumLogLevel.Critical, content)
+	Log(eumLogLevel.Critical, content...)
 }
 
 // Criticalf 打印Critical日志
