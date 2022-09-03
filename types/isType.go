@@ -1,0 +1,41 @@
+package types
+
+import (
+	"reflect"
+	"strings"
+)
+
+// GetRealType 获取真实类型
+func GetRealType(val reflect.Value) reflect.Type {
+	if val.Kind() == reflect.Pointer {
+		val = val.Elem()
+	}
+	if val.Kind() == reflect.Interface {
+		val = reflect.ValueOf(val.Interface())
+	}
+	return val.Type()
+}
+
+// IsSlice 是否为切片类型
+func IsSlice(val reflect.Value) (reflect.Type, bool) {
+	realType := GetRealType(val)
+	return realType, realType.Kind() == reflect.Slice
+}
+
+// IsMap 是否为Map类型
+func IsMap(val reflect.Value) (reflect.Type, bool) {
+	realType := GetRealType(val)
+	return realType, realType.Kind() == reflect.Map
+}
+
+// IsList 判断类型是否为List
+func IsList(val reflect.Value) (reflect.Type, bool) {
+	realType := GetRealType(val)
+	return realType, strings.HasPrefix(realType.String(), "collections.List[")
+}
+
+// IsStruct 是否为Struct
+func IsStruct(val reflect.Value) (reflect.Type, bool) {
+	realType := GetRealType(val)
+	return realType, realType.Kind() == reflect.Struct
+}

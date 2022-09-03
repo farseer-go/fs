@@ -104,6 +104,13 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
             * Start（继续计时）
             * Stop（停止计时）
             * ElapsedMilliseconds（返回当前已计时的时间（毫秒））
+* [types](types/)
+  * func
+    * GetRealType（获取真实类型）
+    * IsSlice（是否为切片类型）
+    * IsMap（是否为Map类型）
+    * IsList（判断类型是否为List）
+    * IsStruct（是否为Struct）
 * [core（通用类型）](core/)
     * struct
         * ApiResponseString （标准的API输出（默认string值））
