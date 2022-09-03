@@ -11,7 +11,8 @@ func GetRealType(val reflect.Value) reflect.Type {
 		val = val.Elem()
 	}
 	if val.Kind() == reflect.Interface {
-		val = reflect.ValueOf(val.Interface())
+		val = val.Elem()
+		//val = reflect.ValueOf(val.Interface())
 	}
 	return val.Type()
 }
