@@ -4,12 +4,13 @@ import (
 	"github.com/farseer-go/fs/flog"
 	"github.com/farseer-go/fs/modules"
 	"github.com/farseer-go/fs/net"
+	"github.com/farseer-go/fs/parse"
+	"github.com/farseer-go/fs/snowflake"
 	"github.com/farseer-go/fs/stopwatch"
 	"math/rand"
 	"os"
 	"reflect"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -18,6 +19,9 @@ var StartupAt time.Time
 
 // AppName 应用名称
 var AppName string
+
+// HostName 主机名称
+var HostName string
 
 // AppId 应用ID
 var AppId int64
@@ -36,15 +40,18 @@ var callbackFnList []func()
 // Initialize 初始化框架
 func Initialize[TModule modules.FarseerModule](appName string) {
 	sw := stopwatch.StartNew()
-	rand.Seed(time.Now().UnixNano())
-	StartupAt = time.Now()
-	appidString := strings.Join([]string{strconv.FormatInt(StartupAt.UnixMilli(), 10), strconv.Itoa(rand.Intn(999-100) + 100)}, "")
-	AppId, _ = strconv.ParseInt(appidString, 10, 64)
-	AppIp = net.GetIp()
+
 	AppName = appName
 	ProcessId = os.Getppid()
+	HostName, _ = os.Hostname()
+	rand.Seed(time.Now().UnixNano())
+	snowflake.Init(parse.HashCode64(HostName), rand.Int63n(32))
+	StartupAt = time.Now()
+	AppId = snowflake.GenerateId()
+	AppIp = net.GetIp()
 
 	flog.Println("应用名称：", AppName)
+	flog.Println("主机名称：", HostName)
 	flog.Println("系统时间：", StartupAt)
 	flog.Println("进程ID：", ProcessId)
 	flog.Println("应用ID：", AppId)
