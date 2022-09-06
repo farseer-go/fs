@@ -101,6 +101,7 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
     * AddSeconds（添加秒）
     * AddDate（添加Date）
     * AddTime（添加Time）
+    * ToTime（获取time.Time类型）
 * [exception（异常处理）](exception/)
     * struct
         * RefuseException

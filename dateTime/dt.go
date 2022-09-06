@@ -102,3 +102,6 @@ func (d DateTime) AddMinutes(minutes int) DateTime {
 func (d DateTime) AddSeconds(seconds int) DateTime {
 	return New(d.time.Add(time.Second * time.Duration(seconds)))
 }
+
+// ToTime 获取time.Time类型
+func (d DateTime) ToTime() time.Time { return d.time }
