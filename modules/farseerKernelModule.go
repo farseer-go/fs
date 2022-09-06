@@ -3,7 +3,6 @@ package modules
 import (
 	"github.com/farseer-go/fs/configure"
 	"github.com/farseer-go/fs/container"
-	"github.com/farseer-go/fs/net"
 	"math/rand"
 	"time"
 )
@@ -19,7 +18,6 @@ func (module FarseerKernelModule) PreInitialize() {
 	rand.Seed(int64(time.Now().Nanosecond()))
 	container.InitContainer()
 	configure.InitConfigure()
-	net.InitNet()
 }
 
 func (module FarseerKernelModule) Initialize() {

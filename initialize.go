@@ -25,6 +25,9 @@ var AppId int64
 // AppIp 应用IP
 var AppIp string
 
+// ProcessId 进程Id
+var ProcessId int
+
 // 依赖的模块
 var dependModules []modules.FarseerModule
 
@@ -37,12 +40,13 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 	StartupAt = time.Now()
 	appidString := strings.Join([]string{strconv.FormatInt(StartupAt.UnixMilli(), 10), strconv.Itoa(rand.Intn(999-100) + 100)}, "")
 	AppId, _ = strconv.ParseInt(appidString, 10, 64)
-	AppIp = net.Ip
+	AppIp = net.GetIp()
 	AppName = appName
+	ProcessId = os.Getppid()
 
 	flog.Println("应用名称：", AppName)
 	flog.Println("系统时间：", StartupAt)
-	flog.Println("进程ID：", os.Getppid())
+	flog.Println("进程ID：", ProcessId)
 	flog.Println("应用ID：", AppId)
 	flog.Println("应用IP：", AppIp)
 	flog.Println("---------------------------------------")
