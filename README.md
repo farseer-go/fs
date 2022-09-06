@@ -56,8 +56,6 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
 ## What are the functions?
 * [fs（框架初始化）](#how-to-start)
     * Initialize （初始化框架）
-* [modules](modules/)
-    * StartModules （启动模块）
 * [configure（配置读写）](configure/)
     * GetString （获取配置）
     * SetDefault （设置配置的默认值）
@@ -70,16 +68,20 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
         * Register （单例且没有别名注册到容器）
         * Resolve （从容器中获取实例）
         * ResolveName （指定ioc别名从容器中获取实例）
-* [flog（日志打印）](flog/)
-  * func
-    * Trace（打印Trace日志）
-    * Debug（打印Debug日志）
-    * Info（打印Info日志）
-    * Warning（打印Warning日志）
-    * Error（打印Error日志）
-    * Critical（打印Critical日志）
-    * Log（打印日志）
-    * Print（打印日志）
+* [core（通用类型）](core/)
+    * struct
+        * ApiResponseString （标准的API输出（默认string值））
+        * ApiResponseInt （标准的API输出（默认int值））
+        * ApiResponseLong （标准的API输出（默认int64值））
+        * ApiResponse （标准的API输出（泛型））
+            * .SetData （设置Data字段的值）
+    * func
+        * Success （接口调用成功后返回的Json）
+        * Error （接口调用失时返回的Json）
+        * Error403 （接口调用失时返回的Json）
+    * core/eumLogLevel
+        * Enum （日志等级）
+* [dateTime（时间日期）](dateTime/)
 * [exception（异常处理）](exception/)
     * struct
         * RefuseException
@@ -91,10 +93,27 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
                 * .ContinueRecover（是否继续让下一个捕获继续处理）
             * .String（捕获String异常）
             * .Any（捕获Any异常）
+* [flog（日志打印）](flog/)
+    * func
+        * Trace（打印Trace日志）
+        * Debug（打印Debug日志）
+        * Info（打印Info日志）
+        * Warning（打印Warning日志）
+        * Error（打印Error日志）
+        * Critical（打印Critical日志）
+        * Log（打印日志）
+        * Print（打印日志）
+* [modules](modules/)
+    * StartModules （启动模块）
+* [net](net/)
+    * LocalIPv4s （获取本机IP地址）
 * [parse（类型转换）](parse/)
     * Convert （通用的类型转换）
     * IsInt （是否为int类型）
     * IsEqual（两个any值是否相等）
+* [snowflake（雪花算法）](snowflake/)
+    * Init（全局初始化一次)
+    * GenerateId（生成唯一ID）
 * [stopwatch](stopwatch/)
     * func
         * StartNew（创建计时器，并开始计时）
@@ -111,21 +130,6 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
     * IsMap（是否为Map类型）
     * IsList（判断类型是否为List）
     * IsStruct（是否为Struct）
-* [core（通用类型）](core/)
-    * struct
-        * ApiResponseString （标准的API输出（默认string值））
-        * ApiResponseInt （标准的API输出（默认int值））
-        * ApiResponseLong （标准的API输出（默认int64值））
-        * ApiResponse （标准的API输出（泛型））
-            * .SetData （设置Data字段的值）
-    * func
-        * Success （接口调用成功后返回的Json）
-        * Error （接口调用失时返回的Json）
-        * Error403 （接口调用失时返回的Json）
-* core/eumLogLevel
-    * Enum （日志等级）
-* [net](net/)
-    * LocalIPv4s （获取本机IP地址）
 
 ## How to start？
 StartupModule is the startup module you define, as detailed in：[modules](modules/)
