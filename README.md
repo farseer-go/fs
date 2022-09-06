@@ -99,6 +99,8 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
     * AddHours（添加小时）
     * AddMinutes（添加分钟）
     * AddSeconds（添加秒）
+    * AddDate（添加Date）
+    * AddTime（添加Time）
 * [exception（异常处理）](exception/)
     * struct
         * RefuseException

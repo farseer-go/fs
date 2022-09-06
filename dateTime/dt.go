@@ -63,6 +63,16 @@ func (d DateTime) Date() DateTime {
 	return New(time.Date(year, month, day, 0, 0, 0, 0, time.Local))
 }
 
+// AddDate 添加Date
+func (d DateTime) AddDate(years int, months int, days int) DateTime {
+	return New(d.time.AddDate(years, months, days))
+}
+
+// AddTime 添加Time
+func (d DateTime) AddTime(hours int, minutes int, seconds int) DateTime {
+	return New(d.time.Add(time.Hour * time.Duration(hours)).Add(time.Minute * time.Duration(minutes)).Add(time.Second * time.Duration(seconds)))
+}
+
 // AddYears 添加年
 func (d DateTime) AddYears(year int) DateTime {
 	return New(d.time.AddDate(year, 0, 0))
