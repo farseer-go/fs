@@ -1,0 +1,94 @@
+package dateTime
+
+import (
+	"strings"
+	"time"
+)
+
+type DateTime struct {
+	time time.Time
+}
+
+// Now 当前时间
+func Now() DateTime {
+	return DateTime{
+		time: time.Now(),
+	}
+}
+
+// New 初始化
+func New(time time.Time) DateTime {
+	return DateTime{
+		time: time,
+	}
+}
+
+// ToString 转字符串，yyyy-MM-dd hh:mm:ss
+func (d DateTime) ToString(format string) string {
+	// 2006-01-02 15:04:05
+	format = strings.Replace(format, "yyyy", "2006", -1)
+	format = strings.Replace(format, "yy", "06", -1)
+	format = strings.Replace(format, "MM", "01", -1)
+	format = strings.Replace(format, "dd", "02", -1)
+
+	format = strings.Replace(format, "hh", "15", -1)
+	format = strings.Replace(format, "HH", "15", -1)
+	format = strings.Replace(format, "mm", "04", -1)
+	format = strings.Replace(format, "ss", "05", -1)
+
+	return d.time.Format(format)
+}
+
+// Year 获取年
+func (d DateTime) Year() int { return d.time.Year() }
+
+// Month 获取月
+func (d DateTime) Month() int { return int(d.time.Month()) }
+
+// Day 获取日
+func (d DateTime) Day() int { return d.time.Day() }
+
+// Hour 获取小时
+func (d DateTime) Hour() int { return d.time.Hour() }
+
+// Minute 获取分钟
+func (d DateTime) Minute() int { return d.time.Minute() }
+
+// Second 获取秒
+func (d DateTime) Second() int { return d.time.Second() }
+
+// Date 获取Date部份
+func (d DateTime) Date() DateTime {
+	year, month, day := d.time.Date()
+	return New(time.Date(year, month, day, 0, 0, 0, 0, time.Local))
+}
+
+// AddYears 添加年
+func (d DateTime) AddYears(year int) DateTime {
+	return New(d.time.AddDate(year, 0, 0))
+}
+
+// AddMonths 添加月份
+func (d DateTime) AddMonths(months int) DateTime {
+	return New(d.time.AddDate(0, months, 0))
+}
+
+// AddDays 添加天数
+func (d DateTime) AddDays(days int) DateTime {
+	return New(d.time.AddDate(0, 0, days))
+}
+
+// AddHours 添加小时
+func (d DateTime) AddHours(hours int) DateTime {
+	return New(d.time.Add(time.Hour * time.Duration(hours)))
+}
+
+// AddMinutes 添加分钟
+func (d DateTime) AddMinutes(minutes int) DateTime {
+	return New(d.time.Add(time.Minute * time.Duration(minutes)))
+}
+
+// AddSeconds 添加秒
+func (d DateTime) AddSeconds(seconds int) DateTime {
+	return New(d.time.Add(time.Second * time.Duration(seconds)))
+}

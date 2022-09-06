@@ -82,6 +82,23 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
     * core/eumLogLevel
         * Enum （日志等级）
 * [dateTime（时间日期）](dateTime/)
+  * func
+    * ToString（转字符串）
+    * Now（当前时间）
+    * New（初始化）
+    * Year（获取年）
+    * Month（获取月）
+    * Day（获取日）
+    * Hour（获取小时）
+    * Minute（获取分钟）
+    * Second（获取秒）
+    * Date（获取Date部份）
+    * AddYears（添加年）
+    * AddMonths（添加月份）
+    * AddDays（添加天数）
+    * AddHours（添加小时）
+    * AddMinutes（添加分钟）
+    * AddSeconds（添加秒）
 * [exception（异常处理）](exception/)
     * struct
         * RefuseException
