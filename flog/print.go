@@ -3,7 +3,7 @@ package flog
 import (
 	"fmt"
 	"github.com/farseer-go/fs/core/eumLogLevel"
-	"time"
+	"github.com/farseer-go/fs/dateTime"
 )
 
 // Trace 打印Trace日志
@@ -75,23 +75,23 @@ func Criticalf(format string, a ...any) {
 // Log 打印日志
 func Log(logLevel eumLogLevel.Enum, contents ...any) {
 	content := fmt.Sprint(contents...)
-	fmt.Printf("%s [%s] %s\r\n", time.Now().Format("2006-01-02 15:04:05"), logLevel.ToString(), content)
+	fmt.Printf("%s %s %s\r\n", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss"), Colors[logLevel]("["+logLevel.ToString()+"]"), content)
 }
 
 // Print 打印日志
 func Print(contents ...any) {
 	content := fmt.Sprint(contents...)
-	fmt.Printf("%s %s", time.Now().Format("2006-01-02 15:04:05"), content)
+	fmt.Printf("%s %s", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss"), content)
 }
 
 // Println 打印日志
 func Println(a ...any) {
 	content := fmt.Sprintln(a...)
-	fmt.Printf("%s %s", time.Now().Format("2006-01-02 15:04:05"), content)
+	fmt.Printf("%s %s", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss"), content)
 }
 
 // Printf 打印日志
 func Printf(format string, a ...any) {
 	content := fmt.Sprintf(format, a...)
-	fmt.Printf("%s %s", time.Now().Format("2006-01-02 15:04:05"), content)
+	fmt.Printf("%s %s", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss"), content)
 }

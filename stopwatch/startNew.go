@@ -1,6 +1,8 @@
 package stopwatch
 
 import (
+	"github.com/farseer-go/fs/flog"
+	"strconv"
 	"time"
 )
 
@@ -57,4 +59,9 @@ func (sw *Watch) ElapsedMilliseconds() int64 {
 		elapsedMilliseconds += time.Now().Sub(sw.startTime).Milliseconds()
 	}
 	return elapsedMilliseconds
+}
+
+// GetMillisecondsText 返回当前已计时的时间（毫秒）
+func (sw *Watch) GetMillisecondsText() string {
+	return flog.Colors[4](strconv.FormatInt(sw.ElapsedMilliseconds(), 10) + " ms ")
 }

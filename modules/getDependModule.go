@@ -4,7 +4,6 @@ import (
 	"github.com/farseer-go/fs/flog"
 	"github.com/farseer-go/fs/stopwatch"
 	"reflect"
-	"strconv"
 )
 
 // GetDependModule 查找模块的依赖
@@ -16,7 +15,7 @@ func GetDependModule(module ...FarseerModule) []FarseerModule {
 			modules = append(modules, GetDependModule(dependsModules...)...)
 		}
 
-		flog.Println("加载模块:" + reflect.TypeOf(farseerModule).String() + "")
+		flog.Println("加载模块：" + flog.Colors[5](reflect.TypeOf(farseerModule).String()) + "")
 		modules = append(modules, farseerModule)
 	}
 	return modules
@@ -50,21 +49,21 @@ func StartModules(farseerModules []FarseerModule) {
 	for _, farseerModule := range farseerModules {
 		sw.Restart()
 		farseerModule.PreInitialize()
-		flog.Println("耗时：" + strconv.FormatInt(sw.ElapsedMilliseconds(), 10) + " ms " + reflect.TypeOf(farseerModule).String() + ".PreInitialize()")
+		flog.Println("耗时：" + sw.GetMillisecondsText() + reflect.TypeOf(farseerModule).String() + ".PreInitialize()")
 	}
 	flog.Println("---------------------------------------")
 
 	for _, farseerModule := range farseerModules {
 		sw.Restart()
 		farseerModule.Initialize()
-		flog.Println("耗时：" + strconv.FormatInt(sw.ElapsedMilliseconds(), 10) + " ms " + reflect.TypeOf(farseerModule).String() + ".Initialize()")
+		flog.Println("耗时：" + sw.GetMillisecondsText() + reflect.TypeOf(farseerModule).String() + ".Initialize()")
 	}
 	flog.Println("---------------------------------------")
 
 	for _, farseerModule := range farseerModules {
 		sw.Restart()
 		farseerModule.PostInitialize()
-		flog.Println("耗时：" + strconv.FormatInt(sw.ElapsedMilliseconds(), 10) + " ms " + reflect.TypeOf(farseerModule).String() + ".PostInitialize()")
+		flog.Println("耗时：" + sw.GetMillisecondsText() + reflect.TypeOf(farseerModule).String() + ".PostInitialize()")
 	}
 	flog.Println("基础组件初始化完成")
 }
@@ -76,7 +75,7 @@ func ShutdownModules(farseerModules []FarseerModule) {
 	for _, farseerModule := range farseerModules {
 		sw.Restart()
 		farseerModule.Shutdown()
-		flog.Println("耗时：" + strconv.FormatInt(sw.ElapsedMilliseconds(), 10) + " ms " + reflect.TypeOf(farseerModule).String() + ".Shutdown()")
+		flog.Println("耗时：" + sw.GetMillisecondsText() + reflect.TypeOf(farseerModule).String() + ".Shutdown()")
 	}
 	flog.Println("---------------------------------------")
 }

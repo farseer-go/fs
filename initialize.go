@@ -1,6 +1,7 @@
 package fs
 
 import (
+	"github.com/farseer-go/fs/dateTime"
 	"github.com/farseer-go/fs/flog"
 	"github.com/farseer-go/fs/modules"
 	"github.com/farseer-go/fs/net"
@@ -15,7 +16,7 @@ import (
 )
 
 // StartupAt 应用启动时间
-var StartupAt time.Time
+var StartupAt dateTime.DateTime
 
 // AppName 应用名称
 var AppName string
@@ -46,16 +47,16 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 	HostName, _ = os.Hostname()
 	rand.Seed(time.Now().UnixNano())
 	snowflake.Init(parse.HashCode64(HostName), rand.Int63n(32))
-	StartupAt = time.Now()
+	StartupAt = dateTime.Now()
 	AppId = snowflake.GenerateId()
 	AppIp = net.GetIp()
 
-	flog.Println("应用名称：", AppName)
-	flog.Println("主机名称：", HostName)
-	flog.Println("系统时间：", StartupAt)
-	flog.Println("进程ID：", ProcessId)
-	flog.Println("应用ID：", AppId)
-	flog.Println("应用IP：", AppIp)
+	flog.Println("应用名称：", flog.Colors[2](AppName))
+	flog.Println("主机名称：", flog.Colors[2](HostName))
+	flog.Println("系统时间：", flog.Colors[2](StartupAt.ToString("yyyy-MM-dd hh:mm:ss")))
+	flog.Println("进程ID：", flog.Colors[2](ProcessId))
+	flog.Println("应用ID：", flog.Colors[2](AppId))
+	flog.Println("应用IP：", flog.Colors[2](AppIp))
 	flog.Println("---------------------------------------")
 
 	var startupModule TModule
@@ -65,14 +66,14 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 	flog.Println("---------------------------------------")
 
 	modules.StartModules(dependModules)
-	flog.Println("初始化完毕，共耗时" + strconv.FormatInt(sw.ElapsedMilliseconds(), 10) + " ms")
+	flog.Println("初始化完毕，共耗时：" + sw.GetMillisecondsText())
 	flog.Println("---------------------------------------")
 
 	if len(callbackFnList) > 0 {
 		for index, fn := range callbackFnList {
 			sw.Restart()
 			fn()
-			flog.Println("运行" + strconv.Itoa(index+1) + "：" + reflect.TypeOf(fn).String() + "，共耗时" + strconv.FormatInt(sw.ElapsedMilliseconds(), 10) + " ms")
+			flog.Println("运行" + strconv.Itoa(index+1) + "：" + reflect.TypeOf(fn).String() + "，共耗时：" + sw.GetMillisecondsText())
 			flog.Println("---------------------------------------")
 		}
 	}
