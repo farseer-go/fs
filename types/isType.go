@@ -40,3 +40,15 @@ func IsStruct(val reflect.Value) (reflect.Type, bool) {
 	realType := GetRealType(val)
 	return realType, realType.Kind() == reflect.Struct
 }
+
+// IsEsIndexSet 判断类型是否为ES的IndexSet类型
+func IsEsIndexSet(val reflect.Value) (reflect.Type, bool) {
+	realType := GetRealType(val)
+	return realType, strings.HasPrefix(realType.String(), "elasticSearch.IndexSet[")
+}
+
+// IsDataTableSet 判断类型是否为Data的TableSet类型
+func IsDataTableSet(val reflect.Value) (reflect.Type, bool) {
+	realType := GetRealType(val)
+	return realType, strings.HasPrefix(realType.String(), "data.TableSet[")
+}
