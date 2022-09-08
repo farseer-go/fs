@@ -7,8 +7,8 @@ import (
 )
 
 // Trace 打印Trace日志
-func Trace(content ...any) {
-	Log(eumLogLevel.Trace, content...)
+func Trace(contents ...any) {
+	Log(eumLogLevel.Trace, contents...)
 }
 
 // Tracef 打印Trace日志
@@ -18,8 +18,8 @@ func Tracef(format string, a ...any) {
 }
 
 // Debug 打印Debug日志
-func Debug(content ...any) {
-	Log(eumLogLevel.Debug, content...)
+func Debug(contents ...any) {
+	Log(eumLogLevel.Debug, contents...)
 }
 
 // Debugf 打印Debug日志
@@ -29,8 +29,8 @@ func Debugf(format string, a ...any) {
 }
 
 // Info 打印Info日志
-func Info(content ...any) {
-	Log(eumLogLevel.Information, content...)
+func Info(contents ...any) {
+	Log(eumLogLevel.Information, contents...)
 }
 
 // Infof 打印Info日志
@@ -51,8 +51,8 @@ func Warningf(format string, a ...any) {
 }
 
 // Error 打印Error日志
-func Error(content ...any) {
-	Log(eumLogLevel.Error, content...)
+func Error(contents ...any) {
+	Log(eumLogLevel.Error, contents...)
 }
 
 // Errorf 打印Error日志
@@ -62,8 +62,8 @@ func Errorf(format string, a ...any) {
 }
 
 // Critical 打印Critical日志
-func Critical(content ...any) {
-	Log(eumLogLevel.Critical, content...)
+func Critical(contents ...any) {
+	Log(eumLogLevel.Critical, contents...)
 }
 
 // Criticalf 打印Critical日志
@@ -94,4 +94,16 @@ func Println(a ...any) {
 func Printf(format string, a ...any) {
 	content := fmt.Sprintf(format, a...)
 	fmt.Printf("%s %s", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss"), content)
+}
+
+// AppInfo 打印应用日志
+func AppInfo(appName string, contents ...any) {
+	content := fmt.Sprint(contents...)
+	fmt.Printf("%s %s %s\r\n", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss"), Colors[0]("["+appName+"]"), content)
+}
+
+// AppInfof 打印应用日志
+func AppInfof(appName string, format string, a ...any) {
+	content := fmt.Sprintf(format, a...)
+	fmt.Printf("%s %s %s\r\n", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss"), Colors[0]("["+appName+"]"), content)
 }
