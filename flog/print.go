@@ -2,6 +2,7 @@ package flog
 
 import (
 	"fmt"
+	"github.com/farseer-go/fs/configure"
 	"github.com/farseer-go/fs/core/eumLogLevel"
 	"github.com/farseer-go/fs/dateTime"
 )
@@ -96,14 +97,18 @@ func Printf(format string, a ...any) {
 	fmt.Printf("%s %s", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss"), content)
 }
 
-// AppInfo 打印应用日志
-func AppInfo(appName string, contents ...any) {
-	content := fmt.Sprint(contents...)
-	fmt.Printf("%s %s %s\r\n", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss"), Colors[0]("["+appName+"]"), content)
+// ComponentInfo 打印应用日志
+func ComponentInfo(appName string, contents ...any) {
+	if configure.GetBool("Log.Component." + appName) {
+		content := fmt.Sprint(contents...)
+		fmt.Printf("%s %s %s\r\n", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss"), Colors[0]("["+appName+"]"), content)
+	}
 }
 
-// AppInfof 打印应用日志
-func AppInfof(appName string, format string, a ...any) {
-	content := fmt.Sprintf(format, a...)
-	fmt.Printf("%s %s %s\r\n", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss"), Colors[0]("["+appName+"]"), content)
+// ComponentInfof 打印应用日志
+func ComponentInfof(appName string, format string, a ...any) {
+	if configure.GetBool("Log.Component." + appName) {
+		content := fmt.Sprintf(format, a...)
+		fmt.Printf("%s %s %s\r\n", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss"), Colors[0]("["+appName+"]"), content)
+	}
 }

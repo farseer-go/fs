@@ -157,3 +157,20 @@ StartupModule is the startup module you define, as detailed in：[modules](modul
 // The framework starts and performs module initialization
 fs.Initialize[StartupModule]("FOPS")
 ```
+
+## Log Print
+`Log.Component` Set the switch for component printing logs
+
+if true, the Component will print Detailed Log
+```yaml
+Log:
+  LogLevel: "Information"
+  Component:
+    task: true
+    cacheManage: true
+    webapi: true
+    event: true
+    httpRequest: true
+    queue: true
+    fss: true
+```
