@@ -1,6 +1,7 @@
 package fs
 
 import (
+	"github.com/farseer-go/fs/configure"
 	"github.com/farseer-go/fs/dateTime"
 	"github.com/farseer-go/fs/flog"
 	"github.com/farseer-go/fs/modules"
@@ -12,6 +13,7 @@ import (
 	"os"
 	"reflect"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -54,9 +56,10 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 	flog.Println("应用名称：", flog.Colors[2](AppName))
 	flog.Println("主机名称：", flog.Colors[2](HostName))
 	flog.Println("系统时间：", flog.Colors[2](StartupAt.ToString("yyyy-MM-dd hh:mm:ss")))
-	flog.Println("进程ID：", flog.Colors[2](ProcessId))
-	flog.Println("应用ID：", flog.Colors[2](AppId))
-	flog.Println("应用IP：", flog.Colors[2](AppIp))
+	flog.Println("  进程ID：", flog.Colors[2](ProcessId))
+	flog.Println("  应用ID：", flog.Colors[2](AppId))
+	flog.Println("  应用IP：", flog.Colors[2](AppIp))
+	showComponentLog()
 	flog.Println("---------------------------------------")
 
 	var startupModule TModule
@@ -76,6 +79,23 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 			flog.Println("运行" + strconv.Itoa(index+1) + "：" + reflect.TypeOf(fn).String() + "，共耗时：" + sw.GetMillisecondsText())
 			flog.Println("---------------------------------------")
 		}
+	}
+}
+
+// 组件日志
+func showComponentLog() {
+	err := configure.ReadInConfig()
+	if err != nil { // 捕获读取中遇到的error
+		flog.Errorf("配置[farseer.yaml]读取时发生错误: %s \n", err)
+	} else {
+		logConfig := configure.GetMap("Log.Component")
+		var logSets []string
+		for k, v := range logConfig {
+			if v == "true" {
+				logSets = append(logSets, k)
+			}
+		}
+		flog.Println("日志开关：", flog.Colors[2](strings.Join(logSets, " ")))
 	}
 }
 

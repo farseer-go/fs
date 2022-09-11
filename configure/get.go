@@ -25,6 +25,11 @@ func GetSlice(key string) []string {
 	return viper.GetStringSlice(key)
 }
 
+// GetMap 读取子节点
+func GetMap(key string) map[string]string {
+	return viper.GetStringMapString(key)
+}
+
 // GetInt 获取配置
 func GetInt(key string) int {
 	return viper.GetInt(key)

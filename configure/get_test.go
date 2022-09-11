@@ -7,14 +7,15 @@ import (
 )
 
 func TestGetArray(t *testing.T) {
-	InitConfigure()
-	array := viper.GetStringSlice("Log.CloseComponent")
-
-	exists1 := viper.InConfig("Log.CloseComponent")
-	str := viper.Get("Log.CloseComponent")
-	exists2 := viper.InConfig("Log.CloseComponent.httpInvoke")
+	ReadInConfig()
+	array := viper.GetStringSlice("Log.Component")
+	exists1 := viper.InConfig("Log.Component")
+	str := viper.Get("Log.Component")
+	exists2 := viper.InConfig("Log.Component.httpInvoke")
+	mapstr := viper.GetStringMapString("Log.Component")
 	fmt.Print(exists1)
 	fmt.Print(exists2)
 	fmt.Print(str)
+	fmt.Print(mapstr)
 	fmt.Println(len(array))
 }
