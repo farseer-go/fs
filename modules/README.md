@@ -6,12 +6,13 @@ Use instead of `func init() { }` to accomplish what you expect by an explicit in
 ## What modules are available for farseer-go？
 * cache.Module
 * cacheMemory.Module
-* redis.Module
 * data.Module
 * elasticSearch.Module
 * eventBus.Module
+* fss.Module
 * queue.Module
 * rabbit.Module
+* redis.Module
 * tasks.Module
 
 ## Add your StartupModule Files
