@@ -16,6 +16,10 @@ It has a [.net core](https://github.com/FarseerNet/Farseer.Net/tree/dev/Doc) Mat
 
 ## What are the features?
 
+**Unified Configuration**
+
+Global unified configuration management
+
 **Elegant**
 
 We use `IOC` technology throughout the framework and your business systems.
@@ -46,12 +50,16 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
 | [eventBus](https://github.com/farseer-go/eventBus)           | Publish subscription for events                                      |
 | [fs](https://github.com/farseer-go/fs)                       | Farseer Basic                                                        |
 | [fss](https://github.com/farseer-go/fss)                     | fss client                                                           |
+| [linkTrack](https://github.com/farseer-go/linkTrack)         | Link Tracking                                                        |
 | [mapper](https://github.com/farseer-go/mapper)               | Conversions between objects, such as DO to DTO                       |
+| [mvc](https://github.com/farseer-go/mvc)                     | web mvc                                                              |
 | [queue](https://github.com/farseer-go/queue)                 | Local queue, multiple writes, bulk consumption, multiple subscribers |
 | [rabbit](https://github.com/farseer-go/rabbit)               | rabbit client                                                        |
 | [redis](https://github.com/farseer-go/redis)                 | redis client                                                         |
+| [redisStream](https://github.com/farseer-go/redisStream)     | redisStream client                                                   |
 | [tasks](https://github.com/farseer-go/tasks)                 | Local job                                                            |
 | [utils](https://github.com/farseer-go/utils)                 | General Tools                                                        |
+| [webapi](https://github.com/farseer-go/webapi)               | webapi mvc                                                           |
 
 ## What are the functions?
 * [fs（框架初始化）](#how-to-start)
