@@ -42,6 +42,7 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
 
 | Component                                                    | Description                                                          |
 |--------------------------------------------------------------|----------------------------------------------------------------------|
+| [async](https://github.com/farseer-go/async)                 | Parallel asynchronous execution, uniform await to get the result     |
 | [cache](https://github.com/farseer-go/cache)                 | Multi-level cache                                                    |
 | [cacheMemory](https://github.com/farseer-go/cacheMemory)     | Memory Cache                                                         |
 | [collections](https://github.com/farseer-go/collections)     | Support for List collections and linq syntax                         |
