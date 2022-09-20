@@ -7,6 +7,11 @@ import (
 
 func ReadInConfig() error {
 	viper.SetConfigFile("./farseer.yaml")
+	viper.AutomaticEnv()
+	viper.AllowEmptyEnv(true)
+	// 配置文件，我们都是通过a.b访问的。而环境变量是A_B。
+	// 让环境变量支持A.B的方式，使用替换的方式以支持。
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	return viper.ReadInConfig() //找到并读取配置文件
 }
 
