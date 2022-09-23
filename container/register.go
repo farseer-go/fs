@@ -20,6 +20,7 @@ type ioc[TInterface any] struct {
 	constructor any
 }
 
+// 注册实例，默认使用单例
 func Register(constructor any) {
 	if container == nil {
 		exception.ThrowRefuseException("请先调用fs.Initialize[Module]()初始化模块")
