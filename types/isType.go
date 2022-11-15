@@ -35,6 +35,18 @@ func IsList(val reflect.Value) (reflect.Type, bool) {
 	return realType, strings.HasPrefix(realType.String(), "collections.List[")
 }
 
+// IsDictionary 判断类型是否为Dictionary
+func IsDictionary(val reflect.Value) (reflect.Type, bool) {
+	realType := GetRealType(val)
+	return realType, strings.HasPrefix(realType.String(), "collections.Dictionary[")
+}
+
+// IsPageList 判断类型是否为PageList
+func IsPageList(val reflect.Value) (reflect.Type, bool) {
+	realType := GetRealType(val)
+	return realType, strings.HasPrefix(realType.String(), "collections.PageList[")
+}
+
 // IsStruct 是否为Struct
 func IsStruct(val reflect.Value) (reflect.Type, bool) {
 	realType := GetRealType(val)

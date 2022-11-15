@@ -157,8 +157,10 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
     * GetRealType（获取真实类型）
     * IsSlice（是否为切片类型）
     * IsMap（是否为Map类型）
-    * IsList（判断类型是否为List）
     * IsStruct（是否为Struct）
+    * IsList（判断类型是否为List）
+    * IsDictionary（是否为Dictionary）
+    * IsPageList（是否为PageList）
 
 ## How to start？
 StartupModule is the startup module you define, as detailed in：[modules](modules/)
