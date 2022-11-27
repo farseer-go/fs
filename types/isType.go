@@ -5,18 +5,6 @@ import (
 	"strings"
 )
 
-// GetRealType 获取真实类型
-func GetRealType(val reflect.Value) reflect.Type {
-	if val.Kind() == reflect.Pointer {
-		val = val.Elem()
-	}
-	if val.Kind() == reflect.Interface {
-		val = val.Elem()
-		//val = reflect.ValueOf(val.Interface())
-	}
-	return val.Type()
-}
-
 // IsSlice 是否为切片类型
 func IsSlice(val reflect.Value) (reflect.Type, bool) {
 	realType := GetRealType(val)
@@ -45,6 +33,11 @@ func IsDictionary(val reflect.Value) (reflect.Type, bool) {
 func IsPageList(val reflect.Value) (reflect.Type, bool) {
 	realType := GetRealType(val)
 	return realType, strings.HasPrefix(realType.String(), "collections.PageList[")
+}
+
+// IsCollections 是否为集合
+func IsCollections(ty reflect.Type) bool {
+	return strings.HasPrefix(ty.String(), "collections.")
 }
 
 // IsStruct 是否为Struct

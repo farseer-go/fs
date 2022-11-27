@@ -161,6 +161,9 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
     * IsList（判断类型是否为List）
     * IsDictionary（是否为Dictionary）
     * IsPageList（是否为PageList）
+    * IsCollections（是否为是否为集合）
+    * GetInParam（获取方法的入参）
+    * GetOutParam（获取方法的出参）
 
 ## How to start？
 StartupModule is the startup module you define, as detailed in：[modules](modules/)
