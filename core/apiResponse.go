@@ -21,13 +21,13 @@ func (receiver *ApiResponse[TData]) SetData(data TData) {
 
 // ToJson 转成Json
 func (receiver *ApiResponse[TData]) ToJson() string {
-	bytes, _ := json.Marshal(*receiver)
+	bytes, _ := json.Marshal(receiver)
 	return string(bytes)
 }
 
 // ToBytes 转成Json字节
 func (receiver *ApiResponse[TData]) ToBytes() []byte {
-	bytes, _ := json.Marshal(*receiver)
+	bytes, _ := json.Marshal(receiver)
 	return bytes
 }
 
