@@ -1,6 +1,8 @@
 package types
 
-import "reflect"
+import (
+	"reflect"
+)
 
 // GetRealType 获取真实类型
 func GetRealType(val reflect.Value) reflect.Type {
@@ -29,4 +31,13 @@ func GetOutParam(methodType reflect.Type) []reflect.Type {
 		arr = append(arr, methodType.Out(inIndex))
 	}
 	return arr
+}
+
+// IsDtoModel 当只有一个参数，且非集合类型，又是结构类型时，判断为DTO
+func IsDtoModel(lst []reflect.Type) bool {
+	if len(lst) != 1 {
+		return false
+	}
+
+	return !IsCollections(lst[0]) && lst[0].Kind() == reflect.Struct
 }
