@@ -14,13 +14,13 @@ func InitContainer() {
 }
 
 type ioc[TInterface any] struct {
-	isTransient bool
-	name        string
+	isTransient bool   // 是否注册临时实例（默认为单例）
+	name        string // 别名
 	inter       *TInterface
 	constructor any
 }
 
-// 注册实例，默认使用单例
+// Register 注册实例，默认使用单例
 func Register(constructor any) {
 	if container == nil {
 		exception.ThrowRefuseException("请先调用fs.Initialize[Module]()初始化模块")
