@@ -1,190 +1,118 @@
-## What is Farseer.Go?
+# 概述
+## 什么是farseer-go
+针对 **golang** 平台下的一套标准制定的框架。
 
-[English](https://github.com/farseer-go/fs) | [中文](https://github.com/farseer-go/fs/blob/main/README.zh-cn.md)
+我们为您选型出目前最为流行的组件，并按模块化来提供使用这些组件。
 
-A standard set of frameworks developed for the **golang** platform.
+框架完美支持 **DDD领域驱动** 的技术实现，如`仓储资源库`、`应用层事务`、`领域事件`、`应用层动态WebAPI`。
 
-We have selected the most popular components for you and provide the use of these components in a modular way.
+我们希望，在日常开发中，只需要直接依赖这一套框架便可应付常用的技术组件
 
-The framework perfectly supports **DDD domain-driven** technical implementations such as `repository`, `application-layer transactions`, `domain events`, `application-layer`, `dynamic WebAPI`.
+它有一个[.net core](https://github.com/FarseerNet/Farseer.Net/tree/dev/Doc) 成熟版本，已经使用了10多年，非常棒
 
-We hope that in the daily development, only need to directly rely on this set of frameworks can cope with the common technical components
+?> 不用担心框架会让你依赖过多的包，我们的组件都是独立的包，意味着如果你使用`webapi组件`则不会依赖`redis包`
 
-It has a [.net core](https://github.com/FarseerNet/Farseer.Net/tree/dev/Doc) Mature version, has been used for more than 10 years, very good
+!> 每个组件都是单独的包，因此版本号也是单独发布的
 
-> *The current version of golang is `Alpha`, which means the features are not perfect yet, we are working on adding new features to the framework gradually. You can follow us first*.
+> [文档](https://farseer-go.github.io/doc/)
 
-## What are the features?
+## 有什么特点？
 
-**Unified Configuration**
+### 统一配置
 
-Global unified configuration management
+常用的框架中都需要配置各种连接字符串，而`farseer-go`将这些配置都整合到`farseer.yaml`
 
-**Elegant**
+### 优雅
 
-We use `IOC` technology throughout the framework and your business systems.
+我们会让写代码跟阅读英文书一样流畅，没有晦涩难懂、无意义的参数
 
-**Simple**
+### 极简
 
-We use `AOP` technology so that you don't have to write additional non-business functional code such as transactions, caching, exception catching, logging, linking Track
+所有的组件功能在提供使用时，最简单的调用，是我们最主要的考虑目标之一
 
-**Lightweight**
+### 轻量
 
-The framework makes extensive use of `collection pooling` technology to make your application take up less memory.
+我们将所有组件打散在单独地包中，或许你只需要用到像webapi组件时，不会让你依赖其它不需要的包
 
-**Tracking**
+### 链路追踪
 
-If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocker, local Queue), EventBus, Task, FSS, etc. that we provide, you don't need to do anything, the system will implicitly implement link tracking for you and provide API request logs, slow queries (all of the previously mentioned will be logged).
+如果您使用我们提供的Orm、Redis、Http、Grpc、Elasticsearch、MQ(Rabbit、RedisStream、Rocker、本地Queue)、EventBus、Task、FSS等等，您什么都不需要做，系统将隐式为您实现链路追踪，并提供API请求日志、慢查询（前面提到的都会记录）。
 
-[FOPS](https://github.com/FarseerNet/FOPS) Project (automatic build, link trace console, K8S cluster log collection) supports code non-intrusive full link real-time monitoring.
+> 结合[FOPS](https://github.com/FarseerNet/FOPS) 项目（自动构建、链路追踪控制台、K8S集群日志收集）支持代码无侵入的全链路实时监控。
 
-## What packages are available?
+## 如何开始
 
-| Component                                                    | Description                                                          |
-|--------------------------------------------------------------|----------------------------------------------------------------------|
-| [async](https://github.com/farseer-go/async)                 | Parallel asynchronous execution, uniform await to get the result     |
-| [cache](https://github.com/farseer-go/cache)                 | Multi-level cache                                                    |
-| [cacheMemory](https://github.com/farseer-go/cacheMemory)     | Memory Cache                                                         |
-| [collections](https://github.com/farseer-go/collections)     | Support for List collections and linq syntax                         |
-| [data](https://github.com/farseer-go/data)                   | Database ORM                                                         |
-| [elasticSearch](https://github.com/farseer-go/elasticSearch) | elasticSearch client                                                 |
-| [eventBus](https://github.com/farseer-go/eventBus)           | Publish subscription for events                                      |
-| [fs](https://github.com/farseer-go/fs)                       | Farseer Basic                                                        |
-| [fss](https://github.com/farseer-go/fss)                     | fss client                                                           |
-| [linkTrack](https://github.com/farseer-go/linkTrack)         | Link Tracking                                                        |
-| [mapper](https://github.com/farseer-go/mapper)               | Conversions between objects, such as DO to DTO                       |
-| [mvc](https://github.com/farseer-go/mvc)                     | web mvc                                                              |
-| [queue](https://github.com/farseer-go/queue)                 | Local queue, multiple writes, bulk consumption, multiple subscribers |
-| [rabbit](https://github.com/farseer-go/rabbit)               | rabbit client                                                        |
-| [redis](https://github.com/farseer-go/redis)                 | redis client                                                         |
-| [redisStream](https://github.com/farseer-go/redisStream)     | redisStream client                                                   |
-| [tasks](https://github.com/farseer-go/tasks)                 | Local job                                                            |
-| [utils](https://github.com/farseer-go/utils)                 | General Tools                                                        |
-| [webapi](https://github.com/farseer-go/webapi)               | webapi mvc                                                           |
-
-## What are the functions?
-* [fs（框架初始化）](#how-to-start)
-    * Initialize （初始化框架）
-* [configure（配置读写）](configure/)
-    * GetString （获取配置）
-    * SetDefault （设置配置的默认值）
-* [container（容器IOC）](container/)
-    * func
-        * Use （自定义注册）
-          * Transient（临时模式（默认为单例模式））
-          * Name（Ioc别名）
-          * Register （注册到容器）
-        * Register （单例且没有别名注册到容器）
-        * Resolve （从容器中获取实例）
-        * ResolveName （指定ioc别名从容器中获取实例）
-* [core（通用类型）](core/)
-    * struct
-        * ApiResponseString （标准的API输出（默认string值））
-        * ApiResponseInt （标准的API输出（默认int值））
-        * ApiResponseLong （标准的API输出（默认int64值））
-        * ApiResponse （标准的API输出（泛型））
-            * .SetData （设置Data字段的值）
-    * func
-        * Success （接口调用成功后返回的Json）
-        * Error （接口调用失时返回的Json）
-        * Error403 （接口调用失时返回的Json）
-    * core/eumLogLevel
-        * Enum （日志等级）
-* [dateTime（时间日期）](dateTime/)
-  * func
-    * ToString（转字符串）
-    * Now（当前时间）
-    * New（初始化）
-    * Year（获取年）
-    * Month（获取月）
-    * Day（获取日）
-    * Hour（获取小时）
-    * Minute（获取分钟）
-    * Second（获取秒）
-    * Date（获取Date部份）
-    * AddYears（添加年）
-    * AddMonths（添加月份）
-    * AddDays（添加天数）
-    * AddHours（添加小时）
-    * AddMinutes（添加分钟）
-    * AddSeconds（添加秒）
-    * AddDate（添加Date）
-    * AddTime（添加Time）
-    * ToTime（获取time.Time类型）
-* [exception（异常处理）](exception/)
-    * struct
-        * RefuseException
-    * func
-        * ThrowRefuseException （抛出RefuseException异常）
-        * ThrowRefuseExceptionf （抛出RefuseException异常）
-        * Catch（捕获异常）
-            * .RefuseException（捕获RefuseException异常）
-                * .ContinueRecover（是否继续让下一个捕获继续处理）
-            * .String（捕获String异常）
-            * .Any（捕获Any异常）
-* [flog（日志打印）](flog/)
-    * func
-        * Trace（打印Trace日志）
-        * Debug（打印Debug日志）
-        * Info（打印Info日志）
-        * Warning（打印Warning日志）
-        * Error（打印Error日志）
-        * Critical（打印Critical日志）
-        * Log（打印日志）
-        * Print（打印日志）
-* [modules](modules/)
-    * StartModules （启动模块）
-* [net](net/)
-    * LocalIPv4s （获取本机IP地址）
-* [parse（类型转换）](parse/)
-    * Convert （通用的类型转换）
-    * IsInt （是否为int类型）
-    * IsEqual（两个any值是否相等）
-* [snowflake（雪花算法）](snowflake/)
-    * Init（全局初始化一次)
-    * GenerateId（生成唯一ID）
-* [stopwatch](stopwatch/)
-    * func
-        * StartNew（创建计时器，并开始计时）
-    * struct
-        * Stopwatch
-            * Restart（重置计时器）
-            * Start（继续计时）
-            * Stop（停止计时）
-            * ElapsedMilliseconds（返回当前已计时的时间（毫秒））
-* [types](types/)
-  * func
-    * GetRealType（获取真实类型）
-    * IsSlice（是否为切片类型）
-    * IsMap（是否为Map类型）
-    * IsStruct（是否为Struct）
-    * IsList（判断类型是否为List）
-    * IsDictionary（是否为Dictionary）
-    * IsPageList（是否为PageList）
-    * IsCollections（是否为是否为集合）
-    * GetInParam（获取方法的入参）
-    * GetOutParam（获取方法的出参）
-
-## How to start？
-StartupModule is the startup module you define, as detailed in：[modules](modules/)
+_main.go_
 ```go
-// The framework starts and performs module initialization
-fs.Initialize[StartupModule]("FOPS")
+package main
+import "github.com/farseer-go/fs"
+
+func main() {
+	fs.Initialize[StartupModule]("your project Name")
+}
 ```
 
-## Log Print
-`Log.Component` Set the switch for component printing logs
+?> 只需要在main函数第一行，执行`fs.Initialize`，即可初始化框架
 
-if true, the Component will print Detailed Log
-```yaml
-Log:
-  LogLevel: "Information"
-  Component:
-    task: true
-    cacheManage: true
-    webapi: true
-    event: true
-    httpRequest: true
-    queue: true
-    fss: true
+运行后，会在控制台打印加载信息：
+
+```
+2022-12-01 17:07:24 应用名称： your project Name
+2022-12-01 17:07:24 主机名称： MacBook-Pro.local
+2022-12-01 17:07:24 系统时间： 2022-12-01 17:07:24
+2022-12-01 17:07:24   进程ID： 6123
+2022-12-01 17:07:24   应用ID： 193337022963818496
+2022-12-01 17:07:24   应用IP： 192.168.1.4
+2022-12-01 17:07:24 日志开关： 
+2022-12-01 17:07:24 ---------------------------------------
+2022-12-01 17:07:24 加载模块...
+2022-12-01 17:07:24 加载模块：webapi.Module
+2022-12-01 17:07:24 加载模块：domain.Module
+2022-12-01 17:07:24 加载模块：application.Module
+2022-12-01 17:07:24 加载模块：interfaces.Module
+2022-12-01 17:07:24 加载模块：data.Module
+2022-12-01 17:07:24 加载模块：eventBus.Module
+2022-12-01 17:07:24 加载模块：queue.Module
+2022-12-01 17:07:24 加载模块：infrastructure.Module
+2022-12-01 17:07:24 加载模块：main.StartupModule
+2022-12-01 17:07:24 加载完毕，共加载 10 个模块
+2022-12-01 17:07:24 ---------------------------------------
+2022-12-01 17:07:24 Modules模块初始化...
+2022-12-01 17:07:24 耗时：0 ms modules.FarseerKernelModule.PreInitialize()
+2022-12-01 17:07:24 耗时：0 ms webapi.Module.PreInitialize()
+2022-12-01 17:07:24 耗时：0 ms domain.Module.PreInitialize()
+2022-12-01 17:07:24 耗时：0 ms application.Module.PreInitialize()
+2022-12-01 17:07:24 耗时：0 ms interfaces.Module.PreInitialize()
+2022-12-01 17:07:24 耗时：0 ms data.Module.PreInitialize()
+2022-12-01 17:07:24 耗时：0 ms eventBus.Module.PreInitialize()
+2022-12-01 17:07:24 耗时：0 ms queue.Module.PreInitialize()
+2022-12-01 17:07:24 耗时：0 ms infrastructure.Module.PreInitialize()
+2022-12-01 17:07:24 耗时：0 ms main.StartupModule.PreInitialize()
+2022-12-01 17:07:24 ---------------------------------------
+2022-12-01 17:07:24 耗时：0 ms modules.FarseerKernelModule.Initialize()
+2022-12-01 17:07:24 耗时：0 ms webapi.Module.Initialize()
+2022-12-01 17:07:24 耗时：0 ms domain.Module.Initialize()
+2022-12-01 17:07:24 耗时：0 ms application.Module.Initialize()
+2022-12-01 17:07:24 耗时：0 ms interfaces.Module.Initialize()
+2022-12-01 17:07:24 耗时：0 ms data.Module.Initialize()
+2022-12-01 17:07:24 耗时：0 ms eventBus.Module.Initialize()
+2022-12-01 17:07:24 耗时：0 ms queue.Module.Initialize()
+2022-12-01 17:07:24 耗时：0 ms infrastructure.Module.Initialize()
+2022-12-01 17:07:24 耗时：0 ms main.StartupModule.Initialize()
+2022-12-01 17:07:24 ---------------------------------------
+2022-12-01 17:07:24 耗时：0 ms modules.FarseerKernelModule.PostInitialize()
+2022-12-01 17:07:24 耗时：0 ms webapi.Module.PostInitialize()
+2022-12-01 17:07:24 耗时：0 ms domain.Module.PostInitialize()
+2022-12-01 17:07:24 耗时：0 ms application.Module.PostInitialize()
+2022-12-01 17:07:24 耗时：0 ms interfaces.Module.PostInitialize()
+2022-12-01 17:07:24 耗时：0 ms data.Module.PostInitialize()
+2022-12-01 17:07:24 耗时：0 ms eventBus.Module.PostInitialize()
+2022-12-01 17:07:24 耗时：0 ms queue.Module.PostInitialize()
+2022-12-01 17:07:24 耗时：0 ms infrastructure.Module.PostInitialize()
+2022-12-01 17:07:24 耗时：0 ms main.StartupModule.PostInitialize()
+2022-12-01 17:07:24 基础组件初始化完成
+2022-12-01 17:07:24 初始化完毕，共耗时：1 ms 
+2022-12-01 17:07:24 ---------------------------------------
+2022-12-01 17:07:24 [Info] Web服务已启动：http://localhost:8888/
+
 ```
