@@ -17,27 +17,45 @@
 
 ## 有什么特点？
 
-### 统一配置
+### 1、统一配置
 
 常用的框架中都需要配置各种连接字符串，而`farseer-go`将这些配置都整合到`farseer.yaml`
 
-### 优雅
+### 2、优雅
 
 我们会让写代码跟阅读英文书一样流畅，没有晦涩难懂、无意义的参数
 
-### 极简
+### 3、极简
 
 所有的组件功能在提供使用时，最简单的调用，是我们最主要的考虑目标之一
 
-### 轻量
+### 4、轻量
 
 我们将所有组件打散在单独地包中，或许你只需要用到像webapi组件时，不会让你依赖其它不需要的包
 
-### 链路追踪
+### 5、链路追踪
 
 如果您使用我们提供的Orm、Redis、Http、Grpc、Elasticsearch、MQ(Rabbit、RedisStream、Rocker、本地Queue)、EventBus、Task、FSS等等，您什么都不需要做，系统将隐式为您实现链路追踪，并提供API请求日志、慢查询（前面提到的都会记录）。
 
 > 结合[FOPS](https://github.com/FarseerNet/FOPS) 项目（自动构建、链路追踪控制台、K8S集群日志收集）支持代码无侵入的全链路实时监控。
+
+## 集成的组件
+- `collections`：数据集合
+- `webapi`：web api服务
+- `async`：异步编程
+- `mapper`：对象转换
+- `cacheMemory`：本地缓存
+- `redis`：redis client
+- `data`：数据库ORM
+- `elasticSearch`：es client
+- `eventBus`：事件总线
+- `queue`：本地队列
+- `tasks`：本地任务
+- `fss`：分布试调度中心client
+- `utils`：工具集
+- linkTrack：链路追踪（下一版本推出）
+- rabbit：rabbit client（下一版本推出）
+- redisStream：redis mq（下一版本推出）
 
 ## 如何开始
 
