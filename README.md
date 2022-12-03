@@ -14,7 +14,7 @@
 
 !> 每个组件都是单独的包，因此版本号也是单独发布的
 
-> [文档](https://farseer-go.github.io/doc/)
+> [文档：https://farseer-go.github.io/doc/](https://farseer-go.github.io/doc/)
 
 ## 有什么特点？
 
