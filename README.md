@@ -1,4 +1,5 @@
 # 概述
+> [文档：https://farseer-go.github.io/doc/](https://farseer-go.github.io/doc/)
 ## 什么是farseer-go
 针对 **golang** 平台下的一套标准制定的框架。
 
@@ -13,8 +14,6 @@
 ?> 不用担心框架会让你依赖过多的包，我们的组件都是独立的包，意味着如果你使用`webapi组件`则不会依赖`redis包`
 
 !> 每个组件都是单独的包，因此版本号也是单独发布的
-
-> [文档：https://farseer-go.github.io/doc/](https://farseer-go.github.io/doc/)
 
 ## 有什么特点？
 
