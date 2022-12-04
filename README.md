@@ -1,15 +1,17 @@
 # 概述
-> [文档：https://farseer-go.github.io/doc/](https://farseer-go.github.io/doc/)
+- [文档](https://farseer-go.github.io/doc/)
+- [GitHub](https://github.com/farseer-go)
+
 ## 什么是farseer-go
-针对 **golang** 平台下的一套标准制定的框架。
+针对 `golang` 平台下的一套技术框架。
 
 我们为您选型出目前最为流行的组件，并按模块化来提供使用这些组件。
 
-框架完美支持 **DDD领域驱动** 的技术实现，如`仓储资源库`、`应用层事务`、`领域事件`、`应用层动态WebAPI`。
+框架完美支持 `DDD领域驱动` 的战术设计，如`仓储资源库`、`应用层事务`、`领域事件`、`应用层动态WebAPI`。
 
-我们希望，在日常开发中，只需要直接依赖这一套框架便可应付常用的技术组件
+只需要这一套框架便可应付常用的项目应用
 
-它有一个[.net core](https://github.com/FarseerNet/Farseer.Net/tree/dev/Doc) 成熟版本，已经使用了10多年，非常棒
+它有一个[.net core](https://github.com/FarseerNet/Farseer.Net/) 成熟版本，已经使用了10多年，非常棒
 
 ?> 不用担心框架会让你依赖过多的包，我们的组件都是独立的包，意味着如果你使用`webapi组件`则不会依赖`redis包`
 
