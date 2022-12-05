@@ -47,23 +47,27 @@ func StartModules(farseerModules []FarseerModule) {
 	flog.Println("Modules模块初始化...")
 	sw := stopwatch.StartNew()
 	for _, farseerModule := range farseerModules {
+		moduleName := reflect.TypeOf(farseerModule).String()
 		sw.Restart()
 		farseerModule.PreInitialize()
-		flog.Println("耗时：" + sw.GetMillisecondsText() + reflect.TypeOf(farseerModule).String() + ".PreInitialize()")
+		flog.Println("耗时：" + sw.GetMillisecondsText() + moduleName + ".PreInitialize()")
 	}
 	flog.Println("---------------------------------------")
 
 	for _, farseerModule := range farseerModules {
+		moduleName := reflect.TypeOf(farseerModule).String()
 		sw.Restart()
 		farseerModule.Initialize()
-		flog.Println("耗时：" + sw.GetMillisecondsText() + reflect.TypeOf(farseerModule).String() + ".Initialize()")
+		flog.Println("耗时：" + sw.GetMillisecondsText() + moduleName + ".Initialize()")
 	}
 	flog.Println("---------------------------------------")
 
 	for _, farseerModule := range farseerModules {
+		moduleName := reflect.TypeOf(farseerModule).String()
 		sw.Restart()
 		farseerModule.PostInitialize()
-		flog.Println("耗时：" + sw.GetMillisecondsText() + reflect.TypeOf(farseerModule).String() + ".PostInitialize()")
+		flog.Println("耗时：" + sw.GetMillisecondsText() + moduleName + ".PostInitialize()")
+		moduleMap[moduleName] = sw.ElapsedMilliseconds()
 	}
 	flog.Println("基础组件初始化完成")
 }
