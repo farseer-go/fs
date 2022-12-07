@@ -28,45 +28,38 @@
 
 ## 有什么特点？
 
-### 1、统一配置
+- `统一配置`：`farseer-go`将常用包的各种连接字符串都整合到`./farseer.yaml`
 
-?> 常用的框架中都需要配置各种连接字符串，而`farseer-go`将这些配置都整合到`./farseer.yaml`
+- `优雅`：所有的模块都遵循开发者体验第一为原则。
 
-### 2、优雅
+- `极简`：尽可能让您少依赖模块中的包、参数。
 
-?> 所有的模块开发，都遵循开发者体验第一为原则，宁可移除体验不好的功能，也不能影响到框架的优雅调使用。
+- `模块化`：未使用的模块不会下载到你的环境中。
 
-### 3、极简
-
-?> 尽可能让您少依赖模块中的包。非必要参数，不会出现在您的开发过程中。
-
-### 4、模块化
-
-?> farseer-go是真正意义上的模块化框架，未使用的模块不会下载到你的环境中，使用到的模块，需要您显示加载并初始化。
-
-### 5、链路追踪（下个版本推出）
-
-?> 如果您使用我们提供的Orm、Redis、Http、Grpc、Elasticsearch、MQ(Rabbit、RedisStream、Rocker、本地Queue)、EventBus、Task、FSS等等，您什么都不需要做，系统将隐式为您实现链路追踪，并提供API请求日志、慢查询（前面提到的都会记录）。
+- `链路追踪`（下个版本推出）：如果您使用框架中的Orm、Redis、Http、Grpc、ES、MQ、EventBus、Task、FSS，将隐式为您实现链路追踪，并提供API请求日志、慢查询。
 
 > 结合[FOPS](https://github.com/FarseerNet/FOPS) 项目（自动构建、链路追踪控制台、K8S集群日志收集）支持代码无侵入的全链路实时监控。
 
 ## 集成的组件
-- `collections`：数据集合
-- `webapi`：web api服务
-- `async`：异步编程
-- `mapper`：对象转换
-- `cacheMemory`：本地缓存
-- `redis`：redis client
-- `data`：数据库ORM
-- `elasticSearch`：es client
-- `eventBus`：事件总线
-- `queue`：本地队列
-- `tasks`：本地任务
-- `fss`：分布试调度中心client
-- `utils`：工具集
-- linkTrack：链路追踪（下一版本推出）
-- rabbit：rabbit client（下一版本推出）
-- redisStream：redis mq（下一版本推出）
+
+| 包名            | 描述          |                                                                                                                                                                                                                                                                                                             |
+|---------------|-------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| collections   | 数据集合        | ![](https://img.shields.io/github/v/release/farseer-go/collections)![](https://img.shields.io/github/languages/code-size/farseer-go/collections)![](https://img.shields.io/github/directory-file-count/farseer-go/collections)![](https://img.shields.io/github/last-commit/farseer-go/collections)         |
+| webapi        | web api服务   | ![](https://img.shields.io/github/v/release/farseer-go/webapi)![](https://img.shields.io/github/languages/code-size/farseer-go/webapi)![](https://img.shields.io/github/directory-file-count/farseer-go/webapi)![](https://img.shields.io/github/last-commit/farseer-go/webapi)                             |
+| async         | 异步编程        | ![](https://img.shields.io/github/v/release/farseer-go/async)![](https://img.shields.io/github/languages/code-size/farseer-go/async)![](https://img.shields.io/github/directory-file-count/farseer-go/async)![](https://img.shields.io/github/last-commit/farseer-go/async)                                 |
+| mapper        | 对象转换        | ![](https://img.shields.io/github/v/release/farseer-go/mapper)![](https://img.shields.io/github/languages/code-size/farseer-go/mapper)![](https://img.shields.io/github/directory-file-count/farseer-go/mapper)![](https://img.shields.io/github/last-commit/farseer-go/mapper)                             |
+| cacheMemory   | 本地缓存        | ![](https://img.shields.io/github/v/release/farseer-go/cacheMemory)![](https://img.shields.io/github/languages/code-size/farseer-go/cacheMemory)![](https://img.shields.io/github/directory-file-count/farseer-go/cacheMemory)![](https://img.shields.io/github/last-commit/farseer-go/cacheMemory)         |
+| redis         | client      | ![](https://img.shields.io/github/v/release/farseer-go/redis)![](https://img.shields.io/github/languages/code-size/farseer-go/redis)![](https://img.shields.io/github/directory-file-count/farseer-go/redis)![](https://img.shields.io/github/last-commit/farseer-go/redis)                                 |
+| data          | 数据库ORM      | ![](https://img.shields.io/github/v/release/farseer-go/data)![](https://img.shields.io/github/languages/code-size/farseer-go/data)![](https://img.shields.io/github/directory-file-count/farseer-go/data)![](https://img.shields.io/github/last-commit/farseer-go/data)                                     |
+| elasticSearch | client      | ![](https://img.shields.io/github/v/release/farseer-go/elasticSearch)![](https://img.shields.io/github/languages/code-size/farseer-go/elasticSearch)![](https://img.shields.io/github/directory-file-count/farseer-go/elasticSearch)![](https://img.shields.io/github/last-commit/farseer-go/elasticSearch) |
+| eventBus      | 事件总线        | ![](https://img.shields.io/github/v/release/farseer-go/eventBus)![](https://img.shields.io/github/languages/code-size/farseer-go/eventBus)![](https://img.shields.io/github/directory-file-count/farseer-go/eventBus)![](https://img.shields.io/github/last-commit/farseer-go/eventBus)                     |
+| queue         | 本地队列        | ![](https://img.shields.io/github/v/release/farseer-go/queue)![](https://img.shields.io/github/languages/code-size/farseer-go/queue)![](https://img.shields.io/github/directory-file-count/farseer-go/queue)![](https://img.shields.io/github/last-commit/farseer-go/queue)                                 |
+| tasks         | 本地任务        | ![](https://img.shields.io/github/v/release/farseer-go/tasks)![](https://img.shields.io/github/languages/code-size/farseer-go/tasks)![](https://img.shields.io/github/directory-file-count/farseer-go/tasks)![](https://img.shields.io/github/last-commit/farseer-go/tasks)                                 |
+| fss           | 分布试调度client | ![](https://img.shields.io/github/v/release/farseer-go/fss)![](https://img.shields.io/github/languages/code-size/farseer-go/fss)![](https://img.shields.io/github/directory-file-count/farseer-go/fss)![](https://img.shields.io/github/last-commit/farseer-go/fss)                                         |
+| utils         | 工具集         | ![](https://img.shields.io/github/v/release/farseer-go/utils)![](https://img.shields.io/github/languages/code-size/farseer-go/utils)![](https://img.shields.io/github/directory-file-count/farseer-go/utils)![](https://img.shields.io/github/last-commit/farseer-go/utils)                                 |
+| linkTrack     | 链路追踪        | （即将推出）                                                                                                                                                                                                                                                                                                      |
+| rabbit        | client      | （即将推出）                                                                                                                                                                                                                                                                                                      |
+| redisStream   | redis mq    | （即将推出）                                                                                                                                                                                                                                                                                                      |
 
 ## 如何开始
 
@@ -80,9 +73,9 @@ func main() {
 }
 ```
 
-?> 只需要在main函数第一行，执行`fs.Initialize`，即可初始化框架
+?> 在main函数第一行，执行`fs.Initialize`，开始初始化框架
 
-运行后，会在控制台打印加载信息：
+运行后控制台打印加载信息：
 
 ```
 2022-12-01 17:07:24 应用名称： your project Name
@@ -91,7 +84,6 @@ func main() {
 2022-12-01 17:07:24   进程ID： 6123
 2022-12-01 17:07:24   应用ID： 193337022963818496
 2022-12-01 17:07:24   应用IP： 192.168.1.4
-2022-12-01 17:07:24 日志开关： 
 2022-12-01 17:07:24 ---------------------------------------
 2022-12-01 17:07:24 加载模块...
 2022-12-01 17:07:24 加载模块：webapi.Module
@@ -105,42 +97,14 @@ func main() {
 2022-12-01 17:07:24 加载模块：main.StartupModule
 2022-12-01 17:07:24 加载完毕，共加载 10 个模块
 2022-12-01 17:07:24 ---------------------------------------
-2022-12-01 17:07:24 Modules模块初始化...
-2022-12-01 17:07:24 耗时：0 ms modules.FarseerKernelModule.PreInitialize()
-2022-12-01 17:07:24 耗时：0 ms webapi.Module.PreInitialize()
-2022-12-01 17:07:24 耗时：0 ms domain.Module.PreInitialize()
-2022-12-01 17:07:24 耗时：0 ms application.Module.PreInitialize()
-2022-12-01 17:07:24 耗时：0 ms interfaces.Module.PreInitialize()
-2022-12-01 17:07:24 耗时：0 ms data.Module.PreInitialize()
-2022-12-01 17:07:24 耗时：0 ms eventBus.Module.PreInitialize()
-2022-12-01 17:07:24 耗时：0 ms queue.Module.PreInitialize()
-2022-12-01 17:07:24 耗时：0 ms infrastructure.Module.PreInitialize()
-2022-12-01 17:07:24 耗时：0 ms main.StartupModule.PreInitialize()
-2022-12-01 17:07:24 ---------------------------------------
-2022-12-01 17:07:24 耗时：0 ms modules.FarseerKernelModule.Initialize()
-2022-12-01 17:07:24 耗时：0 ms webapi.Module.Initialize()
-2022-12-01 17:07:24 耗时：0 ms domain.Module.Initialize()
-2022-12-01 17:07:24 耗时：0 ms application.Module.Initialize()
-2022-12-01 17:07:24 耗时：0 ms interfaces.Module.Initialize()
-2022-12-01 17:07:24 耗时：0 ms data.Module.Initialize()
-2022-12-01 17:07:24 耗时：0 ms eventBus.Module.Initialize()
-2022-12-01 17:07:24 耗时：0 ms queue.Module.Initialize()
-2022-12-01 17:07:24 耗时：0 ms infrastructure.Module.Initialize()
-2022-12-01 17:07:24 耗时：0 ms main.StartupModule.Initialize()
-2022-12-01 17:07:24 ---------------------------------------
-2022-12-01 17:07:24 耗时：0 ms modules.FarseerKernelModule.PostInitialize()
-2022-12-01 17:07:24 耗时：0 ms webapi.Module.PostInitialize()
-2022-12-01 17:07:24 耗时：0 ms domain.Module.PostInitialize()
-2022-12-01 17:07:24 耗时：0 ms application.Module.PostInitialize()
-2022-12-01 17:07:24 耗时：0 ms interfaces.Module.PostInitialize()
-2022-12-01 17:07:24 耗时：0 ms data.Module.PostInitialize()
-2022-12-01 17:07:24 耗时：0 ms eventBus.Module.PostInitialize()
-2022-12-01 17:07:24 耗时：0 ms queue.Module.PostInitialize()
-2022-12-01 17:07:24 耗时：0 ms infrastructure.Module.PostInitialize()
-2022-12-01 17:07:24 耗时：0 ms main.StartupModule.PostInitialize()
-2022-12-01 17:07:24 基础组件初始化完成
 2022-12-01 17:07:24 初始化完毕，共耗时：1 ms 
 2022-12-01 17:07:24 ---------------------------------------
 2022-12-01 17:07:24 [Info] Web服务已启动：http://localhost:8888/
-
 ```
+## Stargazers
+
+[![Stargazers repo roster for @farseer-go/fs](https://reporoster.com/stars/farseer-go/fs)](https://github.com/farseer-go/fs/stargazers)
+
+## Forkers
+
+[![Forkers repo roster for @farseer-go/fs](https://reporoster.com/forks/farseer-go/fs)](https://github.com/farseer-go/fs/network/members)
