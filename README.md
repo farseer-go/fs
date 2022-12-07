@@ -1,6 +1,15 @@
 # 概述
-- [文档](https://farseer-go.github.io/doc/)
-- [GitHub](https://github.com/farseer-go)
+- [文档（国内）](https://farseer-go.gitee.io/)
+- [文档（国外）](https://farseer-go.github.io/doc/)
+- [开源（Github）](https://github.com/farseer-go/fs)
+
+![](https://img.shields.io/github/stars/farseer-go?style=social)
+![](https://img.shields.io/github/license/farseer-go/fs)
+![](https://img.shields.io/github/go-mod/go-version/farseer-go/fs)
+![](https://img.shields.io/github/v/release/farseer-go/fs)
+![](https://img.shields.io/github/languages/code-size/farseer-go/fs)
+![](https://img.shields.io/github/directory-file-count/farseer-go/fs)
+![](https://img.shields.io/github/last-commit/farseer-go/fs)
 
 ## 什么是farseer-go
 针对 `golang` 平台下的一套技术框架。
@@ -21,23 +30,23 @@
 
 ### 1、统一配置
 
-常用的框架中都需要配置各种连接字符串，而`farseer-go`将这些配置都整合到`farseer.yaml`
+?> 常用的框架中都需要配置各种连接字符串，而`farseer-go`将这些配置都整合到`./farseer.yaml`
 
 ### 2、优雅
 
-我们会让写代码跟阅读英文书一样流畅，没有晦涩难懂、无意义的参数
+?> 所有的模块开发，都遵循开发者体验第一为原则，宁可移除体验不好的功能，也不能影响到框架的优雅调使用。
 
 ### 3、极简
 
-所有的组件功能在提供使用时，最简单的调用，是我们最主要的考虑目标之一
+?> 尽可能让您少依赖模块中的包。非必要参数，不会出现在您的开发过程中。
 
-### 4、轻量
+### 4、模块化
 
-我们将所有组件打散在单独地包中，或许你只需要用到像webapi组件时，不会让你依赖其它不需要的包
+?> farseer-go是真正意义上的模块化框架，未使用的模块不会下载到你的环境中，使用到的模块，需要您显示加载并初始化。
 
-### 5、链路追踪
+### 5、链路追踪（下个版本推出）
 
-如果您使用我们提供的Orm、Redis、Http、Grpc、Elasticsearch、MQ(Rabbit、RedisStream、Rocker、本地Queue)、EventBus、Task、FSS等等，您什么都不需要做，系统将隐式为您实现链路追踪，并提供API请求日志、慢查询（前面提到的都会记录）。
+?> 如果您使用我们提供的Orm、Redis、Http、Grpc、Elasticsearch、MQ(Rabbit、RedisStream、Rocker、本地Queue)、EventBus、Task、FSS等等，您什么都不需要做，系统将隐式为您实现链路追踪，并提供API请求日志、慢查询（前面提到的都会记录）。
 
 > 结合[FOPS](https://github.com/FarseerNet/FOPS) 项目（自动构建、链路追踪控制台、K8S集群日志收集）支持代码无侵入的全链路实时监控。
 
