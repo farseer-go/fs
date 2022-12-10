@@ -5,6 +5,12 @@ import (
 	"strings"
 )
 
+func ConvertValue(source any, defValType reflect.Type) reflect.Value {
+	defVal := reflect.New(defValType).Elem().Interface()
+	val := Convert(source, defVal)
+	return reflect.ValueOf(val)
+}
+
 // Convert 通用的类型转换
 func Convert[T any](source any, defVal T) T {
 	sourceKind := reflect.TypeOf(source).Kind()
@@ -56,6 +62,15 @@ func Convert[T any](source any, defVal T) T {
 		if isNumber(returnKind) {
 			return stringToNumber(strSource, defVal, returnKind).(T)
 		}
+
+		// 数组
+		if isArray(returnKind) {
+			arr := strings.Split(strSource, ",")
+			itemType := reflect.TypeOf(defVal).Elem()
+			if itemType.Kind() == reflect.String {
+				return any(arr).(T)
+			}
+		}
 	}
 	return defVal
 }
@@ -77,4 +92,9 @@ func isBool(kind reflect.Kind) bool {
 // 布尔值类型
 func isString(kind reflect.Kind) bool {
 	return kind == reflect.String
+}
+
+// 数组
+func isArray(kind reflect.Kind) bool {
+	return kind == reflect.Array || kind == reflect.Slice
 }
