@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+// ConvertValue 通用的类型转换
 func ConvertValue(source any, defValType reflect.Type) reflect.Value {
 	defVal := reflect.New(defValType).Elem().Interface()
 	val := Convert(source, defVal)
