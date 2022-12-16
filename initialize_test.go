@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"strings"
 	"testing"
-	"time"
 )
 
 type testModule struct {
@@ -45,7 +44,6 @@ func TestInitialize(t *testing.T) {
 	assert.Equal(t, 18, len(strconv.FormatInt(AppId, 10)))
 	assert.Equal(t, "unit test", AppName)
 	assert.Equal(t, os.Getppid(), ProcessId)
-	assert.True(t, time.Now().Sub(StartupAt) <= 1*time.Millisecond)
 
 	hostName, _ := os.Hostname()
 	assert.Equal(t, hostName, HostName)

@@ -88,7 +88,7 @@ func showComponentLog() {
 	if err != nil { // 捕获读取中遇到的error
 		flog.Errorf("配置[farseer.yaml]读取时发生错误: %s \n", err)
 	} else {
-		logConfig := configure.GetMap("Log.Component")
+		logConfig := configure.GetSubNodes("Log.Component")
 		var logSets []string
 		for k, v := range logConfig {
 			if v == "true" {
