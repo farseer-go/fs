@@ -1,5 +1,10 @@
 package configure
 
+import (
+	"os"
+	"strings"
+)
+
 type envConfig struct {
 }
 
@@ -12,6 +17,13 @@ func (r *envConfig) LoadConfigure() error {
 }
 
 func (r *envConfig) GetString(key string) string {
+	key = strings.ReplaceAll(key, ".", "_")
+	key = strings.ReplaceAll(key, "[", "_")
+	key = strings.ReplaceAll(key, "]", "_")
+	val, exists := os.LookupEnv(key)
+	if exists {
+		return val
+	}
 	return ""
 }
 

@@ -8,7 +8,6 @@ var configurationBuilder config
 
 type config struct {
 	def            map[string]any    // 默认配置
-	loaderData     map[string]any    // 已读取的配置
 	envKeyReplacer *strings.Replacer // 环境变量替换
 	configProvider []IConfigProvider // 配置提供者
 }
@@ -16,7 +15,6 @@ type config struct {
 func NewConfigurationBuilder() config {
 	return config{
 		def:            make(map[string]any),
-		loaderData:     make(map[string]any),
 		configProvider: []IConfigProvider{},
 	}
 }
@@ -29,8 +27,8 @@ func (c *config) AddYamlFile(configFile string) {
 
 // AddEnvironmentVariables 加载环境变量
 func (c *config) AddEnvironmentVariables() {
-	var yConfig IConfigProvider = NewEnvConfig()
-	c.configProvider = append(c.configProvider, yConfig)
+	var envConfig IConfigProvider = NewEnvConfig()
+	c.configProvider = append([]IConfigProvider{envConfig}, c.configProvider...)
 }
 
 // SetEnvKeyReplacer 环境变量替换
@@ -51,23 +49,16 @@ func (c *config) Build() error {
 
 // GetString 读取配置
 func (c *config) GetString(key string) string {
-	// 先查看之前是否已读取过
-	val, exists := c.loaderData[key]
-	if exists {
-		return val.(string)
-	}
-
 	// 遍历配置提供者
 	for _, provider := range c.configProvider {
 		v := provider.GetString(key)
 		if v != "" {
-			c.loaderData[key] = v
 			return v
 		}
 	}
 
 	// 是否有默认配置
-	val, exists = c.def[key]
+	val, exists := c.def[key]
 	if exists {
 		return val.(string)
 	}
@@ -77,19 +68,12 @@ func (c *config) GetString(key string) string {
 
 // GetSubNodes 获取所有子节点
 func (c *config) GetSubNodes(key string) map[string]any {
-	// 先查看之前是否已读取过
-	val, exists := c.loaderData[key]
-	if exists {
-		return val.(map[string]any)
-	}
-
 	// 遍历配置提供者
 	for _, provider := range c.configProvider {
 		v, exists := provider.Get(key)
 		if exists {
 			m, isOk := v.(map[string]any)
 			if isOk {
-				c.loaderData[key] = m
 				return m
 			}
 		}
@@ -99,12 +83,6 @@ func (c *config) GetSubNodes(key string) map[string]any {
 
 // GetSlice 获取数组
 func (c *config) GetSlice(key string) []string {
-	// 先查看之前是否已读取过
-	val, exists := c.loaderData[key]
-	if exists {
-		return val.([]string)
-	}
-
 	// 遍历配置提供者
 	for _, provider := range c.configProvider {
 		v, exists := provider.Get(key)
@@ -115,7 +93,6 @@ func (c *config) GetSlice(key string) []string {
 				for _, s := range m {
 					arr = append(arr, s.(string))
 				}
-				c.loaderData[key] = arr
 				return arr
 			}
 		}

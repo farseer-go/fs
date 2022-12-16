@@ -1,7 +1,6 @@
 package configure
 
 import (
-	"fmt"
 	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
@@ -23,7 +22,7 @@ func TestGetArray(t *testing.T) {
 // 测试环境变量
 func TestEnv(t *testing.T) {
 	_ = ReadInConfig()
-	fmt.Println(GetString("Database.default"))
-	os.Setenv("DATABASE_DEFAULT", "aaa")
+	assert.Equal(t, "DataType=mysql,PoolMaxSize=50,PoolMinSize=1,ConnectionString=root:steden@123@tcp(192.168.1.8:3306)/fss_demo?charset=utf8&parseTime=True&loc=Local", GetString("Database.default"))
+	os.Setenv("Database_default", "aaa")
 	assert.Equal(t, "aaa", GetString("Database.default"))
 }
