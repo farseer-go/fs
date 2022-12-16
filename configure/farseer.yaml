@@ -19,3 +19,7 @@ Log:
     httpInvoke: true
     task: true
     cacheManage: true
+A:
+  - "a1"
+  - "a2"
+  - "a3"
