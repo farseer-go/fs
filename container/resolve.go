@@ -1,24 +1,22 @@
 package container
 
 import (
-	"github.com/farseer-go/fs/exception"
-	"github.com/studyzy/iocgo"
+	"reflect"
 )
 
 // Resolve 从容器中获取实例
-func Resolve[T any]() (t T) {
-	if container == nil {
-		exception.ThrowRefuseException("请先调用fs.Initialize[Module]()初始化模块")
+// iocName = 别名
+func Resolve[T any](iocName ...string) T {
+	name := ""
+	if len(iocName) > 0 {
+		name = iocName[0]
 	}
-	_ = container.Resolve(&t)
-	return
-}
-
-// ResolveName 指定ioc别名从容器中获取实例
-func ResolveName[T any](iocName string) (t T) {
-	if container == nil {
-		exception.ThrowRefuseException("请先调用fs.Initialize[Module]()初始化模块")
+	var t *T
+	interfaceType := reflect.TypeOf(t).Elem()
+	ins := defContainer.resolve(interfaceType, name)
+	if ins == nil {
+		var nilResult T
+		return nilResult
 	}
-	_ = container.Resolve(&t, iocgo.ResolveName(iocName))
-	return
+	return ins.(T)
 }
