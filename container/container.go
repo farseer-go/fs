@@ -35,14 +35,9 @@ func (r *container) addComponent(model componentModel) {
 				os.Exit(-1)
 			}
 		}
-		componentModels = append(componentModels, model)
+		r.dependency[model.interfaceType] = append(componentModels, model)
 	}
 	r.component = append(r.component, model)
-}
-
-// 注册实例
-func (r *container) registerInstance(interfaceType any, ins struct{}, name string, lifecycle eumLifecycle.Enum) {
-
 }
 
 // 注册构造函数
@@ -63,6 +58,11 @@ func (r *container) registerConstructor(constructor any, name string, lifecycle 
 	}
 	model := NewComponentModel(name, lifecycle, interfaceType, constructor)
 	r.addComponent(model)
+}
+
+// 注册实例
+func (r *container) registerInstance(interfaceType any, ins struct{}, name string, lifecycle eumLifecycle.Enum) {
+
 }
 
 // 注册方法

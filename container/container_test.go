@@ -3,51 +3,57 @@ package container
 import (
 	"github.com/stretchr/testify/assert"
 	"testing"
+	"time"
 )
 
 type ITest interface {
-	TestCall() string
+	GetCount() int
+	AddCount()
+	ShowTime() string
 }
 
 type testStruct struct {
+	count    int
+	createAt time.Time
 }
 
-func (r testStruct) TestCall() string {
-	return "hello world"
+func (r *testStruct) GetCount() int {
+	return r.count
 }
 
-func Test_ioc_UseInstance(t *testing.T) {
-	//InitContainer()
-	//test := testStruct{}
-	//Use[ITest](test).Name("test1").Transient().Register()
-	//
-	//iocInstance := ResolveName[ITest]("test")
-	//assert.Nil(t, iocInstance)
-	//iocInstance = ResolveName[ITest]("test1")
-	//assert.NotNil(t, iocInstance)
-	//assert.Equal(t, iocInstance.TestCall(), "hello world")
+func (r *testStruct) AddCount() {
+	r.count++
 }
 
-func Test_ioc_UseFunc(t *testing.T) {
-	//InitContainer()
-	//Use[ITest](func() ITest { return testStruct{} }).Name("test1").Register()
-	//
-	//iocInstance := ResolveName[ITest]("test")
-	//assert.Nil(t, iocInstance)
-	//iocInstance = ResolveName[ITest]("test1")
-	//assert.NotNil(t, iocInstance)
-	//assert.Equal(t, iocInstance.TestCall(), "hello world")
+func (r *testStruct) ShowTime() string {
+	return r.createAt.String()
 }
 
 func TestRegister(t *testing.T) {
 	InitContainer()
-	Register(func() ITest {
-		return testStruct{}
-	})
+	// 注册单例
+	Register(func() ITest { return &testStruct{createAt: time.Now()} })
 
-	iocInstance := Resolve[ITest]("test")
-	assert.Nil(t, iocInstance)
-	iocInstance = Resolve[ITest]()
+	// 取一个不存在的别名的实例
+	assert.Nil(t, Resolve[ITest]("test"))
+
+	// 正常取出
+	iocInstance := Resolve[ITest]()
 	assert.NotNil(t, iocInstance)
-	assert.Equal(t, iocInstance.TestCall(), "hello world")
+	assert.Equal(t, iocInstance.GetCount(), 0)
+
+	// 测试单例
+	iocInstance.AddCount()
+	iocInstance2 := Resolve[ITest]()
+	assert.Equal(t, iocInstance2.GetCount(), 1)
+	assert.Equal(t, iocInstance.ShowTime(), iocInstance2.ShowTime())
+
+	// 注册临时对象
+	RegisterTransient(func() ITest { return &testStruct{createAt: time.Now()} }, "test2")
+	iocInstance = Resolve[ITest]("test2")
+	iocInstance.AddCount()
+
+	iocInstance2 = Resolve[ITest]("test2")
+	assert.Equal(t, iocInstance2.GetCount(), 0)
+	assert.NotEqual(t, iocInstance.ShowTime(), iocInstance2.ShowTime())
 }
