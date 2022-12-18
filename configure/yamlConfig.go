@@ -2,6 +2,7 @@ package configure
 
 import (
 	"fmt"
+	"github.com/farseer-go/fs/parse"
 	"gopkg.in/yaml.v3"
 	"os"
 )
@@ -38,13 +39,13 @@ func (r *yamlConfig) GetString(key string) string {
 	v, exists := r.data[key]
 	if exists {
 		switch v.(type) {
-		case string:
-			return v.(string)
 		case map[string]any:
 			data, err := yaml.Marshal(&v)
 			if err == nil {
 				return string(data)
 			}
+		default:
+			return parse.Convert(v, "")
 		}
 	}
 	return ""
@@ -71,9 +72,6 @@ func (r *yamlConfig) flattening(keyPrefix string, m map[string]any) {
 // 扁平化any
 func (r *yamlConfig) flatteningAny(key string, v any) {
 	switch v.(type) {
-	// 不需要再往里面遍历了
-	case string:
-		r.data[key] = v.(string)
 	// 需要继续往里面遍历子节点map
 	case map[string]any:
 		subNode := v.(map[string]any)
@@ -87,5 +85,7 @@ func (r *yamlConfig) flatteningAny(key string, v any) {
 		for subIndex := 0; subIndex < len(subNode); subIndex++ {
 			r.flatteningAny(key+fmt.Sprintf("[%d]", subIndex), subNode[subIndex])
 		}
+	default:
+		r.data[key] = v
 	}
 }
