@@ -40,14 +40,35 @@ func Convert[T any](source any, defVal T) T {
 		}
 	}
 
-	// bool转数字
+	// bool转...
 	if isBool(sourceKind) {
-		var result any = 0
 		boolSource := source.(bool)
-		if boolSource {
-			result = 1
+		var result any
+
+		// 转bool
+		if isBool(returnKind) {
+			result = boolSource
+			return result.(T)
 		}
-		return result.(T)
+
+		// 转数字
+		if isNumber(returnKind) {
+			result = 0
+			if boolSource {
+				result = 1
+			}
+			return result.(T)
+		}
+
+		if isString(returnKind) {
+			if boolSource {
+				result = "true"
+			} else {
+				result = "false"
+			}
+			return result.(T)
+		}
+		return defVal
 	}
 
 	// 字符串转...
