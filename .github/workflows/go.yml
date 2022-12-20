@@ -20,25 +20,10 @@ jobs:
       uses: actions/setup-go@v3
       with:
         go-version: 1.19
-
-    - name: Setup Go environment
-      uses: actions/setup-go@v3.5.0
-      with:
-        # The Go version to download (if necessary) and use. Supports semver spec and ranges.
-        go-version: 1.19
-        # Path to the go.mod or go.work file.
-        go-version-file: ./go.mod
-        # Set this option to true if you want the action to always check for the latest available version that satisfies the version spec
-        check-latest: true
-        # Used to pull node distributions from go-versions. Since there's a default, this is typically not supplied by the user. When running this action on github.com, the default value is sufficient. When running on GHES, you can pass a personal access token for github.com if you are experiencing rate limiting.
-        token: ""
-        # Used to specify whether caching is needed. Set to true, if you'd like to enable caching.
-        cache: true
-        # Used to specify the path to a dependency file - go.sum
-        cache-dependency-path: ./go.sum
-        # Target architecture for Go to use. Examples: x86, x64. Will use system architecture by default.
-        architecture: x86,x64
         
+    - name: Go Mod Tidy
+      run: go mod tidy
+      
     - name: Build
       run: go build -v ./...
 
