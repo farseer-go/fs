@@ -1,0 +1,34 @@
+package test
+
+import (
+	"github.com/farseer-go/fs/container"
+	"github.com/stretchr/testify/assert"
+	"testing"
+)
+
+type IDatabaseFactory interface {
+	CreateDatabase() IDatabase
+}
+
+type databaseFactory struct {
+}
+
+func (d *databaseFactory) CreateDatabase() IDatabase {
+	return &sqlserver{}
+}
+
+// 注册的函数
+func createDb(factory IDatabaseFactory) IDatabase {
+	return factory.CreateDatabase()
+}
+
+func TestMethod(t *testing.T) {
+	container.InitContainer()
+
+	// 注册获取IDatabase接口的方法
+	container.Register(createDb)
+	// 注册IDatabaseFactory接口实例
+	container.Register(func() IDatabaseFactory { return &databaseFactory{} })
+
+	assert.Equal(t, container.Resolve[IDatabase]().GetDbType(), "sqlserver")
+}
