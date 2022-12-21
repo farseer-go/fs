@@ -15,15 +15,21 @@
 ![](https://goreportcard.com/badge/github.com/farseer-go/fs)
 
 ## Introduction
+
 A **modular** and **complete infrastructure** framework based on Golang，create modern web applications and APIs
 
 Use the most popular components available today and provide them with modular technology.
 
-The framework perfectly supports `DDD domain-driven` tactical design, such as `warehousing repository`, `application-layer transactions`, `domain events`, `application-layer dynamic WebAPI`.
+The framework perfectly supports `DDD domain-driven` tactical design, such as `warehousing repository`
+, `application-layer transactions`, `domain events`, `application-layer dynamic WebAPI`.
 
-It has a mature version of [.net core](https://github.com/FarseerNet/Farseer.Net/) that has been in use for over 10 years and is great
+It has a mature version of [.net core](https://github.com/FarseerNet/Farseer.Net/) that has been in use for over 10
+years and is great
 
-> Don't worry about the framework making you depend on too many packages, farseer-go's components are all separate packages and unused packages are not downloaded into your application
+![](https://farseer-go.gitee.io/images/farseer-go.png)
+
+> Don't worry about the framework making you depend on too many packages, farseer-go's components are all separate
+> packages and unused packages are not downloaded into your application
 
 > Each component is a separate package, so the version number is also released separately
 
