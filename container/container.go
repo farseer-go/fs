@@ -174,7 +174,7 @@ func (r *container) inject(ins any) any {
 	insVal := reflect.Indirect(reflect.ValueOf(ins))
 	for i := 0; i < insVal.NumField(); i++ {
 		field := insVal.Type().Field(i)
-		if field.IsExported() && field.Type.Kind() == reflect.Interface {
+		if field.IsExported() && field.Type.Kind() == reflect.Interface && insVal.Field(i).IsNil() {
 			fieldIns := r.resolve(field.Type, field.Tag.Get("inject"))
 			insVal.Field(i).Set(reflect.ValueOf(fieldIns))
 		}
