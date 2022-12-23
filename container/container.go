@@ -194,3 +194,18 @@ func (r *container) injectByType(instanceType reflect.Type) any {
 	}
 	return instanceVal.Interface()
 }
+
+// 是否注册过
+func (r *container) isRegister(interfaceType reflect.Type, name string) bool {
+	componentModels, exists := r.dependency[interfaceType]
+	if !exists {
+		return false
+	}
+	for i := 0; i < len(componentModels); i++ {
+		// 找到了实现类
+		if componentModels[i].name == name {
+			return true
+		}
+	}
+	return false
+}

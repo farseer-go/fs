@@ -6,17 +6,17 @@ import (
 
 // Resolve 从容器中获取实例
 // iocName = 别名
-func Resolve[T any](iocName ...string) T {
+func Resolve[TInterface any](iocName ...string) TInterface {
 	name := ""
 	if len(iocName) > 0 {
 		name = iocName[0]
 	}
-	var t *T
-	interfaceType := reflect.TypeOf(t).Elem()
+	//var t TInterface
+	interfaceType := reflect.TypeOf((*TInterface)(nil)).Elem()
 	ins := defContainer.resolve(interfaceType, name)
 	if ins == nil {
-		var nilResult T
+		var nilResult TInterface
 		return nilResult
 	}
-	return ins.(T)
+	return ins.(TInterface)
 }

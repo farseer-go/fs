@@ -3,6 +3,7 @@ package container
 import (
 	"github.com/farseer-go/fs/container/eumLifecycle"
 	"github.com/farseer-go/fs/exception"
+	"reflect"
 )
 
 // Container 容器操作
@@ -46,4 +47,14 @@ func RegisterInstance[TInterface any](ins any, iocName ...string) {
 		name = iocName[0]
 	}
 	defContainer.registerInstance((*TInterface)(nil), ins, name, eumLifecycle.Single)
+}
+
+// IsRegister 是否注册过
+func IsRegister[TInterface any](iocName ...string) bool {
+	name := ""
+	if len(iocName) > 0 {
+		name = iocName[0]
+	}
+	interfaceType := reflect.TypeOf((*TInterface)(nil)).Elem()
+	return defContainer.isRegister(interfaceType, name)
 }
