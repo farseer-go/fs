@@ -32,6 +32,6 @@ jobs:
 
     - name: Run coverage
       #run: cd test && go test -race -coverprofile=coverage.txt -covermode=atomic
-      run: go test -covermode=count -coverprofile=coverage.txt -covermode=atomic -run="^Test" -coverpkg=$(go list ./... | grep -v "/test" | tr '\n' ',') ./test
+      run: go test -race -covermode=count -coverprofile=coverage.txt -covermode=atomic -run="^Test" -coverpkg=$(go list ./... | grep -v "/test" | tr '\n' ',') ./test
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
