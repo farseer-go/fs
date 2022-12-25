@@ -92,7 +92,7 @@ func showComponentLog() {
 
 		var logSets []string
 		for k, v := range logConfig {
-			if v == "true" {
+			if v == true {
 				logSets = append(logSets, k)
 			}
 		}
