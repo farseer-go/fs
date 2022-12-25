@@ -13,7 +13,7 @@ func ParseConfig[TConfig any](configString string) TConfig {
 	configRefVal := reflect.ValueOf(config).Elem()
 
 	if configRefVal.Type().Kind() != reflect.Struct {
-		panic("泛型只能是struct结构")
+		panic("A generic type can only be a struct")
 	}
 
 	// 第一步：字符串转成map

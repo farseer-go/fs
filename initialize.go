@@ -53,49 +53,52 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 	AppId = snowflake.GenerateId()
 	AppIp = net.GetIp()
 
-	flog.Println("应用名称：", flog.Colors[2](AppName))
-	flog.Println("主机名称：", flog.Colors[2](HostName))
-	flog.Println("系统时间：", flog.Colors[2](StartupAt.ToString("yyyy-MM-dd hh:mm:ss")))
-	flog.Println("  进程ID：", flog.Colors[2](ProcessId))
-	flog.Println("  应用ID：", flog.Colors[2](AppId))
-	flog.Println("  应用IP：", flog.Colors[2](AppIp))
+	flog.Println("AppName： ", flog.Colors[2](AppName))
+	flog.Println("AppID：   ", flog.Colors[2](AppId))
+	flog.Println("AppIP：   ", flog.Colors[2](AppIp))
+	flog.Println("HostName：", flog.Colors[2](HostName))
+	flog.Println("HostTime：", flog.Colors[2](StartupAt.ToString("yyyy-MM-dd hh:mm:ss")))
+	flog.Println("PID：     ", flog.Colors[2](ProcessId))
 	showComponentLog()
 	flog.Println("---------------------------------------")
 
 	var startupModule TModule
-	flog.Println("加载模块...")
+	flog.Println("Loading Module...")
 	dependModules = modules.Distinct(modules.GetDependModule(startupModule))
-	flog.Println("加载完毕，共加载 " + strconv.Itoa(len(dependModules)) + " 个模块")
+	flog.Println("Loaded, " + strconv.Itoa(len(dependModules)) + " modules in total")
 	flog.Println("---------------------------------------")
 
 	modules.StartModules(dependModules)
-	flog.Println("初始化完毕，共耗时：" + sw.GetMillisecondsText())
 	flog.Println("---------------------------------------")
 
 	if len(callbackFnList) > 0 {
 		for index, fn := range callbackFnList {
 			sw.Restart()
 			fn()
-			flog.Println("运行" + strconv.Itoa(index+1) + "：" + reflect.TypeOf(fn).String() + "，共耗时：" + sw.GetMillisecondsText())
+			flog.Println("Run " + strconv.Itoa(index+1) + "：" + reflect.TypeOf(fn).String() + "，Use：" + sw.GetMillisecondsText())
 			flog.Println("---------------------------------------")
 		}
 	}
+	flog.Println("Initialization completed, total time：" + sw.GetMillisecondsText())
 }
 
 // 组件日志
 func showComponentLog() {
 	err := configure.ReadInConfig()
 	if err != nil { // 捕获读取中遇到的error
-		flog.Errorf("配置[farseer.yaml]读取时发生错误: %s \n", err)
+		flog.Errorf("An error occurred while reading: %s \n", err)
 	} else {
 		logConfig := configure.GetSubNodes("Log.Component")
+
 		var logSets []string
 		for k, v := range logConfig {
 			if v == "true" {
 				logSets = append(logSets, k)
 			}
 		}
-		flog.Println("日志开关：", flog.Colors[2](strings.Join(logSets, " ")))
+		if len(logSets) > 0 {
+			flog.Println("Log Switch：", flog.Colors[2](strings.Join(logSets, " ")))
+		}
 	}
 }
 

@@ -20,7 +20,7 @@ func ThrowIfNotLoad(module FarseerModule) {
 	load := IsLoad(module)
 	if !load {
 		moduleName := reflect.TypeOf(module).String()
-		flog.Errorf("使用%s模块时，需要在启动模块中依赖%s模块，", flog.Colors[4](moduleName), flog.Colors[4](moduleName))
+		flog.Errorf("When using the %s module, you need to depend on the %s module in the startup module，", flog.Colors[4](moduleName), flog.Colors[4](moduleName))
 		os.Exit(1)
 	}
 }

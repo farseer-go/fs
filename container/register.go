@@ -16,7 +16,7 @@ func InitContainer() {
 // Register 注册实例，默认使用单例
 func Register(constructor any, iocName ...string) {
 	if defContainer == nil {
-		exception.ThrowRefuseException("请先调用fs.Initialize[Module]()初始化模块")
+		exception.ThrowRefuseException("Please call fs.Initialize[Module]() to initialize the module first")
 	}
 	name := ""
 	if len(iocName) > 0 {
@@ -28,7 +28,7 @@ func Register(constructor any, iocName ...string) {
 // RegisterTransient 注册实例，默认使用单例
 func RegisterTransient(constructor any, iocName ...string) {
 	if defContainer == nil {
-		exception.ThrowException("请先调用fs.Initialize[Module]()初始化模块")
+		exception.ThrowException("Please call fs.Initialize[Module]() to initialize the module first")
 	}
 	name := ""
 	if len(iocName) > 0 {
@@ -40,7 +40,7 @@ func RegisterTransient(constructor any, iocName ...string) {
 // RegisterInstance 注册实例，默认使用单例
 func RegisterInstance[TInterface any](ins any, iocName ...string) {
 	if defContainer == nil {
-		exception.ThrowException("请先调用fs.Initialize[Module]()初始化模块")
+		exception.ThrowException("Please call fs.Initialize[Module]() to initialize the module first")
 	}
 	name := ""
 	if len(iocName) > 0 {

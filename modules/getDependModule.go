@@ -15,7 +15,7 @@ func GetDependModule(module ...FarseerModule) []FarseerModule {
 			modules = append(modules, GetDependModule(dependsModules...)...)
 		}
 
-		flog.Println("加载模块：" + flog.Colors[5](reflect.TypeOf(farseerModule).String()) + "")
+		flog.Println("Loading Module：" + flog.Colors[5](reflect.TypeOf(farseerModule).String()) + "")
 		modules = append(modules, farseerModule)
 	}
 	return modules
@@ -44,13 +44,13 @@ func exists(lst []FarseerModule, module FarseerModule) bool {
 
 // StartModules 启动模块
 func StartModules(farseerModules []FarseerModule) {
-	flog.Println("Modules模块初始化...")
+	//flog.Println("module initialization...")
 	sw := stopwatch.StartNew()
 	for _, farseerModule := range farseerModules {
 		moduleName := reflect.TypeOf(farseerModule).String()
 		sw.Restart()
 		farseerModule.PreInitialize()
-		flog.Println("耗时：" + sw.GetMillisecondsText() + moduleName + ".PreInitialize()")
+		flog.Println("Elapsed time：" + sw.GetMillisecondsText() + moduleName + ".PreInitialize()")
 	}
 	flog.Println("---------------------------------------")
 
@@ -58,7 +58,7 @@ func StartModules(farseerModules []FarseerModule) {
 		moduleName := reflect.TypeOf(farseerModule).String()
 		sw.Restart()
 		farseerModule.Initialize()
-		flog.Println("耗时：" + sw.GetMillisecondsText() + moduleName + ".Initialize()")
+		flog.Println("Elapsed time：" + sw.GetMillisecondsText() + moduleName + ".Initialize()")
 	}
 	flog.Println("---------------------------------------")
 
@@ -66,20 +66,19 @@ func StartModules(farseerModules []FarseerModule) {
 		moduleName := reflect.TypeOf(farseerModule).String()
 		sw.Restart()
 		farseerModule.PostInitialize()
-		flog.Println("耗时：" + sw.GetMillisecondsText() + moduleName + ".PostInitialize()")
+		flog.Println("Elapsed time：" + sw.GetMillisecondsText() + moduleName + ".PostInitialize()")
 		moduleMap[moduleName] = sw.ElapsedMilliseconds()
 	}
-	flog.Println("基础组件初始化完成")
 }
 
 // ShutdownModules 关闭模块
 func ShutdownModules(farseerModules []FarseerModule) {
-	flog.Println("Modules模块关闭...")
+	flog.Println("Modules close...")
 	sw := stopwatch.StartNew()
 	for _, farseerModule := range farseerModules {
 		sw.Restart()
 		farseerModule.Shutdown()
-		flog.Println("耗时：" + sw.GetMillisecondsText() + reflect.TypeOf(farseerModule).String() + ".Shutdown()")
+		flog.Println("Elapsed time：" + sw.GetMillisecondsText() + reflect.TypeOf(farseerModule).String() + ".Shutdown()")
 	}
 	flog.Println("---------------------------------------")
 }

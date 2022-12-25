@@ -32,7 +32,7 @@ func (r *container) addComponent(model componentModel) {
 	} else {
 		for index := 0; index < len(componentModels); index++ {
 			if componentModels[index].name == model.name && componentModels[index].instanceType == model.instanceType {
-				panic(fmt.Sprintf("container：已存在同样的注册对象,interfaceType=%s,name=%s,instanceType=%s", model.interfaceType.String(), model.name, reflect.TypeOf(model.instanceType).String()))
+				panic(fmt.Sprintf("container：The same registration object already exists,interfaceType=%s,name=%s,instanceType=%s", model.interfaceType.String(), model.name, reflect.TypeOf(model.instanceType).String()))
 			}
 		}
 		r.dependency[model.interfaceType] = append(componentModels, model)
@@ -45,19 +45,19 @@ func (r *container) registerConstructor(constructor any, name string, lifecycle 
 	constructorType := reflect.TypeOf(constructor)
 	for inIndex := 0; inIndex < constructorType.NumIn(); inIndex++ {
 		if name == "" && constructorType.In(inIndex).String() == constructorType.String() {
-			panic("container：构造函数注册，当未设置别名时，入参的类型不能与返回的接口类型一样")
+			panic("container：Constructor registration, when no alias is set, the type of the entry cannot be the same as the type of the returned interface")
 		}
 
 		if constructorType.In(inIndex).Kind() != reflect.Interface {
-			panic("container：构造函数注册，入参类型必须为interface")
+			panic("container：Constructor registration，The input type must be interface")
 		}
 	}
 	if constructorType.NumOut() != 1 {
-		panic("container：构造函数注册，只能有1个出参")
+		panic("container：Constructor registration，There can only be 1 out participation")
 	}
 	interfaceType := constructorType.Out(0)
 	if interfaceType.Kind() != reflect.Interface {
-		panic("container：构造函数注册，出参类型只能为Interface")
+		panic("container：Constructor registration，The reference type can only be Interface")
 	}
 	model := NewComponentModel(name, lifecycle, interfaceType, constructor)
 	r.addComponent(model)
@@ -70,7 +70,7 @@ func (r *container) registerInstance(interfaceType any, ins any, name string, li
 		interfaceTypeOf = interfaceTypeOf.Elem()
 	}
 	if interfaceTypeOf.Kind() != reflect.Interface {
-		flog.Error("container：实例注册，interfaceType类型只能为Interface")
+		flog.Error("container：实例注册，The interfaceType type can only be Interface")
 		os.Exit(-1)
 	}
 	model := NewComponentModelByInstance(name, lifecycle, interfaceTypeOf, ins)
@@ -88,7 +88,7 @@ func (r *container) resolve(interfaceType reflect.Type, name string) any {
 	if interfaceType.Kind() == reflect.Interface {
 		componentModels, exists := r.dependency[interfaceType]
 		if !exists {
-			flog.Errorf("container：%s未注册", interfaceType.String())
+			flog.Errorf("container：%sUnregistered", interfaceType.String())
 			return nil
 		}
 
@@ -98,7 +98,7 @@ func (r *container) resolve(interfaceType reflect.Type, name string) any {
 				return r.getOrCreateIns(interfaceType, i)
 			}
 		}
-		flog.Errorf("container：%s未注册，name=%s", interfaceType.String(), name)
+		flog.Errorf("container：%sUnregistered，name=%s", interfaceType.String(), name)
 
 		// 结构对象，直接动态创建
 	} else if interfaceType.Kind() == reflect.Struct {
@@ -151,7 +151,7 @@ func (r *container) createIns(model componentModel) any {
 func (r *container) resolveDefaultOrFirstComponent(interfaceType reflect.Type) any {
 	componentModels, exists := r.dependency[interfaceType]
 	if !exists {
-		flog.Errorf("container：%s未注册", interfaceType.String())
+		flog.Errorf("container：%sUnregistered", interfaceType.String())
 		return nil
 	}
 
