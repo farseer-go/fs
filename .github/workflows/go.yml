@@ -24,8 +24,13 @@ jobs:
     - name: Go Mod Tidy
       run: go mod tidy
       
-    - name: Build
-      run: go build -v ./...
+#    - name: Build
+#      run: go build -v ./...
 
-    - name: Test
-      run: go test -v ./...
+#    - name: Test
+#      run: go test -v ./...
+
+    - name: Run coverage
+      run: go test -race -coverprofile=coverage.txt -covermode=atomic
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
