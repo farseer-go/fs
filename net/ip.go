@@ -18,9 +18,6 @@ func GetIp() string {
 func LocalIPv4s() ([]string, error) {
 	var ips []string
 	address, err := net.InterfaceAddrs()
-	if err != nil {
-		return ips, err
-	}
 
 	for _, a := range address {
 		if ipNet, ok := a.(*net.IPNet); ok && !ipNet.IP.IsLoopback() && ipNet.IP.To4() != nil {
@@ -28,5 +25,5 @@ func LocalIPv4s() ([]string, error) {
 		}
 	}
 
-	return ips, nil
+	return ips, err
 }
