@@ -54,14 +54,13 @@ func (catch *catchException) CatchWebException(expFn func(exp *WebException)) *c
 }
 
 // CatchException 捕获Any异常
-func (catch *catchException) CatchException(expFn func(exp any)) *catchException {
+func (catch *catchException) CatchException(expFn func(exp any)) {
 	if catch.exp == nil {
-		return nil
+		return
 	}
 	catch.exp = Try(func() {
 		expFn(catch.exp)
 	}).exp
-	return catch
 }
 
 // ThrowUnCatch 抛出未捕获的异常

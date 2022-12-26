@@ -21,7 +21,7 @@ func TestDateTime_ToString(t *testing.T) {
 	assert.Equal(t, 2022, dt.Year())
 	assert.Equal(t, 2022, dt.ToTime().Year())
 	assert.Equal(t, 9, dt.Month())
-	assert.Equal(t, 9, dt.ToTime().Month())
+	assert.Equal(t, time.Month(9), dt.ToTime().Month())
 	assert.Equal(t, 06, dt.Day())
 	assert.Equal(t, 06, dt.ToTime().Day())
 	assert.Equal(t, 21, dt.Hour())
