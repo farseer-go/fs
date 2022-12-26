@@ -4,11 +4,12 @@ package core
 type ApiResponseString ApiResponse[string]
 
 // ApiResponseStringSuccess 接口调用成功后返回的Json
-func ApiResponseStringSuccess(statusMessage string) ApiResponseString {
+func ApiResponseStringSuccess(statusMessage string, data string) ApiResponseString {
 	return ApiResponseString{
 		Status:        true,
 		StatusMessage: statusMessage,
 		StatusCode:    200,
+		Data:          data,
 	}
 }
 
