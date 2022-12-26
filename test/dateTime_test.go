@@ -19,11 +19,17 @@ func TestDateTime_ToString(t *testing.T) {
 	assert.Equal(t, "09/06/2022 21:14:25", dt.ToString("MM/dd/yyyy HH:mm:ss"))
 
 	assert.Equal(t, 2022, dt.Year())
+	assert.Equal(t, 2022, dt.ToTime().Year())
 	assert.Equal(t, 9, dt.Month())
+	assert.Equal(t, 9, dt.ToTime().Month())
 	assert.Equal(t, 06, dt.Day())
+	assert.Equal(t, 06, dt.ToTime().Day())
 	assert.Equal(t, 21, dt.Hour())
+	assert.Equal(t, 21, dt.ToTime().Hour())
 	assert.Equal(t, 14, dt.Minute())
+	assert.Equal(t, 14, dt.ToTime().Minute())
 	assert.Equal(t, 25, dt.Second())
+	assert.Equal(t, 25, dt.ToTime().Second())
 
 	assert.Equal(t, "2022-09-06 00:00:00", dt.Date().ToString("yyyy-MM-dd HH:mm:ss"))
 
@@ -42,4 +48,5 @@ func TestDateTime_ToString(t *testing.T) {
 
 	assert.Equal(t, "2023-11-09 21:14:25", dt.AddDate(1, 2, 3).ToString("yyyy-MM-dd HH:mm:ss"))
 	assert.Equal(t, "2022-09-06 22:16:28", dt.AddTime(1, 2, 3).ToString("yyyy-MM-dd HH:mm:ss"))
+
 }
