@@ -35,7 +35,7 @@ func Distinct(modules []FarseerModule) []FarseerModule {
 // 判断模块是否存在于数组中
 func exists(lst []FarseerModule, module FarseerModule) bool {
 	for _, farseerModule := range lst {
-		if farseerModule == module {
+		if reflect.ValueOf(farseerModule).String() == reflect.ValueOf(module).String() {
 			return true
 		}
 	}
