@@ -7,8 +7,9 @@ import (
 )
 
 func TestInstance(t *testing.T) {
-	container.InitContainer()
 	test := &mysql{}
+
+	container.InitContainer()
 	// 根据实例注册
 	container.RegisterInstance[IDatabase](test)
 	test.SetTableName("user4")

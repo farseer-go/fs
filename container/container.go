@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/farseer-go/fs/container/eumLifecycle"
 	"github.com/farseer-go/fs/flog"
-	"os"
 	"reflect"
 )
 
@@ -43,15 +42,12 @@ func (r *container) addComponent(model componentModel) {
 // 注册构造函数
 func (r *container) registerConstructor(constructor any, name string, lifecycle eumLifecycle.Enum) {
 	constructorType := reflect.TypeOf(constructor)
-	for inIndex := 0; inIndex < constructorType.NumIn(); inIndex++ {
-		if name == "" && constructorType.In(inIndex).String() == constructorType.String() {
-			panic("container：Constructor registration, when no alias is set, the type of the entry cannot be the same as the type of the returned interface")
-		}
 
-		if constructorType.In(inIndex).Kind() != reflect.Interface {
-			panic("container：Constructor registration，The input type must be interface")
-		}
+	if constructorType.Kind() != reflect.Func {
+		panic("container：Constructor registration，Can only be func type")
 	}
+
+	// 检查出参，只能为1个出参
 	if constructorType.NumOut() != 1 {
 		panic("container：Constructor registration，There can only be 1 out participation")
 	}
@@ -59,6 +55,18 @@ func (r *container) registerConstructor(constructor any, name string, lifecycle 
 	if interfaceType.Kind() != reflect.Interface {
 		panic("container：Constructor registration，The reference type can only be Interface")
 	}
+
+	// 入参中，不能包含当前接口类型
+	for inIndex := 0; inIndex < constructorType.NumIn(); inIndex++ {
+		if name == "" && constructorType.In(inIndex).String() == interfaceType.String() {
+			panic("container：Constructor registration, when no alias is set, the type of the entry cannot be the same as the type of the returned interface")
+		}
+
+		if constructorType.In(inIndex).Kind() != reflect.Interface {
+			panic("container：Constructor registration，The input type must be interface")
+		}
+	}
+
 	model := NewComponentModel(name, lifecycle, interfaceType, constructor)
 	r.addComponent(model)
 }
@@ -70,11 +78,9 @@ func (r *container) registerInstance(interfaceType any, ins any, name string, li
 		interfaceTypeOf = interfaceTypeOf.Elem()
 	}
 	if interfaceTypeOf.Kind() != reflect.Interface {
-		flog.Error("container：实例注册，The interfaceType type can only be Interface")
-		os.Exit(-1)
+		panic("container：实例注册，The interfaceType type can only be Interface")
 	}
 	model := NewComponentModelByInstance(name, lifecycle, interfaceTypeOf, ins)
-	model.instance = ins
 	r.addComponent(model)
 }
 
@@ -88,7 +94,7 @@ func (r *container) resolve(interfaceType reflect.Type, name string) any {
 	if interfaceType.Kind() == reflect.Interface {
 		componentModels, exists := r.dependency[interfaceType]
 		if !exists {
-			flog.Errorf("container：%sUnregistered", interfaceType.String())
+			flog.Errorf("container：%s Unregistered", interfaceType.String())
 			return nil
 		}
 
@@ -98,13 +104,11 @@ func (r *container) resolve(interfaceType reflect.Type, name string) any {
 				return r.getOrCreateIns(interfaceType, i)
 			}
 		}
-		flog.Errorf("container：%sUnregistered，name=%s", interfaceType.String(), name)
+		flog.Errorf("container：%s Unregistered，name=%s", interfaceType.String(), name)
 
 		// 结构对象，直接动态创建
 	} else if interfaceType.Kind() == reflect.Struct {
-		return r.createIns(componentModel{
-			instanceType: interfaceType,
-		})
+		return r.injectByType(interfaceType)
 	}
 	return nil
 }
@@ -124,34 +128,23 @@ func (r *container) getOrCreateIns(interfaceType reflect.Type, index int) any {
 
 // 根据类型，动态创建实例
 func (r *container) createIns(model componentModel) any {
-	if model.instanceType.Kind() == reflect.Func {
-		var arr []reflect.Value
-		// 构造函数，需要分别取出入参值
-		for inIndex := 0; inIndex < model.instanceType.NumIn(); inIndex++ {
-			val := reflect.ValueOf(r.resolveDefaultOrFirstComponent(model.instanceType.In(inIndex)))
-			arr = append(arr, val)
-		}
-		if arr == nil {
-			arr = []reflect.Value{}
-		}
-		return r.inject(model.instanceValue.Call(arr)[0].Interface())
+	var arr []reflect.Value
+	// 构造函数，需要分别取出入参值
+	for inIndex := 0; inIndex < model.instanceType.NumIn(); inIndex++ {
+		val := r.resolveDefaultOrFirstComponent(model.instanceType.In(inIndex))
+		arr = append(arr, reflect.ValueOf(val))
 	}
-
-	if model.instanceType.Kind() == reflect.Struct || model.instanceType.Kind() == reflect.Pointer {
-		if model.instance != nil {
-			return r.inject(model.instance)
-		} else {
-			return r.injectByType(model.instanceType)
-		}
+	if arr == nil {
+		arr = []reflect.Value{}
 	}
-	return nil
+	return r.inject(model.instanceValue.Call(arr)[0].Interface())
 }
 
 // 获取对象，如果默认别名不存在，则使用第一个注册的实例
 func (r *container) resolveDefaultOrFirstComponent(interfaceType reflect.Type) any {
 	componentModels, exists := r.dependency[interfaceType]
 	if !exists {
-		flog.Errorf("container：%sUnregistered", interfaceType.String())
+		flog.Errorf("container：%s Unregistered", interfaceType.String())
 		return nil
 	}
 

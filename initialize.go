@@ -108,8 +108,9 @@ func showComponentLog() error {
 }
 
 // Exit 应用退出
-func Exit() {
+func Exit(code int) {
 	modules.ShutdownModules(dependModules)
+	os.Exit(code)
 }
 
 // AddInitCallback 添加框架启动完后执行的函数

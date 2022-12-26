@@ -7,10 +7,7 @@ import (
 // Resolve 从容器中获取实例
 // iocName = 别名
 func Resolve[TInterface any](iocName ...string) TInterface {
-	name := ""
-	if len(iocName) > 0 {
-		name = iocName[0]
-	}
+	name := getIocName(iocName...)
 	//var t TInterface
 	interfaceType := reflect.TypeOf((*TInterface)(nil)).Elem()
 	ins := defContainer.resolve(interfaceType, name)
@@ -25,10 +22,6 @@ func Resolve[TInterface any](iocName ...string) TInterface {
 // interfaceType = interface type
 // iocName = 别名
 func ResolveType(interfaceType reflect.Type, iocName ...string) any {
-	name := ""
-	if len(iocName) > 0 {
-		name = iocName[0]
-	}
-
+	name := getIocName(iocName...)
 	return defContainer.resolve(interfaceType, name)
 }

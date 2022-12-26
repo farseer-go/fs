@@ -56,5 +56,7 @@ func TestErrorConfig(t *testing.T) {
 	os.Remove("./farseer.yaml")
 	os.Rename("./farseer.yaml.bak", "./farseer.yaml")
 
-	fs.Exit()
+	assert.Panics(t, func() {
+		fs.Exit(0)
+	})
 }

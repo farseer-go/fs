@@ -17,18 +17,17 @@ func (d *databaseFactory) CreateDatabase() IDatabase {
 	return &sqlserver{}
 }
 
-// 注册的函数
-func createDb(factory IDatabaseFactory) IDatabase {
-	return factory.CreateDatabase()
-}
-
 func TestMethod(t *testing.T) {
 	container.InitContainer()
 
 	// 注册获取IDatabase接口的方法
-	container.Register(createDb)
+	container.Register(func(factory IDatabaseFactory) IDatabase {
+		return factory.CreateDatabase()
+	})
+
+	assert.Panics(t, func() { assert.Equal(t, container.Resolve[IDatabase]().GetDbType(), "sqlserver") })
+
 	// 注册IDatabaseFactory接口实例
 	container.Register(func() IDatabaseFactory { return &databaseFactory{} })
-
 	assert.Equal(t, container.Resolve[IDatabase]().GetDbType(), "sqlserver")
 }
