@@ -29,6 +29,7 @@ func TestConfigureGet(t *testing.T) {
 	assert.Equal(t, "PoolMaxSize=50", arr[1])
 	assert.Equal(t, "PoolMinSize=1", arr[2])
 
+	assert.Equal(t, "Url: :888\n", configure.GetString("WebApi"))
 	assert.Equal(t, 20, configure.GetInt("FSS.ReservedTaskCount"))
 	assert.Equal(t, int64(20), configure.GetInt64("FSS.ReservedTaskCount"))
 	assert.Equal(t, true, configure.GetBool("Log.Component.httpInvoke"))
@@ -39,4 +40,21 @@ func TestConfigureGet(t *testing.T) {
 	assert.Equal(t, "DataType=mysql,PoolMaxSize=50,PoolMinSize=1,ConnectionString=root:steden@123@tcp(192.168.1.8:3306)/fss_demo?charset=utf8&parseTime=True&loc=Local", configure.GetString("Database.default"))
 	os.Setenv("Database_default", "aaa")
 	assert.Equal(t, "aaa", configure.GetString("Database.default"))
+}
+
+func TestErrorConfig(t *testing.T) {
+	os.Rename("./farseer.yaml", "./farseer.yaml.bak")
+	assert.Panics(t, func() {
+		fs.Initialize[modules.FarseerKernelModule]("unit test")
+	})
+	os.Create("./farseer.yaml")
+	os.WriteFile("./farseer.yaml", []byte("aaa"), 660)
+	assert.Panics(t, func() {
+		fs.Initialize[modules.FarseerKernelModule]("unit test")
+	})
+
+	os.Remove("./farseer.yaml")
+	os.Rename("./farseer.yaml.bak", "./farseer.yaml")
+
+	fs.Exit()
 }

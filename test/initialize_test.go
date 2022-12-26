@@ -50,11 +50,3 @@ func TestInitialize(t *testing.T) {
 	hostName, _ := os.Hostname()
 	assert.Equal(t, hostName, fs.HostName)
 }
-
-func TestErrorConfig(t *testing.T) {
-	os.Rename("./farseer.yaml", "./farseer.yaml.tmp")
-	fs.Initialize[modules.FarseerKernelModule]("unit test")
-	os.Rename("./farseer.yaml.tmp", "./farseer.yaml")
-
-	fs.Exit()
-}

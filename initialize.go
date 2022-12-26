@@ -41,15 +41,15 @@ var dependModules []modules.FarseerModule
 var callbackFnList []func()
 
 // Initialize 初始化框架
-func Initialize[TModule modules.FarseerModule](appName string) {
+func Initialize[TModule modules.FarseerModule](appName string) error {
 	sw := stopwatch.StartNew()
 
 	AppName = appName
 	ProcessId = os.Getppid()
 	HostName, _ = os.Hostname()
+	StartupAt = dateTime.Now()
 	rand.Seed(time.Now().UnixNano())
 	snowflake.Init(parse.HashCode64(HostName), rand.Int63n(32))
-	StartupAt = dateTime.Now()
 	AppId = snowflake.GenerateId()
 	AppIp = net.GetIp()
 
@@ -59,7 +59,10 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 	flog.Println("HostName：", flog.Colors[2](HostName))
 	flog.Println("HostTime：", flog.Colors[2](StartupAt.ToString("yyyy-MM-dd hh:mm:ss")))
 	flog.Println("PID：     ", flog.Colors[2](ProcessId))
-	showComponentLog()
+	err := showComponentLog()
+	if err != nil {
+		panic(err)
+	}
 	flog.Println("---------------------------------------")
 
 	var startupModule TModule
@@ -80,26 +83,28 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 		}
 	}
 	flog.Println("Initialization completed, total time：" + sw.GetMillisecondsText())
+	return nil
 }
 
 // 组件日志
-func showComponentLog() {
+func showComponentLog() error {
 	err := configure.ReadInConfig()
 	if err != nil { // 捕获读取中遇到的error
 		flog.Errorf("An error occurred while reading: %s \n", err)
-	} else {
-		logConfig := configure.GetSubNodes("Log.Component")
+		return err
+	}
 
-		var logSets []string
-		for k, v := range logConfig {
-			if v == true {
-				logSets = append(logSets, k)
-			}
-		}
-		if len(logSets) > 0 {
-			flog.Println("Log Switch：", flog.Colors[2](strings.Join(logSets, " ")))
+	logConfig := configure.GetSubNodes("Log.Component")
+	var logSets []string
+	for k, v := range logConfig {
+		if v == true {
+			logSets = append(logSets, k)
 		}
 	}
+	if len(logSets) > 0 {
+		flog.Println("Log Switch：", flog.Colors[2](strings.Join(logSets, " ")))
+	}
+	return nil
 }
 
 // Exit 应用退出
