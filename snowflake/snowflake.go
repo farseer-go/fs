@@ -53,7 +53,7 @@ func (s *snowflake) nextVal() int64 {
 			// 如果当前序列超出12bit长度，则需要等待下一毫秒
 			// 下一毫秒将使用sequence:0
 			for now <= s.timestamp {
-				now = time.Now().UnixNano() / 1000000
+				now = time.Now().UnixMilli()
 			}
 		}
 	} else {
