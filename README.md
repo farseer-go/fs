@@ -10,9 +10,8 @@
 ![license](https://img.shields.io/github/license/farseer-go/fs)
 ![go-version](https://img.shields.io/github/go-mod/go-version/farseer-go/fs)
 ![release](https://img.shields.io/github/v/release/farseer-go/fs)
-![Codecov](https://img.shields.io/codecov/c/github/farseer-go/fs)
+[![codecov](https://codecov.io/gh/farseer-go/fs/branch/main/graph/badge.svg?token=YBGOS9RWRR)](https://codecov.io/gh/farseer-go/fs)
 ![badge](https://goreportcard.com/badge/github.com/farseer-go/fs)
-
 ## Introduction
 
 A **modular** and **complete infrastructure** framework based on Golang，create modern web applications and APIs
