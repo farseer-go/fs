@@ -7,6 +7,7 @@ import (
 )
 
 func TestIsEqual(t *testing.T) {
+	assert.False(t, parse.IsEqual(struct{}{}, struct{}{}))
 	assert.True(t, parse.IsEqual(true, true))
 	assert.False(t, parse.IsEqual(true, false))
 

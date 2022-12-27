@@ -15,7 +15,8 @@ func ConvertValue(source any, defValType reflect.Type) reflect.Value {
 // Convert 通用的类型转换
 func Convert[T any](source any, defVal T) T {
 	sourceKind := reflect.TypeOf(source).Kind()
-	returnKind := reflect.TypeOf(defVal).Kind()
+	defValType := reflect.TypeOf(defVal)
+	returnKind := defValType.Kind()
 
 	if sourceKind == returnKind {
 		return source.(T)
@@ -44,12 +45,6 @@ func Convert[T any](source any, defVal T) T {
 	if isBool(sourceKind) {
 		boolSource := source.(bool)
 		var result any
-
-		// 转bool
-		if isBool(returnKind) {
-			result = boolSource
-			return result.(T)
-		}
 
 		// 转数字
 		if isNumber(returnKind) {
@@ -88,10 +83,18 @@ func Convert[T any](source any, defVal T) T {
 		// 数组
 		if isArray(returnKind) {
 			arr := strings.Split(strSource, ",")
-			itemType := reflect.TypeOf(defVal).Elem()
+			itemType := defValType.Elem()
+			// 字符串数组，则直接转
 			if itemType.Kind() == reflect.String {
 				return any(arr).(T)
 			}
+
+			// 非字符串数组，则要动态
+			slice := reflect.MakeSlice(defValType, 0, len(arr))
+			for i := 0; i < len(arr); i++ {
+				slice = reflect.Append(slice, ConvertValue(arr[i], itemType))
+			}
+			return slice.Interface().(T)
 		}
 	}
 	return defVal

@@ -28,9 +28,9 @@ func numberToString(source any, defValue any, sourceKind reflect.Kind) any {
 	case reflect.Uint64:
 		return strconv.FormatUint(source.(uint64), 10)
 	case reflect.Float32:
-		return strconv.FormatFloat(float64(source.(float32)), 'E', -1, 64)
+		return strconv.FormatFloat(float64(source.(float32)), 'g', 6, 64)
 	case reflect.Float64:
-		return strconv.FormatFloat(source.(float64), 'E', -1, 64)
+		return strconv.FormatFloat(source.(float64), 'g', 6, 64)
 	}
 	return defValue
 }
