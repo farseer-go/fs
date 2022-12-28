@@ -6,54 +6,63 @@ import (
 )
 
 func stringToNumber(source string, defVal any, returnKind reflect.Kind) any {
-	if returnKind == reflect.Int8 || returnKind == reflect.Int16 || returnKind == reflect.Int32 || returnKind == reflect.Int || returnKind == reflect.Int64 {
-		result, err := strconv.ParseInt(source, 10, 64)
-		if err != nil {
-			return defVal
-		}
+	switch returnKind {
+	case reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Int:
+		defVal = int64ToNumber(source, defVal, returnKind)
+	case reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uint:
+		defVal = uintToNumber(source, defVal, returnKind)
+	case reflect.Float32, reflect.Float64:
+		defVal = floatToNumber(source, defVal, returnKind)
+	}
+	return defVal
+}
+
+func int64ToNumber(source string, defVal any, returnKind reflect.Kind) any {
+	result, err := strconv.ParseInt(source, 10, 64)
+	if err == nil {
 		switch returnKind {
 		case reflect.Int8:
-			return int8(result)
+			defVal = int8(result)
 		case reflect.Int16:
-			return int16(result)
+			defVal = int16(result)
 		case reflect.Int32:
-			return int32(result)
+			defVal = int32(result)
 		case reflect.Int64:
-			return result
+			defVal = result
 		case reflect.Int:
-			return int(result)
+			defVal = int(result)
 		}
 	}
+	return defVal
+}
 
-	if returnKind == reflect.Uint8 || returnKind == reflect.Uint16 || returnKind == reflect.Uint32 || returnKind == reflect.Uint || returnKind == reflect.Uint64 {
-		result, err := strconv.ParseUint(source, 10, 64)
-		if err != nil {
-			return defVal
-		}
+func uintToNumber(source string, defVal any, returnKind reflect.Kind) any {
+	result, err := strconv.ParseUint(source, 10, 64)
+	if err == nil {
 		switch returnKind {
 		case reflect.Uint8:
-			return uint8(result)
+			defVal = uint8(result)
 		case reflect.Uint16:
-			return uint16(result)
+			defVal = uint16(result)
 		case reflect.Uint32:
-			return uint32(result)
+			defVal = uint32(result)
 		case reflect.Uint64:
-			return result
+			defVal = result
 		case reflect.Uint:
-			return uint(result)
+			defVal = uint(result)
 		}
 	}
+	return defVal
+}
 
-	if returnKind == reflect.Float32 || returnKind == reflect.Float64 {
-		result, err := strconv.ParseFloat(source, 64)
-		if err != nil {
-			return defVal
-		}
+func floatToNumber(source string, defVal any, returnKind reflect.Kind) any {
+	result, err := strconv.ParseFloat(source, 64)
+	if err == nil {
 		switch returnKind {
 		case reflect.Float32:
-			return float32(result)
+			defVal = float32(result)
 		case reflect.Float64:
-			return result
+			defVal = result
 		}
 	}
 	return defVal
