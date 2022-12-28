@@ -59,10 +59,7 @@ func Initialize[TModule modules.FarseerModule](appName string) error {
 	flog.Println("HostName：", flog.Colors[2](HostName))
 	flog.Println("HostTime：", flog.Colors[2](StartupAt.ToString("yyyy-MM-dd hh:mm:ss")))
 	flog.Println("PID：     ", flog.Colors[2](ProcessId))
-	err := showComponentLog()
-	if err != nil {
-		panic(err)
-	}
+	showComponentLog()
 	flog.Println("---------------------------------------")
 
 	var startupModule TModule
@@ -87,11 +84,10 @@ func Initialize[TModule modules.FarseerModule](appName string) error {
 }
 
 // 组件日志
-func showComponentLog() error {
+func showComponentLog() {
 	err := configure.ReadInConfig()
 	if err != nil { // 捕获读取中遇到的error
 		flog.Errorf("An error occurred while reading: %s \n", err)
-		return err
 	}
 
 	logConfig := configure.GetSubNodes("Log.Component")
@@ -104,7 +100,6 @@ func showComponentLog() error {
 	if len(logSets) > 0 {
 		flog.Println("Log Switch：", flog.Colors[2](strings.Join(logSets, " ")))
 	}
-	return nil
 }
 
 // Exit 应用退出

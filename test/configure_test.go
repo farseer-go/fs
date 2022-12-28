@@ -44,14 +44,10 @@ func TestConfigureGet(t *testing.T) {
 
 func TestErrorConfig(t *testing.T) {
 	os.Rename("./farseer.yaml", "./farseer.yaml.bak")
-	assert.Panics(t, func() {
-		fs.Initialize[modules.FarseerKernelModule]("unit test")
-	})
+	fs.Initialize[modules.FarseerKernelModule]("unit test")
 	os.Create("./farseer.yaml")
 	os.WriteFile("./farseer.yaml", []byte("aaa"), 660)
-	assert.Panics(t, func() {
-		fs.Initialize[modules.FarseerKernelModule]("unit test")
-	})
+	fs.Initialize[modules.FarseerKernelModule]("unit test")
 
 	os.Remove("./farseer.yaml")
 	os.Rename("./farseer.yaml.bak", "./farseer.yaml")
