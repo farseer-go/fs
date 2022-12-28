@@ -71,17 +71,14 @@ func (r *yamlConfig) flattening(keyPrefix string, m map[string]any) {
 
 // 扁平化any
 func (r *yamlConfig) flatteningAny(key string, v any) {
-	switch v.(type) {
+	switch subNode := v.(type) {
 	// 需要继续往里面遍历子节点map
 	case map[string]any:
-		subNode := v.(map[string]any)
 		r.data[key] = subNode
 		r.flattening(key, subNode)
 	// 需要继续往里面遍历子节点数组
 	case []any:
-		subNode := v.([]any)
 		r.data[key] = subNode
-
 		for subIndex := 0; subIndex < len(subNode); subIndex++ {
 			r.flatteningAny(key+fmt.Sprintf("[%d]", subIndex), subNode[subIndex])
 		}

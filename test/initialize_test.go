@@ -29,18 +29,20 @@ func (t testModule) Initialize() {
 
 func (t testModule) PostInitialize() {
 	lst = append(lst, 3)
-	fs.AddInitCallback(func() {})
+	fs.AddInitCallback(func() {
+		lst = append(lst, 4)
+	})
 }
 
-func (t testModule) Shutdown() {
-}
+func (t testModule) Shutdown() {}
 
 func TestInitialize(t *testing.T) {
 	fs.Initialize[testModule]("unit test")
-	assert.Equal(t, 3, len(lst))
+	assert.Equal(t, 4, len(lst))
 	assert.Equal(t, 1, lst[0])
 	assert.Equal(t, 2, lst[1])
 	assert.Equal(t, 3, lst[2])
+	assert.Equal(t, 4, lst[3])
 
 	assert.Equal(t, 3, strings.Count(fs.AppIp, "."))
 	assert.Equal(t, 18, len(strconv.FormatInt(fs.AppId, 10)))

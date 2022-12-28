@@ -6,7 +6,6 @@ type WebException struct {
 	// 异常信息
 	Message    string
 	StatusCode int
-	r          any
 }
 
 // ThrowWebException 抛出WebException异常

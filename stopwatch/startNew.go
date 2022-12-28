@@ -58,7 +58,7 @@ func (sw *Watch) Start() {
 
 // Stop 停止计时
 func (sw *Watch) Stop() {
-	sub := time.Now().Sub(sw.startTime)
+	sub := time.Since(sw.startTime)
 	sw.lastElapsedMilliseconds += sub.Milliseconds()
 	sw.lastElapsedMicroseconds += sub.Microseconds()
 	sw.lastElapsedNanoseconds += sub.Nanoseconds()
@@ -68,7 +68,7 @@ func (sw *Watch) Stop() {
 // ElapsedMilliseconds 返回当前已计时的时间（毫秒）
 func (sw *Watch) ElapsedMilliseconds() int64 {
 	if sw.isRunning {
-		return time.Now().Sub(sw.startTime).Milliseconds() + sw.lastElapsedMilliseconds
+		return time.Since(sw.startTime).Milliseconds() + sw.lastElapsedMilliseconds
 	}
 	return sw.lastElapsedMilliseconds
 }
@@ -76,7 +76,7 @@ func (sw *Watch) ElapsedMilliseconds() int64 {
 // ElapsedMicroseconds 返回当前已计时的时间（微秒）
 func (sw *Watch) ElapsedMicroseconds() int64 {
 	if sw.isRunning {
-		return time.Now().Sub(sw.startTime).Microseconds() + sw.lastElapsedMicroseconds
+		return time.Since(sw.startTime).Microseconds() + sw.lastElapsedMicroseconds
 	}
 	return sw.lastElapsedMicroseconds
 }
@@ -84,7 +84,7 @@ func (sw *Watch) ElapsedMicroseconds() int64 {
 // ElapsedNanoseconds 返回当前已计时的时间（纳秒）
 func (sw *Watch) ElapsedNanoseconds() int64 {
 	if sw.isRunning {
-		return time.Now().Sub(sw.startTime).Nanoseconds() + sw.lastElapsedNanoseconds
+		return time.Since(sw.startTime).Nanoseconds() + sw.lastElapsedNanoseconds
 	}
 	return sw.lastElapsedNanoseconds
 }
