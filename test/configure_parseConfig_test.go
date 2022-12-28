@@ -7,7 +7,6 @@ import (
 )
 
 type testConfig struct {
-	dbName           string
 	DataType         string
 	PoolMaxSize      int
 	PoolMinSize      int

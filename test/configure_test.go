@@ -38,19 +38,19 @@ func TestConfigureGet(t *testing.T) {
 	assert.Len(t, configure.GetSlice("A.B"), 0)
 
 	assert.Equal(t, "DataType=mysql,PoolMaxSize=50,PoolMinSize=1,ConnectionString=root:steden@123@tcp(192.168.1.8:3306)/fss_demo?charset=utf8&parseTime=True&loc=Local", configure.GetString("Database.default"))
-	os.Setenv("Database_default", "aaa")
+	_ = os.Setenv("Database_default", "aaa")
 	assert.Equal(t, "aaa", configure.GetString("Database.default"))
 }
 
 func TestErrorConfig(t *testing.T) {
-	os.Rename("./farseer.yaml", "./farseer.yaml.bak")
+	_ = os.Rename("./farseer.yaml", "./farseer.yaml.bak")
 	fs.Initialize[modules.FarseerKernelModule]("unit test")
-	os.Create("./farseer.yaml")
-	os.WriteFile("./farseer.yaml", []byte("aaa"), 660)
+	_, _ = os.Create("./farseer.yaml")
+	_ = os.WriteFile("./farseer.yaml", []byte("aaa"), 0660)
 	fs.Initialize[modules.FarseerKernelModule]("unit test")
 
-	os.Remove("./farseer.yaml")
-	os.Rename("./farseer.yaml.bak", "./farseer.yaml")
+	_ = os.Remove("./farseer.yaml")
+	_ = os.Rename("./farseer.yaml.bak", "./farseer.yaml")
 
 	assert.Panics(t, func() {
 		fs.Exit(0)

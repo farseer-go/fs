@@ -41,7 +41,7 @@ var dependModules []modules.FarseerModule
 var callbackFnList []func()
 
 // Initialize 初始化框架
-func Initialize[TModule modules.FarseerModule](appName string) error {
+func Initialize[TModule modules.FarseerModule](appName string) {
 	sw := stopwatch.StartNew()
 
 	AppName = appName
@@ -80,7 +80,6 @@ func Initialize[TModule modules.FarseerModule](appName string) error {
 		}
 	}
 	flog.Println("Initialization completed, total time：" + sw.GetMillisecondsText())
-	return nil
 }
 
 // 组件日志

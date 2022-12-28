@@ -7,8 +7,7 @@ import (
 )
 
 func TestFlog(t *testing.T) {
-
-	configure.ReadInConfig()
+	_ = configure.ReadInConfig()
 	flog.Trace("")
 	flog.Tracef("")
 	flog.Debug("")
