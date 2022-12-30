@@ -5,6 +5,6 @@ type IConfigProvider interface {
 	LoadConfigure() error
 	// Get 读取配置
 	Get(key string) (any, bool)
-	// GetString 读取配置
-	GetString(key string) string
+	// GetSubNodes 获取所有子节点
+	GetSubNodes(key string) (map[string]any, bool)
 }

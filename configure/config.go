@@ -47,12 +47,12 @@ func (c *config) Build() error {
 	return nil
 }
 
-// GetString 读取配置
-func (c *config) GetString(key string) string {
+// Get 获取配置
+func (c *config) Get(key string) any {
 	// 遍历配置提供者
 	for _, provider := range c.configProvider {
-		v := provider.GetString(key)
-		if v != "" {
+		v, exists := provider.Get(key)
+		if exists {
 			return v
 		}
 	}
@@ -60,22 +60,19 @@ func (c *config) GetString(key string) string {
 	// 是否有默认配置
 	val, exists := c.def[key]
 	if exists {
-		return val.(string)
+		return val
 	}
 
-	return ""
+	return nil
 }
 
 // GetSubNodes 获取所有子节点
 func (c *config) GetSubNodes(key string) map[string]any {
 	// 遍历配置提供者
 	for _, provider := range c.configProvider {
-		v, exists := provider.Get(key)
+		v, exists := provider.GetSubNodes(key)
 		if exists {
-			m, isOk := v.(map[string]any)
-			if isOk {
-				return m
-			}
+			return v
 		}
 	}
 	return make(map[string]any)

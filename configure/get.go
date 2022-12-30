@@ -18,7 +18,7 @@ func ReadInConfig() error {
 
 // GetString 获取配置
 func GetString(key string) string {
-	return configurationBuilder.GetString(key)
+	return parse.Convert(configurationBuilder.Get(key), "")
 }
 
 // GetStrings 获取配置
@@ -28,17 +28,17 @@ func GetStrings(key string) []string {
 
 // GetInt 获取配置
 func GetInt(key string) int {
-	return parse.Convert(configurationBuilder.GetString(key), 0)
+	return parse.Convert(configurationBuilder.Get(key), 0)
 }
 
 // GetInt64 获取配置
 func GetInt64(key string) int64 {
-	return parse.Convert(configurationBuilder.GetString(key), int64(0))
+	return parse.Convert(configurationBuilder.Get(key), int64(0))
 }
 
 // GetBool 获取配置
 func GetBool(key string) bool {
-	return parse.Convert(configurationBuilder.GetString(key), false)
+	return parse.Convert(configurationBuilder.Get(key), false)
 }
 
 // GetSubNodes 获取所有子节点

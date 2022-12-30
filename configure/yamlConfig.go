@@ -2,7 +2,6 @@ package configure
 
 import (
 	"fmt"
-	"github.com/farseer-go/fs/parse"
 	"gopkg.in/yaml.v3"
 	"os"
 )
@@ -35,25 +34,29 @@ func (r *yamlConfig) LoadConfigure() error {
 	return nil
 }
 
-func (r *yamlConfig) GetString(key string) string {
+func (r *yamlConfig) Get(key string) (any, bool) {
 	v, exists := r.data[key]
 	if exists {
 		switch v.(type) {
 		case map[string]any:
 			data, err := yaml.Marshal(&v)
 			if err == nil {
-				return string(data)
+				return string(data), exists
 			}
-		default:
-			return parse.Convert(v, "")
 		}
 	}
-	return ""
+	return v, exists
 }
 
-func (r *yamlConfig) Get(key string) (any, bool) {
+func (r *yamlConfig) GetSubNodes(key string) (map[string]any, bool) {
 	v, exists := r.data[key]
-	return v, exists
+	if exists {
+		switch m := v.(type) {
+		case map[string]any:
+			return m, exists
+		}
+	}
+	return nil, false
 }
 
 // 扁平化map
