@@ -14,7 +14,12 @@ func ConvertValue(source any, defValType reflect.Type) reflect.Value {
 
 // Convert 通用的类型转换
 func Convert[T any](source any, defVal T) T {
-	sourceKind := reflect.TypeOf(source).Kind()
+	var sourceKind reflect.Kind
+	if source == nil {
+		sourceKind = reflect.Invalid
+	} else {
+		sourceKind = reflect.TypeOf(source).Kind()
+	}
 	defValType := reflect.TypeOf(defVal)
 	returnKind := defValType.Kind()
 
