@@ -52,14 +52,14 @@ func Warningf(format string, a ...any) {
 }
 
 // Error 打印Error日志
-func Error(contents ...any) {
-	Log(eumLogLevel.Error, contents...)
+func Error(contents ...any) error {
+	return fmt.Errorf(Log(eumLogLevel.Error, contents...))
 }
 
 // Errorf 打印Error日志
-func Errorf(format string, a ...any) {
+func Errorf(format string, a ...any) error {
 	content := fmt.Sprintf(format, a...)
-	Log(eumLogLevel.Error, content)
+	return fmt.Errorf(Log(eumLogLevel.Error, content))
 }
 
 // Critical 打印Critical日志
@@ -74,9 +74,11 @@ func Criticalf(format string, a ...any) {
 }
 
 // Log 打印日志
-func Log(logLevel eumLogLevel.Enum, contents ...any) {
+func Log(logLevel eumLogLevel.Enum, contents ...any) string {
 	content := fmt.Sprint(contents...)
-	fmt.Printf("%s %s %s\r\n", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss"), Colors[logLevel]("["+logLevel.ToString()+"]"), content)
+	msg := fmt.Sprintf("%s %s %s\r\n", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss"), Colors[logLevel]("["+logLevel.ToString()+"]"), content)
+	fmt.Print(msg)
+	return msg
 }
 
 // Print 打印日志
