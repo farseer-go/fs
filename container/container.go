@@ -94,7 +94,7 @@ func (r *container) resolve(interfaceType reflect.Type, name string) any {
 	if interfaceType.Kind() == reflect.Interface {
 		componentModels, exists := r.dependency[interfaceType]
 		if !exists {
-			flog.Errorf("container：%s Unregistered", interfaceType.String())
+			_ = flog.Errorf("container：%s Unregistered", interfaceType.String())
 			return nil
 		}
 
