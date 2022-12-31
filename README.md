@@ -11,6 +11,7 @@
 ![go-version](https://img.shields.io/github/go-mod/go-version/farseer-go/fs)
 ![release](https://img.shields.io/github/v/release/farseer-go/fs)
 [![codecov](https://img.shields.io/codecov/c/github/farseer-go/fs)](https://codecov.io/gh/farseer-go/fs)
+[![Build](https://github.com/farseer-go/fs/actions/workflows/go.yml/badge.svg)](https://github.com/farseer-go/fs/actions/workflows/go.yml)
 ![badge](https://goreportcard.com/badge/github.com/farseer-go/fs)
 ## Introduction
 
