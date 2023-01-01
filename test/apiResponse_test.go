@@ -1,6 +1,7 @@
 package test
 
 import (
+	"bytes"
 	"github.com/farseer-go/fs/core"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -13,6 +14,9 @@ func TestApiResponse(t *testing.T) {
 
 	api.SetData("very nice")
 	assert.Equal(t, "very nice", api.Data)
+
+	byByte := core.NewApiResponseByReader[string](bytes.NewReader(api.ToBytes()))
+	assert.Equal(t, api.ToJson(), byByte.ToJson())
 
 	api2 := core.Error403[int]("错误")
 	assert.Equal(t, "{\"Status\":false,\"StatusCode\":403,\"StatusMessage\":\"错误\",\"Data\":0}", api2.ToJson())
@@ -45,4 +49,5 @@ func TestApiResponse(t *testing.T) {
 
 	api12 := core.ApiResponse[string](core.ApiResponseStringError403("错误"))
 	assert.Equal(t, "{\"Status\":false,\"StatusCode\":403,\"StatusMessage\":\"错误\",\"Data\":\"\"}", api12.ToJson())
+
 }

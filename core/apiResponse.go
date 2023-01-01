@@ -1,6 +1,9 @@
 package core
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"io"
+)
 
 // ApiResponse 标准的API Response结构
 type ApiResponse[TData any] struct {
@@ -57,4 +60,17 @@ func Error403[TData any](statusMessage string) ApiResponse[TData] {
 		StatusMessage: statusMessage,
 		StatusCode:    403,
 	}
+}
+
+// NewApiResponseByReader 创建实例
+func NewApiResponseByReader[TData any](reader io.Reader) ApiResponse[TData] {
+	body, _ := io.ReadAll(reader)
+	return NewApiResponseByByte[TData](body)
+}
+
+// NewApiResponseByByte 创建实例
+func NewApiResponseByByte[TData any](body []byte) ApiResponse[TData] {
+	var apiResponse ApiResponse[TData]
+	_ = json.Unmarshal(body, &apiResponse)
+	return apiResponse
 }
