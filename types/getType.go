@@ -16,11 +16,10 @@ func GetRealType(val reflect.Value) reflect.Type {
 }
 
 func GetRealType2(val reflect.Type) reflect.Type {
-	if val.Kind() == reflect.Pointer {
-		val = val.Elem()
-	}
-	if val.Kind() == reflect.Interface {
-		val = val.Elem()
+	if val != nil {
+		if val.Kind() == reflect.Pointer {
+			val = val.Elem()
+		}
 	}
 	return val
 }
