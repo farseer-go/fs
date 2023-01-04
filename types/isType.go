@@ -87,5 +87,15 @@ func IsDtoModel(lst []reflect.Type) bool {
 		return false
 	}
 
-	return !IsCollections(lst[0]) && lst[0].Kind() == reflect.Struct
+	return !IsCollections(lst[0]) && !IsGoBasicType(lst[0]) && lst[0].Kind() == reflect.Struct
+}
+
+// IsTime 是否为time.Time类型
+func IsTime(ty reflect.Type) bool {
+	return ty.String() == "time.Time"
+}
+
+// IsDateTime 是否为DateTime类型
+func IsDateTime(ty reflect.Type) bool {
+	return ty.String() == "dateTime.DateTime"
 }

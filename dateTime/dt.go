@@ -57,6 +57,15 @@ func (d DateTime) Minute() int { return d.time.Minute() }
 // Second 获取秒
 func (d DateTime) Second() int { return d.time.Second() }
 
+// UnixMilli 获取毫秒
+func (d DateTime) UnixMilli() int64 { return d.time.UnixMilli() }
+
+// UnixMicro 获取微秒
+func (d DateTime) UnixMicro() int64 { return d.time.UnixMicro() }
+
+// UnixNano 获取纳秒
+func (d DateTime) UnixNano() int64 { return d.time.UnixNano() }
+
 // Date 获取Date部份
 func (d DateTime) Date() DateTime {
 	year, month, day := d.time.Date()

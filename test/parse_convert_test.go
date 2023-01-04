@@ -1,10 +1,12 @@
 package test
 
 import (
+	"github.com/farseer-go/fs/dateTime"
 	"github.com/farseer-go/fs/parse"
 	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
+	"time"
 )
 
 func TestConvert(t *testing.T) {
@@ -94,4 +96,60 @@ func TestConvert(t *testing.T) {
 	assert.Equal(t, 0, parse.Convert(false, 0))
 	assert.Equal(t, "true", parse.Convert(true, ""))
 	assert.Equal(t, "false", parse.Convert(false, ""))
+
+	t.Run("time.Time转time.Time", func(t *testing.T) {
+		time1 := time.Now()
+		time2 := parse.Convert(time1, time.UnixMilli(0))
+		assert.Equal(t, time1.Year(), time2.Year())
+		assert.Equal(t, time1.Month(), time2.Month())
+		assert.Equal(t, time1.Day(), time2.Day())
+		assert.Equal(t, time1.Hour(), time2.Hour())
+		assert.Equal(t, time1.Minute(), time2.Minute())
+		assert.Equal(t, time1.Second(), time2.Second())
+		assert.Equal(t, time1.UnixMilli(), time2.UnixMilli())
+		assert.Equal(t, time1.UnixMicro(), time2.UnixMicro())
+		assert.Equal(t, time1.UnixNano(), time2.UnixNano())
+	})
+
+	t.Run("time.Time转DateTime", func(t *testing.T) {
+		time1 := time.Now()
+		dt := parse.Convert(time1, dateTime.New(time.UnixMilli(0)))
+		assert.Equal(t, time1.Year(), dt.Year())
+		assert.Equal(t, int(time1.Month()), dt.Month())
+		assert.Equal(t, time1.Day(), dt.Day())
+		assert.Equal(t, time1.Hour(), dt.Hour())
+		assert.Equal(t, time1.Minute(), dt.Minute())
+		assert.Equal(t, time1.Second(), dt.Second())
+		assert.Equal(t, time1.UnixMilli(), dt.UnixMilli())
+		assert.Equal(t, time1.UnixMicro(), dt.UnixMicro())
+		assert.Equal(t, time1.UnixNano(), dt.UnixNano())
+	})
+
+	t.Run("DateTime转time.Time", func(t *testing.T) {
+		dt := dateTime.Now()
+		time1 := parse.Convert(dt, time.UnixMilli(0))
+		assert.Equal(t, dt.Year(), time1.Year())
+		assert.Equal(t, dt.Month(), int(time1.Month()))
+		assert.Equal(t, dt.Day(), time1.Day())
+		assert.Equal(t, dt.Hour(), time1.Hour())
+		assert.Equal(t, dt.Minute(), time1.Minute())
+		assert.Equal(t, dt.Second(), time1.Second())
+		assert.Equal(t, dt.UnixMilli(), time1.UnixMilli())
+		assert.Equal(t, dt.UnixMicro(), time1.UnixMicro())
+		assert.Equal(t, dt.UnixNano(), time1.UnixNano())
+	})
+
+	t.Run("DateTime转DateTime", func(t *testing.T) {
+		dt := dateTime.Now()
+		dt2 := parse.Convert(dt, dateTime.New(time.UnixMilli(0)))
+		assert.Equal(t, dt.Year(), dt2.Year())
+		assert.Equal(t, dt.Month(), dt2.Month())
+		assert.Equal(t, dt.Day(), dt2.Day())
+		assert.Equal(t, dt.Hour(), dt2.Hour())
+		assert.Equal(t, dt.Minute(), dt2.Minute())
+		assert.Equal(t, dt.Second(), dt2.Second())
+		assert.Equal(t, dt.UnixMilli(), dt2.UnixMilli())
+		assert.Equal(t, dt.UnixMicro(), dt2.UnixMicro())
+		assert.Equal(t, dt.UnixNano(), dt2.UnixNano())
+	})
 }

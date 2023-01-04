@@ -1,8 +1,11 @@
 package parse
 
 import (
+	"github.com/farseer-go/fs/dateTime"
+	"github.com/farseer-go/fs/types"
 	"reflect"
 	"strings"
+	"time"
 )
 
 // ConvertValue 通用的类型转换
@@ -14,16 +17,16 @@ func ConvertValue(source any, defValType reflect.Type) reflect.Value {
 
 // Convert 通用的类型转换
 func Convert[T any](source any, defVal T) T {
-	var sourceKind reflect.Kind
 	if source == nil {
-		sourceKind = reflect.Invalid
-	} else {
-		sourceKind = reflect.TypeOf(source).Kind()
+		return defVal
 	}
+
+	sourceType := reflect.TypeOf(source)
+	sourceKind := sourceType.Kind()
 	defValType := reflect.TypeOf(defVal)
 	returnKind := defValType.Kind()
 
-	if sourceKind == returnKind {
+	if sourceKind != reflect.Struct && sourceKind == returnKind {
 		return source.(T)
 	}
 
@@ -100,6 +103,33 @@ func Convert[T any](source any, defVal T) T {
 				slice = reflect.Append(slice, ConvertValue(arr[i], itemType))
 			}
 			return slice.Interface().(T)
+		}
+	}
+
+	// time.Time转...
+	if types.IsTime(sourceType) {
+		// 转time.Time
+		if types.IsTime(defValType) {
+			return source.(T)
+		}
+		// 转DateTime
+		if types.IsDateTime(defValType) {
+			var dt any = dateTime.New(source.(time.Time))
+			return dt.(T)
+		}
+	}
+
+	// DateTime转...
+	if types.IsDateTime(sourceType) {
+		// 转time.Time
+		if types.IsTime(defValType) {
+			var t any = source.(dateTime.DateTime).ToTime()
+			return t.(T)
+		}
+
+		// 转DateTime
+		if types.IsDateTime(defValType) {
+			return source.(T)
 		}
 	}
 	return defVal
