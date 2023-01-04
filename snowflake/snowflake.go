@@ -50,12 +50,10 @@ func (s *snowflake) nextVal() int64 {
 	if s.timestamp == now {
 		// 当同一时间戳（精度：毫秒）下多次生成id会增加序列号
 		s.sequence = (s.sequence + 1) & sequenceMask
-		if s.sequence == 0 {
-			// 如果当前序列超出12bit长度，则需要等待下一毫秒
-			// 下一毫秒将使用sequence:0
-			for now <= s.timestamp {
-				now = time.Now().UnixMilli()
-			}
+		// 如果当前序列超出12bit长度，则需要等待下一毫秒
+		// 下一毫秒将使用sequence:0
+		for s.sequence == 0 && now <= s.timestamp {
+			now = time.Now().UnixMilli()
 		}
 	} else {
 		// 不同时间戳（精度：毫秒）下直接使用序列号：0
