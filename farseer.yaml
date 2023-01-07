@@ -3,6 +3,12 @@ Database:
 Redis:
   default: "Server=192.168.1.8:6379,DB=15,Password=steden@123,ConnectTimeout=600000,SyncTimeout=10000,ResponseTimeout=10000"
   #default: "Server=127.0.0.1:6379,DB=15,Password=,ConnectTimeout=600000,SyncTimeout=10000,ResponseTimeout=10000"
+    #Ex1: "ExchangeName=Ex1,RoutingKey=,ExchangeType=fanout,UseConfirmModel=false,AutoCreateExchange=true"
+Rabbit:
+  - Server: "Server=rabbit:5672,UserName=farseer,Password=farseer"
+    Exchange:
+      - "ExchangeName=Ex1,RoutingKey=,ExchangeType=fanout,UseConfirmModel=false,AutoCreateExchange=true"
+      - "ExchangeName=Ex1,RoutingKey=,ExchangeType=fanout,UseConfirmModel=false,AutoCreateExchange=true"
 FSS:
   Server: "http://127.0.0.1:888"
   ReservedTaskCount: 20

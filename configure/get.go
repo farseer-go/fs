@@ -46,6 +46,11 @@ func GetSubNodes(key string) map[string]any {
 	return configurationBuilder.GetSubNodes(key)
 }
 
+// GetSliceNodes 获取数组节点
+func GetSliceNodes(key string) []map[string]any {
+	return configurationBuilder.GetSliceNodes(key)
+}
+
 // GetSlice 获取数组
 func GetSlice(key string) []string {
 	return configurationBuilder.GetSlice(key)

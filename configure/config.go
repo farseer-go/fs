@@ -96,3 +96,22 @@ func (c *config) GetSlice(key string) []string {
 	}
 	return []string{}
 }
+
+// GetSliceNodes 获取数组节点
+func (c *config) GetSliceNodes(key string) []map[string]any {
+	// 遍历配置提供者
+	for _, provider := range c.configProvider {
+		v, exists := provider.Get(key)
+		if exists {
+			arr, isOk := v.([]any)
+			if isOk {
+				var sliceNodes []map[string]any
+				for _, node := range arr {
+					sliceNodes = append(sliceNodes, node.(map[string]any))
+				}
+				return sliceNodes
+			}
+		}
+	}
+	return []map[string]any{}
+}

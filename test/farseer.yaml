@@ -2,6 +2,15 @@ Database:
   default: "DataType=mysql,PoolMaxSize=50,PoolMinSize=1,ConnectionString=root:steden@123@tcp(192.168.1.8:3306)/fss_demo?charset=utf8&parseTime=True&loc=Local"
 Redis:
   default: "Server=192.168.1.8:6379,DB=15,Password=steden@123,ConnectTimeout=600000,SyncTimeout=10000,ResponseTimeout=10000"
+Rabbit:
+  - Server: "Server=rabbit1:5672,UserName=farseer,Password=farseer"
+    Exchange:
+      - "ExchangeName=Ex1,RoutingKey=,ExchangeType=fanout,UseConfirmModel=false,AutoCreateExchange=true"
+      - "ExchangeName=Ex2,RoutingKey=,ExchangeType=fanout,UseConfirmModel=false,AutoCreateExchange=true"
+  - Server: "Server=rabbit2:5672,UserName=farseer,Password=farseer"
+    Exchange:
+      - "ExchangeName=Ex3,RoutingKey=,ExchangeType=fanout,UseConfirmModel=false,AutoCreateExchange=true"
+      - "ExchangeName=Ex4,RoutingKey=,ExchangeType=fanout,UseConfirmModel=false,AutoCreateExchange=true"
 FSS:
   Server: "http://127.0.0.1:888"
   ReservedTaskCount: 20

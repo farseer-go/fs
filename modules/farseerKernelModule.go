@@ -2,6 +2,7 @@ package modules
 
 import (
 	"github.com/farseer-go/fs/container"
+	"github.com/farseer-go/fs/flog"
 )
 
 type FarseerKernelModule struct {
@@ -13,6 +14,7 @@ func (module FarseerKernelModule) DependsModule() []FarseerModule {
 
 func (module FarseerKernelModule) PreInitialize() {
 	container.InitContainer()
+	flog.Init()
 }
 
 func (module FarseerKernelModule) Initialize() {

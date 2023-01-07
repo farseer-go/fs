@@ -40,6 +40,8 @@ func TestConfigureGet(t *testing.T) {
 	assert.Equal(t, "DataType=mysql,PoolMaxSize=50,PoolMinSize=1,ConnectionString=root:steden@123@tcp(192.168.1.8:3306)/fss_demo?charset=utf8&parseTime=True&loc=Local", configure.GetString("Database.default"))
 	_ = os.Setenv("Database_default", "aaa")
 	assert.Equal(t, "aaa", configure.GetString("Database.default"))
+
+	assert.Len(t, configure.GetSliceNodes("aaa"), 0)
 }
 
 func TestErrorConfig(t *testing.T) {
