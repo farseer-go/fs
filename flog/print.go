@@ -62,6 +62,20 @@ func Errorf(format string, a ...any) error {
 	return fmt.Errorf(Log(eumLogLevel.Error, content))
 }
 
+// Panic 打印Error日志并panic
+func Panic(contents ...any) {
+	Log(eumLogLevel.Error, contents...)
+	panic(fmt.Sprint(contents...))
+}
+
+// Panicf 打印Error日志并panic
+func Panicf(format string, a ...any) {
+	content := fmt.Sprintf(format, a...)
+	Log(eumLogLevel.Error, content)
+
+	panic(content)
+}
+
 // Critical 打印Critical日志
 func Critical(contents ...any) {
 	Log(eumLogLevel.Critical, contents...)

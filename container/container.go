@@ -104,7 +104,7 @@ func (r *container) resolve(interfaceType reflect.Type, name string) any {
 				return r.getOrCreateIns(interfaceType, i)
 			}
 		}
-		flog.Errorf("container：%s Unregistered，name=%s", interfaceType.String(), name)
+		_ = flog.Errorf("container：%s Unregistered，name=%s", interfaceType.String(), name)
 
 		// 结构对象，直接动态创建
 	} else if interfaceType.Kind() == reflect.Struct {
@@ -144,7 +144,7 @@ func (r *container) createIns(model componentModel) any {
 func (r *container) resolveDefaultOrFirstComponent(interfaceType reflect.Type) any {
 	componentModels, exists := r.dependency[interfaceType]
 	if !exists {
-		flog.Errorf("container：%s Unregistered", interfaceType.String())
+		_ = flog.Errorf("container：%s Unregistered", interfaceType.String())
 		return nil
 	}
 

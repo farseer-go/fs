@@ -3,6 +3,7 @@ package test
 import (
 	"github.com/farseer-go/fs/configure"
 	"github.com/farseer-go/fs/flog"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -25,4 +26,12 @@ func TestFlog(t *testing.T) {
 	flog.Println("")
 	flog.ComponentInfo("task", "")
 	flog.ComponentInfof("task", "")
+
+	assert.Panics(t, func() {
+		flog.Panic("test error")
+	})
+
+	assert.Panics(t, func() {
+		flog.Panicf("test error:%s", "content")
+	})
 }

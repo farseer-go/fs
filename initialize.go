@@ -86,7 +86,7 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 func showComponentLog() {
 	err := configure.ReadInConfig()
 	if err != nil { // 捕获读取中遇到的error
-		flog.Errorf("An error occurred while reading: %s \n", err)
+		_ = flog.Errorf("An error occurred while reading: %s \n", err)
 	}
 
 	logConfig := configure.GetSubNodes("Log.Component")
