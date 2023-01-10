@@ -37,14 +37,7 @@ func parseString(configRefVal reflect.Value, configString string) reflect.Value 
 			fieldName := strings.ToLower(configRefVal.Type().Field(i).Name)
 			s, exists := configMap[fieldName]
 			if exists {
-				switch configRefVal.Type().Field(i).Type.Kind() {
-				case reflect.Int:
-					configRefVal.Field(i).SetInt(parse.Convert(s, int64(0)))
-				case reflect.Bool:
-					configRefVal.Field(i).SetBool(parse.Convert(s, false))
-				default:
-					configRefVal.Field(i).Set(reflect.ValueOf(s))
-				}
+				configRefVal.Field(i).Set(parse.ConvertValue(s, configRefVal.Type().Field(i).Type))
 			}
 		}
 	}
