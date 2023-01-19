@@ -9,6 +9,8 @@ Rabbit:
     Exchange:
       - "ExchangeName=Ex1,RoutingKey=,ExchangeType=fanout,UseConfirmModel=false,AutoCreateExchange=true"
       - "ExchangeName=Ex1,RoutingKey=,ExchangeType=fanout,UseConfirmModel=false,AutoCreateExchange=true"
+Etcd:
+  default: "Server=127.0.0.1:2379|127.0.0.1:2379,ConnectTimeout=5000"
 FSS:
   Server: "http://127.0.0.1:888"
   ReservedTaskCount: 20
