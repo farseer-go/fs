@@ -75,10 +75,22 @@ _main.go_
 ```go
 package main
 import "github.com/farseer-go/fs"
+import "github.com/farseer-go/fs/modules"
+import "github.com/farseer-go/webapi"
 
 func main() {
   fs.Initialize[StartupModule]("your project Name")
 }
+
+type StartupModule struct { }
+
+func (module StartupModule) DependsModule() []modules.FarseerModule {
+  return []modules.FarseerModule{webapi.Module{}}
+}
+func (module StartupModule) PreInitialize() { }
+func (module StartupModule) Initialize() { }
+func (module StartupModule) PostInitialize() { }
+func (module StartupModule) Shutdown() { }
 ```
 
 > In the first line of the main function, execute `fs.Initialize` to start initializing the framework
@@ -95,52 +107,20 @@ After running the console prints the loading message.
 
 2023-01-05 16:15:00 ---------------------------------------
 2023-01-05 16:15:00 Loading Module...
-2023-01-05 16:15:00 Loading Module：cache.Module
-2023-01-05 16:15:00 Loading Module：cacheMemory.Module
-2023-01-05 16:15:00 Loading Module：eventBus.Module
-2023-01-05 16:15:00 Loading Module：queue.Module
-2023-01-05 16:15:00 Loading Module：infrastructure.Module
 2023-01-05 16:15:00 Loading Module：webapi.Module
-2023-01-05 16:15:00 Loading Module：domain.Module
-2023-01-05 16:15:00 Loading Module：application.Module
-2023-01-05 16:15:00 Loading Module：interfaces.Module
 2023-01-05 16:15:00 Loading Module：main.StartupModule
 2023-01-05 16:15:00 Loaded, 11 modules in total
 2023-01-05 16:15:00 ---------------------------------------
 2023-01-05 16:15:00 Elapsed time：0 ms modules.FarseerKernelModule.PreInitialize()
-2023-01-05 16:15:00 Elapsed time：0 ms cache.Module.PreInitialize()
-2023-01-05 16:15:00 Elapsed time：0 ms cacheMemory.Module.PreInitialize()
-2023-01-05 16:15:00 Elapsed time：0 ms eventBus.Module.PreInitialize()
-2023-01-05 16:15:00 Elapsed time：0 ms queue.Module.PreInitialize()
-2023-01-05 16:15:00 Elapsed time：0 ms infrastructure.Module.PreInitialize()
 2023-01-05 16:15:00 Elapsed time：0 ms webapi.Module.PreInitialize()
-2023-01-05 16:15:00 Elapsed time：0 ms domain.Module.PreInitialize()
-2023-01-05 16:15:00 Elapsed time：0 ms application.Module.PreInitialize()
-2023-01-05 16:15:00 Elapsed time：0 ms interfaces.Module.PreInitialize()
 2023-01-05 16:15:00 Elapsed time：0 ms main.StartupModule.PreInitialize()
 2023-01-05 16:15:00 ---------------------------------------
 2023-01-05 16:15:00 Elapsed time：0 ms modules.FarseerKernelModule.Initialize()
-2023-01-05 16:15:00 Elapsed time：0 ms cache.Module.Initialize()
-2023-01-05 16:15:00 Elapsed time：0 ms cacheMemory.Module.Initialize()
-2023-01-05 16:15:00 Elapsed time：0 ms eventBus.Module.Initialize()
-2023-01-05 16:15:00 Elapsed time：0 ms queue.Module.Initialize()
-2023-01-05 16:15:00 Elapsed time：0 ms infrastructure.Module.Initialize()
 2023-01-05 16:15:00 Elapsed time：0 ms webapi.Module.Initialize()
-2023-01-05 16:15:00 Elapsed time：0 ms domain.Module.Initialize()
-2023-01-05 16:15:00 Elapsed time：0 ms application.Module.Initialize()
-2023-01-05 16:15:00 Elapsed time：0 ms interfaces.Module.Initialize()
 2023-01-05 16:15:00 Elapsed time：0 ms main.StartupModule.Initialize()
 2023-01-05 16:15:00 ---------------------------------------
 2023-01-05 16:15:00 Elapsed time：0 ms modules.FarseerKernelModule.PostInitialize()
-2023-01-05 16:15:00 Elapsed time：0 ms cache.Module.PostInitialize()
-2023-01-05 16:15:00 Elapsed time：0 ms cacheMemory.Module.PostInitialize()
-2023-01-05 16:15:00 Elapsed time：0 ms eventBus.Module.PostInitialize()
-2023-01-05 16:15:00 Elapsed time：0 ms queue.Module.PostInitialize()
-2023-01-05 16:15:00 Elapsed time：0 ms infrastructure.Module.PostInitialize()
 2023-01-05 16:15:00 Elapsed time：0 ms webapi.Module.PostInitialize()
-2023-01-05 16:15:00 Elapsed time：0 ms domain.Module.PostInitialize()
-2023-01-05 16:15:00 Elapsed time：0 ms application.Module.PostInitialize()
-2023-01-05 16:15:00 Elapsed time：0 ms interfaces.Module.PostInitialize()
 2023-01-05 16:15:00 Elapsed time：0 ms main.StartupModule.PostInitialize()
 2023-01-05 16:15:00 ---------------------------------------
 2023-01-05 16:15:00 Initialization completed, total time：0 ms 
