@@ -98,7 +98,7 @@ func (module StartupModule) Shutdown() { }
 After running the console prints the loading message.
 
 ```
-2023-01-05 16:15:00 AppName：  demo
+2023-01-05 16:15:00 AppName：  your project Name
 2023-01-05 16:15:00 AppID：    199530571963039744
 2023-01-05 16:15:00 AppIP：    192.168.3.55
 2023-01-05 16:15:00 HostName： stedenMacBook-Pro.local
