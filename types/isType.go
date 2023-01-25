@@ -81,6 +81,27 @@ func IsDataTableSet(val reflect.Value) (reflect.Type, bool) {
 	return realType, strings.HasPrefix(realType.String(), "data.TableSet[")
 }
 
+// IsDtoModelIgnoreInterface 当第一个模型为struct，其它类型为interface时，判断为DTO
+func IsDtoModelIgnoreInterface(lst []reflect.Type) bool {
+	if len(lst) < 1 {
+		return false
+	}
+
+	// 第一个参数必须为struct类型
+	isDto := !IsCollections(lst[0]) && !IsGoBasicType(lst[0]) && lst[0].Kind() == reflect.Struct
+	if !isDto {
+		return false
+	}
+
+	// 其它类型必须为interface
+	for i := 1; i < len(lst); i++ {
+		if lst[i].Kind() != reflect.Interface {
+			return false
+		}
+	}
+	return true
+}
+
 // IsDtoModel 当只有一个参数，且非集合类型，又是结构类型时，判断为DTO
 func IsDtoModel(lst []reflect.Type) bool {
 	if len(lst) != 1 {
