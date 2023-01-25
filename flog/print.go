@@ -64,8 +64,10 @@ func Errorf(format string, a ...any) error {
 
 // Panic 打印Error日志并panic
 func Panic(contents ...any) {
-	Log(eumLogLevel.Error, contents...)
-	panic(fmt.Sprint(contents...))
+	if len(contents) > 0 && contents[0] != nil {
+		Log(eumLogLevel.Error, contents...)
+		panic(fmt.Sprint(contents...))
+	}
 }
 
 // Panicf 打印Error日志并panic
