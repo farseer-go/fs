@@ -1,6 +1,7 @@
 package fs
 
 import (
+	"context"
 	"github.com/farseer-go/fs/configure"
 	"github.com/farseer-go/fs/dateTime"
 	"github.com/farseer-go/fs/flog"
@@ -35,6 +36,9 @@ var AppIp string
 // ProcessId 进程Id
 var ProcessId int
 
+// Context 最顶层的上下文
+var Context context.Context
+
 // 依赖的模块
 var dependModules []modules.FarseerModule
 
@@ -43,7 +47,7 @@ var callbackFnList []func()
 // Initialize 初始化框架
 func Initialize[TModule modules.FarseerModule](appName string) {
 	sw := stopwatch.StartNew()
-
+	Context = context.Background()
 	AppName = appName
 	ProcessId = os.Getppid()
 	HostName, _ = os.Hostname()
