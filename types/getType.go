@@ -9,7 +9,7 @@ func GetRealType(val reflect.Value) reflect.Type {
 	if val.Kind() == reflect.Pointer {
 		val = val.Elem()
 	}
-	if val.Kind() == reflect.Interface {
+	if val.Kind() == reflect.Interface && !val.IsZero() {
 		val = val.Elem()
 	}
 	return val.Type()
