@@ -26,14 +26,18 @@ func TestInject(t *testing.T) {
 	// 注册单例
 	container.Register(func() IDatabase { return &sqlserver{} }, "sqlserver")
 
-	// 测试直接取对象的方式
+	// 直接取对象的方式
 	db := container.Resolve[myDb]()
 
 	assert.Equal(t, db.Db1.GetDbType(), "mysql")
 	assert.Equal(t, db.Db2.GetDbType(), "sqlserver")
 
-	// 测试通过接口方式
+	// 通过接口方式
 	container.Register(func() IMyDb { return &myDb{} })
-	myDb := container.Resolve[IMyDb]()
-	assert.Equal(t, myDb.GetAllDbType(), "mysql_sqlserver")
+	iMyDb := container.Resolve[IMyDb]()
+	assert.Equal(t, iMyDb.GetAllDbType(), "mysql_sqlserver")
+
+	// 通过实例的方式
+	dbIns := container.ResolveIns(&myDb{})
+	assert.Equal(t, dbIns.GetAllDbType(), "mysql_sqlserver")
 }

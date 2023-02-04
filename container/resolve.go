@@ -25,3 +25,8 @@ func ResolveType(interfaceType reflect.Type, iocName ...string) any {
 	name := getIocName(iocName...)
 	return defContainer.resolve(interfaceType, name)
 }
+
+// ResolveIns 将现有中实例内的字段做注入操作
+func ResolveIns[TIns any](ins TIns) TIns {
+	return defContainer.inject(ins).(TIns)
+}
