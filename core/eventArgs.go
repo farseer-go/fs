@@ -13,3 +13,6 @@ type EventArgs struct {
 	// 事件名称
 	EventName string
 }
+
+// ConsumerFunc 订阅者的函数
+type ConsumerFunc func(message any, ea EventArgs)
