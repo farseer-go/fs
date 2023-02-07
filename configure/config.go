@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-var configurationBuilder config
+var configurationBuilder = newConfigurationBuilder()
 
 type config struct {
 	def            map[string]any    // 默认配置
@@ -12,7 +12,7 @@ type config struct {
 	configProvider []IConfigProvider // 配置提供者
 }
 
-func NewConfigurationBuilder() config {
+func newConfigurationBuilder() config {
 	return config{
 		def:            make(map[string]any),
 		configProvider: []IConfigProvider{},
@@ -75,7 +75,15 @@ func (c *config) GetSubNodes(key string) map[string]any {
 			return v
 		}
 	}
-	return make(map[string]any)
+
+	m := make(map[string]any)
+	prefixKey := key + "."
+	for k, v := range c.def {
+		if strings.HasPrefix(k, prefixKey) {
+			m[k[len(prefixKey):]] = v
+		}
+	}
+	return m
 }
 
 // GetSlice 获取数组

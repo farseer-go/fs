@@ -6,7 +6,6 @@ import (
 )
 
 func ReadInConfig() error {
-	configurationBuilder = NewConfigurationBuilder()
 	configurationBuilder.AddYamlFile("./farseer.yaml")
 	configurationBuilder.AddEnvironmentVariables()
 	// 配置文件，我们都是通过a.b访问的。而环境变量是A_B。
