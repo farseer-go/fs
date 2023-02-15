@@ -2,10 +2,11 @@ package flog
 
 import "github.com/farseer-go/fs/configure"
 
-var LogConfig Config
+var logConfig Config
 
 func Init() {
-	LogConfig = configure.ParseConfig[Config]("Log")
+	logConfig = configure.ParseConfig[Config]("Log")
+	go printLog()
 }
 
 type Config struct {

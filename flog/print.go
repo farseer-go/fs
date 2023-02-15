@@ -5,6 +5,7 @@ import (
 	"github.com/farseer-go/fs/configure"
 	"github.com/farseer-go/fs/core/eumLogLevel"
 	"github.com/farseer-go/fs/dateTime"
+	"strings"
 )
 
 // Trace 打印Trace日志
@@ -93,7 +94,31 @@ func Criticalf(format string, a ...any) {
 func Log(logLevel eumLogLevel.Enum, contents ...any) string {
 	content := fmt.Sprint(contents...)
 	msg := fmt.Sprintf("%s %s %s\r\n", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss"), Colors[logLevel]("["+logLevel.ToString()+"]"), content)
-	fmt.Print(msg)
+
+	switch strings.ToLower(logConfig.LogLevel) {
+	case "debug":
+		if logLevel < 1 {
+			return msg
+		}
+	case "information", "info":
+		if logLevel < 2 {
+			return msg
+		}
+	case "warning", "warn":
+		if logLevel < 3 {
+			return msg
+		}
+	case "error":
+		if logLevel < 4 {
+			return msg
+		}
+	case "critical":
+		if logLevel < 5 {
+			return msg
+		}
+	}
+
+	logQueue <- msg
 	return msg
 }
 
@@ -128,5 +153,13 @@ func ComponentInfof(appName string, format string, a ...any) {
 	if configure.GetBool("Log.Component." + appName) {
 		content := fmt.Sprintf(format, a...)
 		fmt.Printf("%s %s %s\r\n", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss"), Colors[0]("["+appName+"]"), content)
+	}
+}
+
+var logQueue = make(chan string, 10000)
+
+func printLog() {
+	for msg := range logQueue {
+		fmt.Print(msg)
 	}
 }
