@@ -5,6 +5,7 @@ import (
 	"github.com/farseer-go/fs/container/eumLifecycle"
 	"github.com/farseer-go/fs/flog"
 	"reflect"
+	"sync"
 )
 
 // 容器
@@ -12,6 +13,7 @@ type container struct {
 	name       string
 	dependency map[reflect.Type][]componentModel // 依赖
 	component  []componentModel                  // 实现类
+	lock       *sync.RWMutex
 }
 
 // NewContainer 实例化一个默认容器
@@ -20,11 +22,15 @@ func NewContainer() *container {
 		name:       "default",
 		dependency: make(map[reflect.Type][]componentModel),
 		component:  []componentModel{},
+		lock:       &sync.RWMutex{},
 	}
 }
 
 // 注册实例，添加到依赖列表
 func (r *container) addComponent(model componentModel) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	componentModels, exists := r.dependency[model.interfaceType]
 	if !exists {
 		r.dependency[model.interfaceType] = []componentModel{model}
@@ -92,7 +98,9 @@ func (r *container) resolve(interfaceType reflect.Type, name string) any {
 
 	// 通过Interface查找注册过的container
 	if interfaceType.Kind() == reflect.Interface {
+		r.lock.RLock()
 		componentModels, exists := r.dependency[interfaceType]
+		r.lock.RUnlock()
 		if !exists {
 			_ = flog.Errorf("container：%s Unregistered", interfaceType.String())
 			return nil
@@ -115,6 +123,8 @@ func (r *container) resolve(interfaceType reflect.Type, name string) any {
 
 // 根据lifecycle获取实例
 func (r *container) getOrCreateIns(interfaceType reflect.Type, index int) any {
+	r.lock.RLock()
+	defer r.lock.RUnlock()
 	// 单例
 	if r.dependency[interfaceType][index].lifecycle == eumLifecycle.Single {
 		if r.dependency[interfaceType][index].instance == nil {
@@ -142,7 +152,9 @@ func (r *container) createIns(model componentModel) any {
 
 // 获取对象，如果默认别名不存在，则使用第一个注册的实例
 func (r *container) resolveDefaultOrFirstComponent(interfaceType reflect.Type) any {
+	r.lock.Lock()
 	componentModels, exists := r.dependency[interfaceType]
+	r.lock.Unlock()
 	if !exists {
 		_ = flog.Errorf("container：%s Unregistered", interfaceType.String())
 		return nil
@@ -190,7 +202,9 @@ func (r *container) injectByType(instanceType reflect.Type) any {
 
 // 是否注册过
 func (r *container) isRegister(interfaceType reflect.Type, name string) bool {
+	r.lock.RLock()
 	componentModels, exists := r.dependency[interfaceType]
+	r.lock.RUnlock()
 	if !exists {
 		return false
 	}
