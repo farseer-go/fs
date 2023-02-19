@@ -123,8 +123,6 @@ func (r *container) resolve(interfaceType reflect.Type, name string) any {
 
 // 根据lifecycle获取实例
 func (r *container) getOrCreateIns(interfaceType reflect.Type, index int) any {
-	r.lock.RLock()
-	defer r.lock.RUnlock()
 	// 单例
 	if r.dependency[interfaceType][index].lifecycle == eumLifecycle.Single {
 		if r.dependency[interfaceType][index].instance == nil {
