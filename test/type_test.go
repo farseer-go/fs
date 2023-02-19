@@ -75,4 +75,10 @@ func TestType(t *testing.T) {
 
 	v := 0
 	assert.Equal(t, reflect.TypeOf(0).String(), types.GetRealType2(reflect.TypeOf(&v)).String())
+
+	assert.False(t, types.IsDtoModelIgnoreInterface([]reflect.Type{}))
+	assert.False(t, types.IsDtoModelIgnoreInterface([]reflect.Type{reflect.TypeOf(1)}))
+
+	assert.False(t, types.IsDtoModelIgnoreInterface([]reflect.Type{reflect.TypeOf(sqlserver{}), reflect.TypeOf(sqlserver{})}))
+	assert.True(t, types.IsDtoModelIgnoreInterface([]reflect.Type{reflect.TypeOf(sqlserver{})}))
 }

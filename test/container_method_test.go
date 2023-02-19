@@ -17,7 +17,7 @@ func (d *databaseFactory) CreateDatabase() IDatabase {
 	return &sqlserver{}
 }
 
-func TestMethod(t *testing.T) {
+func TestContainerMethod(t *testing.T) {
 	container.InitContainer()
 
 	// 注册获取IDatabase接口的方法

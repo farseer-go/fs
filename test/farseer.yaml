@@ -22,7 +22,7 @@ ElasticSearch:
 WebApi:
   Url: ":888"
 Log:
-  LogLevel: "Information"
+  LogLevel: "debug"
   Component:
     httpInvoke: true
     task: true
