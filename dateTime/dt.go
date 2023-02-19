@@ -35,6 +35,8 @@ func (d DateTime) ToString(format string) string {
 	format = strings.Replace(format, "HH", "15", -1)
 	format = strings.Replace(format, "mm", "04", -1)
 	format = strings.Replace(format, "ss", "05", -1)
+	format = strings.Replace(format, "ffffff", "000000", -1)
+	format = strings.Replace(format, "fff", "000", -1)
 
 	return d.time.Format(format)
 }
