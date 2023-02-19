@@ -156,7 +156,7 @@ func ComponentInfof(appName string, format string, a ...any) {
 	}
 }
 
-var logQueue = make(chan string, 10000)
+var logQueue = make(chan string, 1000)
 
 func printLog() {
 	for msg := range logQueue {
