@@ -26,6 +26,7 @@ type timingWheel struct {
 	// 第二组为当前时间轮的层数的时间格做为KEY
 	// 根据当前时间轮层数 + 时间格子 ，就能找出对应的Timer
 	timeHandTimer map[wheelLevel]map[timeHand][]*Timer
+	lock          *sync.RWMutex
 }
 
 // New 初始化
@@ -40,6 +41,7 @@ func New(interval time.Duration, bucketsNum int) *timingWheel {
 		timerQueue:    make(chan *Timer, 1000),
 		clock:         make(map[wheelLevel]timeHand),
 		timeHandTimer: timeHandTimer,
+		lock:          &sync.RWMutex{},
 	}
 }
 
@@ -47,7 +49,6 @@ func New(interval time.Duration, bucketsNum int) *timingWheel {
 func (receiver *timingWheel) Start() {
 	receiver.onceStart.Do(func() {
 		receiver.ticker = time.NewTicker(receiver.duration)
-		//receiver.clock[0] = 0
 		// 启动时间轮盘
 		go receiver.turning()
 		// 启动获取到达时间的任务
@@ -59,6 +60,7 @@ func (receiver *timingWheel) Start() {
 func (receiver *timingWheel) Add(d time.Duration) *Timer {
 	planAt := time.Now().Add(d)
 	planDuration := d.String()
+
 	// 公式原理：receiver.totalDuration = 第一层的时长
 	// 每一层的一格时长：receiver.totalDuration^level	math.Pow(receiver.totalDuration, level)
 	// 每一层的一圈时长：receiver.totalDuration^level+1		math.Pow(receiver.totalDuration, level+1)
@@ -89,17 +91,24 @@ func (receiver *timingWheel) Add(d time.Duration) *Timer {
 			d -= time.Duration(receiver.bucketsNum-receiver.clock[0]) * receiver.duration
 			curLevelTimeHandDuration = time.Duration(math.Pow(float64(receiver.totalDuration), float64(level)))
 			curLevelTimeHand = timeHand(d / curLevelTimeHandDuration)
-			//curLevelTimeHand -= receiver.bucketsNum
 		}
 	}
 
-	flog.Debugf("添加时间:+%s %s level：%d 指针：%d", planDuration, planAt.Format("15:04:05.000"), level, curLevelTimeHand)
+	flog.Debugf("添加时间:+%s %s level：%d 指针：%d，当前指针：%d", planDuration, planAt.Format("15:04:05.000"), level, curLevelTimeHand, receiver.clock[0])
 	t := &Timer{
-		C:        make(chan time.Time),
+		C:        make(chan time.Time, 1),
 		duration: d,
 		planAt:   planAt,
 	}
 
+	// 在同一格，说明需要立即执行
+	if (level == 0 && curLevelTimeHand == receiver.clock[0]) || d < 0 {
+		receiver.timerQueue <- t
+		return t
+	}
+
+	receiver.lock.Lock()
+	defer receiver.lock.Unlock()
 	_, exists := receiver.timeHandTimer[level]
 	// 如果所在的层没有初始化过，则先初始化
 	if !exists {
@@ -127,6 +136,9 @@ func (receiver *timingWheel) turning() {
 	for {
 		// 每timingWheel.duration 转动一次
 		<-receiver.ticker.C
+
+		// 时间指针向前一格
+		receiver.turningNextLevel(0)
 		//fmt.Printf("ticker:%s 指针：%d 任务：%d个\n", time.Now().Format("15:04:05.000"), receiver.clock[0], len(receiver.timeHandTimer[0][receiver.clock[0]]))
 
 		// 取出当前格子的任务
@@ -137,9 +149,6 @@ func (receiver *timingWheel) turning() {
 			}
 		}
 		delete(receiver.timeHandTimer[0], receiver.clock[0])
-
-		// 时间指针向前一格
-		receiver.turningNextLevel(0)
 	}
 }
 
@@ -189,15 +198,16 @@ func (receiver *timingWheel) getLevel(d time.Duration) int {
 // 将到达时间的任务推送给C
 func (receiver *timingWheel) popTimer() {
 	for timer := range receiver.timerQueue {
-		// 使用精确的时间
-		if timer.isPrecision {
-			go timer.precision()
-			continue
-		}
-
-		// 留出5ms做最后精确控制
 		milliseconds := timer.planAt.Sub(time.Now()).Milliseconds()
-		time.Sleep(time.Duration(milliseconds) * time.Millisecond)
+		if milliseconds > 0 {
+			// 使用精确的时间
+			if timer.isPrecision {
+				go timer.precision()
+				continue
+			}
+
+			time.Sleep(time.Duration(milliseconds) * time.Millisecond)
+		}
 		timer.C <- timer.planAt
 	}
 }

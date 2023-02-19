@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/farseer-go/fs"
 	"github.com/farseer-go/fs/modules"
-	"github.com/farseer-go/timingWheel"
+	"github.com/farseer-go/fs/timingWheel"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
@@ -12,11 +12,12 @@ import (
 
 func TestTimingWheel(t *testing.T) {
 	fs.Initialize[modules.FarseerKernelModule]("unit test")
-	tw := timingWheel.New(10*time.Millisecond, 60)
+	tw := timingWheel.New(500*time.Millisecond, 60)
 	tw.Start()
-	time.Sleep(200 * time.Millisecond)
+	tw.AddPrecision(-305 * time.Millisecond)
+	//time.Sleep(300 * time.Millisecond)
 	// 添加一个505ms以后的任务
-	timer1 := tw.AddPrecision(505 * time.Millisecond)
+	timer1 := tw.AddPrecision(305 * time.Millisecond)
 	// 添加一个1843ms以后的任务
 	timer2 := tw.Add(102 * time.Millisecond)
 	timer2.Stop()
