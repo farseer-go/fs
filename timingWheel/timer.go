@@ -1,13 +1,15 @@
 package timingWheel
 
 import (
+	"github.com/farseer-go/fs/flog"
 	"time"
 )
 
 type Timer struct {
+	Id          int64 // 唯一ID
 	C           chan time.Time
 	duration    time.Duration // 在level层的实际时长
-	planAt      time.Time     // 计划执行时间
+	PlanAt      time.Time     // 计划执行时间
 	isPrecision bool          // planAt是否需要精准
 	isStop      bool          // 是否停止
 }
@@ -19,20 +21,17 @@ func (receiver *Timer) Stop() {
 // 精确控制时间
 func (receiver *Timer) precision() {
 	// 留出5ms做最后精确控制
-	milliseconds := receiver.planAt.Sub(time.Now()).Milliseconds() - 5
+	milliseconds := receiver.PlanAt.Sub(time.Now()).Milliseconds() - 4
 	if milliseconds > 0 {
 		time.Sleep(time.Duration(milliseconds) * time.Millisecond)
-
-		milli := receiver.planAt.UnixMilli()
 		// 每次休眠1ms
-		for milli > time.Now().UnixMilli()+1 {
+		for receiver.PlanAt.Sub(time.Now()).Microseconds() >= 1100 {
 			time.Sleep(1 * time.Millisecond)
 		}
-
+		flog.Debugf("休眠时间(%d):+%s %d us", receiver.Id, receiver.PlanAt.Format("15:04:05.000"), receiver.PlanAt.Sub(time.Now()).Microseconds())
 		// 每次休眠0.2ms
-		for milli > time.Now().UnixMilli() {
-			time.Sleep(200 * time.Microsecond)
+		for receiver.PlanAt.Sub(time.Now()).Microseconds() >= 55 {
+			time.Sleep(50 * time.Microsecond)
 		}
 	}
-	receiver.C <- receiver.planAt
 }
