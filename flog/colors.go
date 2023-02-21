@@ -1,6 +1,9 @@
 package flog
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 // brush is a color join function
 type brush func(any) string
@@ -23,4 +26,14 @@ func newBrush(color string) brush {
 	return func(text any) string {
 		return fmt.Sprintf("%s%sm%v%s", pre, color, text, reset)
 	}
+}
+
+// RedInt64 转为红色字体
+func RedInt64(v int64) string {
+	return Colors[4](strconv.FormatInt(v, 10))
+}
+
+// RedInt64 转为红色字体
+func RedInt(v int) string {
+	return Colors[4](strconv.Itoa(v))
 }
