@@ -6,7 +6,6 @@ var logConfig Config
 
 func Init() {
 	logConfig = configure.ParseConfig[Config]("Log")
-	go printLog()
 }
 
 type Config struct {

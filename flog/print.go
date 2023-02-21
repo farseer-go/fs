@@ -93,7 +93,7 @@ func Criticalf(format string, a ...any) {
 // Log 打印日志
 func Log(logLevel eumLogLevel.Enum, contents ...any) string {
 	content := fmt.Sprint(contents...)
-	msg := fmt.Sprintf("%s %s %s\r\n", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss"), Colors[logLevel]("["+logLevel.ToString()+"]"), content)
+	msg := fmt.Sprintf("%s %s %s\r\n", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss.ffffff"), Colors[logLevel]("["+logLevel.ToString()+"]"), content)
 
 	switch strings.ToLower(logConfig.LogLevel) {
 	case "debug":
@@ -118,7 +118,7 @@ func Log(logLevel eumLogLevel.Enum, contents ...any) string {
 		}
 	}
 
-	logQueue <- msg
+	fmt.Print(msg)
 	return msg
 }
 
@@ -153,13 +153,5 @@ func ComponentInfof(appName string, format string, a ...any) {
 	if configure.GetBool("Log.Component." + appName) {
 		content := fmt.Sprintf(format, a...)
 		fmt.Printf("%s %s %s\r\n", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss"), Colors[0]("["+appName+"]"), content)
-	}
-}
-
-var logQueue = make(chan string, 1000)
-
-func printLog() {
-	for msg := range logQueue {
-		fmt.Print(msg)
 	}
 }
