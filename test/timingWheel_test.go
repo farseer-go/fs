@@ -2,7 +2,6 @@ package test
 
 import (
 	"github.com/farseer-go/fs"
-	"github.com/farseer-go/fs/flog"
 	"github.com/farseer-go/fs/modules"
 	"github.com/farseer-go/fs/timingWheel"
 	"github.com/stretchr/testify/assert"
@@ -12,16 +11,29 @@ import (
 
 func TestTimingWheel(t *testing.T) {
 	fs.Initialize[modules.FarseerKernelModule]("unit test")
-	tw := timingWheel.New(50*time.Millisecond, 10)
+	tw := timingWheel.New(10*time.Millisecond, 12)
+	/*
+			0： 10 * 12 = 120 ms						0.12s
+			1： 10 * 12 * 12 = 1440 ms					1.44s
+			2： 10 * 12 * 12 * 12 * 17280 ms			17.28
+			3： 10 * 12 * 12 * 12 * 12 * 207360 ms		207.36
+
+		第0层： 10 20 30 40 50 60 70 80 90 100 110 120
+		第1层： 120 240 360 480 600 720 840 960 1080 1200 1320 1440
+				  0秒 123：第1层，第2格，3
+				  78秒 123：第1层，第2格，3
+					201秒
+	*/
 	tw.Start()
-	timer4 := tw.AddPrecision(503 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
+	timer4 := tw.AddPrecision(123 * time.Millisecond)
 	timer5 := tw.AddPrecision(1003 * time.Millisecond)
+	timer6 := tw.AddPrecision(1443 * time.Millisecond)
 	tw.AddPrecision(-35 * time.Millisecond).Stop()
 	tw.Add(102 * time.Millisecond)
 	tw.AddTime(time.Now().Add(1304 * time.Millisecond))
-	timer1 := tw.AddPrecision(10 * time.Millisecond)
-	flog.Info("timer1------------------------------------------")
-	assert.Equal(t, timer1.PlanAt.Format("15:04:05.000"), (<-timer1.C).Format("15:04:05.000"))
+	timer1 := tw.AddPrecision(12 * time.Millisecond)
+	assert.WithinDuration(t, timer1.PlanAt, <-timer1.C, time.Millisecond)
 
 	timer2 := tw.AddPrecision(1102 * time.Millisecond)
 	timer3 := tw.AddTimePrecision(time.Now().Add(1203 * time.Millisecond))
@@ -29,4 +41,5 @@ func TestTimingWheel(t *testing.T) {
 	assert.WithinDuration(t, timer3.PlanAt, <-timer3.C, time.Millisecond)
 	assert.WithinDuration(t, timer4.PlanAt, <-timer4.C, time.Millisecond)
 	assert.WithinDuration(t, timer5.PlanAt, <-timer5.C, time.Millisecond)
+	assert.WithinDuration(t, timer6.PlanAt, <-timer6.C, time.Millisecond)
 }

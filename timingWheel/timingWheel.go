@@ -16,40 +16,41 @@ type timeHand = int   // 第几个格子（桶）
 // 秒钟一圈时长，等于分钟的一格时长，以此类推
 // 相比传统的多层，每层时长一样的算法，更科学。
 type timingWheel struct {
-	ticker        *time.Ticker            // 定时器
-	duration      time.Duration           // 第一层时间每格的时长
-	bucketsNum    int                     // 一圈的格子数量
-	totalDuration time.Duration           // 第一层的时长 duration * bucketsNum
-	onceStart     sync.Once               // 保证只执行一次
-	timerQueue    chan *Timer             // 到达时间的任务，会立即放到此队列中
-	clock         map[wheelLevel]timeHand // 时钟模型
-	// 两组，第一组以时间轮的层数为KEY
-	// 第二组为当前时间轮的层数的时间格做为KEY
+	ticker        *time.Ticker    // 定时器
+	duration      []time.Duration // 每一层时间每格的时长
+	bucketsNum    int             // 一圈的格子数量
+	totalDuration time.Duration   // 第一层的时长 duration * bucketsNum
+	onceStart     sync.Once       // 保证只执行一次
+	timerQueue    chan *Timer     // 到达时间的任务，会立即放到此队列中
+	clock         []timeHand      // 时钟模型（数组索引 = wheelLevel）
+	// 数组索引 = wheelLevel
+	// 当前时间轮的层数的时间格做为MAP KEY
 	// 根据当前时间轮层数 + 时间格子 ，就能找出对应的Timer
-	timeHandTimer map[wheelLevel]map[timeHand][]*Timer
-	lock          *sync.RWMutex
+	timeHandTimer []map[timeHand][]*Timer
+	timerLock     *sync.RWMutex
+	startAt       time.Time
 }
 
 // New 初始化
 // duration 每个时间格子的时长
 func New(interval time.Duration, bucketsNum int) *timingWheel {
-	timeHandTimer := make(map[wheelLevel]map[timeHand][]*Timer)
-	timeHandTimer[0] = make(map[timeHand][]*Timer)
 	return &timingWheel{
-		duration:      interval,
+		duration:      []time.Duration{interval},
 		bucketsNum:    bucketsNum,
 		totalDuration: interval * time.Duration(bucketsNum),
 		timerQueue:    make(chan *Timer, 1000),
-		clock:         make(map[wheelLevel]timeHand),
-		timeHandTimer: timeHandTimer,
-		lock:          &sync.RWMutex{},
+		clock:         []timeHand{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		timeHandTimer: []map[timeHand][]*Timer{make(map[timeHand][]*Timer)},
+		timerLock:     &sync.RWMutex{},
 	}
 }
 
 // Start 开始运行
 func (receiver *timingWheel) Start() {
 	receiver.onceStart.Do(func() {
-		receiver.ticker = time.NewTicker(receiver.duration)
+		receiver.initLevelTimeHandDuration(10)
+		receiver.ticker = time.NewTicker(receiver.duration[0])
+		receiver.startAt = time.Now()
 		// 启动时间轮盘
 		go receiver.turning()
 	})
@@ -57,61 +58,31 @@ func (receiver *timingWheel) Start() {
 
 // Add 添加一个定时任务
 func (receiver *timingWheel) Add(d time.Duration) *Timer {
-	planAt := time.Now().Add(d)
-	planDuration := d.String()
-
-	// 公式原理：receiver.totalDuration = 第一层的时长
-	// 每一层的一格时长：receiver.totalDuration^level	math.Pow(receiver.totalDuration, level)
-	// 每一层的一圈时长：receiver.totalDuration^level+1		math.Pow(receiver.totalDuration, level+1)
-
-	// 计算出第几层 根据d、receiver.bucketDuration开根号，会得出第几层
-	level := receiver.getLevel(d)
-	// 得到level层一格的时长（也相当于level-1一圈的时长）
-	curLevelTimeHandDuration := receiver.getLevelTimeHandDuration(level)
-	if level > 0 {
-		// 减去上一层的总时长，得出当前层的相对时长
-		d -= curLevelTimeHandDuration
-	}
-
-	// 得到level层所在的指针
-	curLevelTimeHand := timeHand(d / curLevelTimeHandDuration)
-
-	// 要算上level已经走的指针
-	curLevelTimeHand += receiver.clock[level]
-	// 当前走的指针大于每一层的格子数量，则要跳到下一层
-	if curLevelTimeHand >= receiver.bucketsNum {
-		level++
-		// 跳到下一层时，指针要按下一层的时长重新计算
-		d -= time.Duration(receiver.bucketsNum-receiver.clock[level]) * receiver.duration
-		curLevelTimeHandDuration = receiver.getLevelTimeHandDuration(level)
-		curLevelTimeHand = timeHand(d / curLevelTimeHandDuration)
-	}
-
-	// 用于更精确控制时间
-	level, curLevelTimeHand = receiver.rewind(d, curLevelTimeHandDuration, level, curLevelTimeHand)
-
 	t := &Timer{
-		Id:       snowflake.GenerateId(),
-		C:        make(chan time.Time, 1),
-		duration: d,
-		PlanAt:   planAt,
+		Id:                snowflake.GenerateId(),
+		C:                 make(chan time.Time, 1),
+		duration:          d,
+		remainingDuration: 0,
+		PlanAt:            time.Now().Add(d),
 	}
+
+	// 计算第几层第几格、剩余时长
+	level, curLevelTimeHand, remainingDuration := receiver.rewind(time.Since(receiver.startAt) + d)
+
+	t.remainingDuration = remainingDuration
+
 	// 在同一格，说明需要立即执行
-	if (level == 0 && curLevelTimeHand == receiver.clock[0]) || d < 0 {
+	if (level == 0 && curLevelTimeHand == receiver.clock[0]) || t.remainingDuration < 0 {
 		go receiver.popTimer(t)
 		return t
 	}
-	flog.Debugf("添加时间(%d):+%s %s level：%d 指针：%d，当前指针：%d", t.Id, planDuration, planAt.Format("15:04:05.000"), level, curLevelTimeHand, receiver.clock[0])
+	flog.Debugf("添加时间(%d):+%s %s 第%d层 第%d格 剩余%s，当前指针：%d", t.Id, t.duration.String(), t.PlanAt.Format("15:04:05.000"), level, curLevelTimeHand, t.remainingDuration.String(), receiver.clock[0])
 
-	receiver.lock.Lock()
-	defer receiver.lock.Unlock()
-	_, exists := receiver.timeHandTimer[level]
-	// 如果所在的层没有初始化过，则先初始化
-	if !exists {
-		receiver.timeHandTimer[level] = make(map[timeHand][]*Timer)
-	}
+	// 初始化所在层的任务队列
+	receiver.initTimeHandTimer(level)
 
-	// 找到对应层的指针
+	receiver.timerLock.Lock()
+	defer receiver.timerLock.Unlock()
 	timers := receiver.timeHandTimer[level][curLevelTimeHand]
 	timers = append(timers, t)
 	receiver.timeHandTimer[level][curLevelTimeHand] = timers
@@ -139,17 +110,18 @@ func (receiver *timingWheel) AddTimePrecision(t time.Time) *Timer {
 
 // 时间轮开始转动
 func (receiver *timingWheel) turning() {
+	flog.Debugf("当前指针，%d.%d.%d", receiver.clock[2], receiver.clock[1], receiver.clock[0])
 	for {
 		go func(tHand timeHand) {
-			flog.Debugf("当前指针，%d.%d.%d", receiver.clock[2], receiver.clock[1], tHand)
+			receiver.timerLock.Lock()
 			// 取出当前格子的任务
 			timers := receiver.timeHandTimer[0][tHand]
 			if len(timers) > 0 {
 				// 需要提前删除，否则会与降级任务冲突
-				receiver.lock.Lock()
 				delete(receiver.timeHandTimer[0], tHand)
-				receiver.lock.Unlock()
 			}
+			receiver.timerLock.Unlock()
+
 			if len(timers) > 1 {
 				receiver.order(timers)
 			}
@@ -166,6 +138,7 @@ func (receiver *timingWheel) turning() {
 		<-receiver.ticker.C
 		// 时间指针向前一格
 		receiver.turningNextLevel(0)
+		flog.Debugf("当前指针，%d.%d.%d", receiver.clock[2], receiver.clock[1], receiver.clock[0])
 	}
 }
 
@@ -177,55 +150,49 @@ func (receiver *timingWheel) turningNextLevel(level wheelLevel) {
 	if receiver.clock[level] >= receiver.bucketsNum {
 		// 指针重新回到0
 		receiver.clock[level] = 0
-		// 先降级任务
-		receiver.timerDowngrade(level + 1)
+
 		// 下一层指针+1
 		receiver.turningNextLevel(level + 1)
+
+		// 先降级任务
+		receiver.timerDowngrade(level + 1)
+		receiver.initTimeHandTimer(level + 1)
 	}
 }
 
 // 任务降级，把level层的任务降到level-1层
-func (receiver *timingWheel) timerDowngrade(level wheelLevel) {
-	flog.Debugf("第%d层降级任务", level)
-	timesHand, exists := receiver.timeHandTimer[level]
-	if exists {
-		clockHand := receiver.clock[level]
-		timers := timesHand[clockHand]
-		// 得到level-1层一格的时长
-		preLevelTimeHandDuration := receiver.getLevelTimeHandDuration(level - 1)
-		// 得到level层一格的时长
-		curLevelTimeHandDuration := receiver.getLevelTimeHandDuration(level)
-		for i := 0; i < len(timers); i++ {
-			// 如果不是第0格，则要回退一格
-			if clockHand > 0 {
-				timers[i].duration -= curLevelTimeHandDuration
-			}
-			// 得到level-1层所在的指针
-			nextLevelTimeHand := timeHand(timers[i].duration / preLevelTimeHandDuration)
-			if nextLevelTimeHand == receiver.bucketsNum {
-				nextLevelTimeHand--
-			}
+func (receiver *timingWheel) timerDowngrade(curLevel wheelLevel) {
+	clockHand := receiver.clock[curLevel]
+	flog.Debugf("任务第%d层第%d格 降级", curLevel, clockHand)
+	if curLevel < len(receiver.timeHandTimer) {
+		receiver.timerLock.Lock()
+		defer receiver.timerLock.Unlock()
 
+		timers := receiver.timeHandTimer[curLevel][clockHand]
+		for i := 0; i < len(timers); i++ {
 			// 用于更精确控制时间
-			level, nextLevelTimeHand = receiver.rewind(timers[i].duration, preLevelTimeHandDuration, level, nextLevelTimeHand)
+			level, curLevelTimeHand, remainingDuration := receiver.rewind(timers[i].remainingDuration)
+			timers[i].remainingDuration = remainingDuration
+
 			// 将上层任务降级到下层
-			receiver.timeHandTimer[level-1][nextLevelTimeHand] = append(receiver.timeHandTimer[level-1][nextLevelTimeHand], timers[i])
+			receiver.timeHandTimer[level][curLevelTimeHand] = append(receiver.timeHandTimer[level][curLevelTimeHand], timers[i])
+			flog.Debugf("任务(%d)，放到第%d层第%d格 %s", timers[i].Id, level, curLevelTimeHand, timers[i].PlanAt.Format("15:04:05.000"))
 		}
-		receiver.lock.Lock()
-		defer receiver.lock.Unlock()
+
 		// 把当前这一层这一格的任务移除
-		delete(receiver.timeHandTimer[level], clockHand)
-		if len(receiver.timeHandTimer[level]) == 0 {
-			delete(receiver.timeHandTimer, level)
-		}
+		delete(receiver.timeHandTimer[curLevel], clockHand)
 	}
 }
 
 // 计算出第几层 将第一层的时长开根号，会得出第几层
 func (receiver *timingWheel) getLevel(d time.Duration) int {
+	//	0： 10 * 12 = 120 ms						0.12s
+	//	1： 10 * 12 * 12 = 1440 ms					1.44s
+	//	2： 10 * 12 * 12 * 12 * 17280 ms			17.28
+	// 503
 	count := 0
-	for d/receiver.totalDuration >= 1 {
-		d /= receiver.totalDuration
+	for d > receiver.totalDuration {
+		d /= time.Duration(receiver.bucketsNum)
 		count++
 	}
 	return count
@@ -271,26 +238,52 @@ func (receiver *timingWheel) order(lst []*Timer) {
 	}
 }
 
-// 获取对应层的一格时长
-func (receiver *timingWheel) getLevelTimeHandDuration(level wheelLevel) time.Duration {
-	if level == 0 {
-		return receiver.duration
+// 初始化这一层的一格时长
+func (receiver *timingWheel) initLevelTimeHandDuration(level wheelLevel) {
+	// 为了优化，将下一层的时长提前计算好
+	for level >= len(receiver.duration) {
+		curLevelTimeHandDuration := receiver.duration[0] * time.Duration(math.Pow(float64(receiver.bucketsNum), float64(len(receiver.duration))))
+		receiver.duration = append(receiver.duration, curLevelTimeHandDuration)
 	}
-	return time.Duration(math.Pow(float64(receiver.totalDuration), float64(level)))
 }
 
-// 当剩余时间小于3ms时，回退一格（用于更精确控制时间）
-func (receiver *timingWheel) rewind(d time.Duration, curLevelTimeHandDuration time.Duration, level wheelLevel, nextLevelTimeHand timeHand) (wheelLevel, timeHand) {
-	// 在当前时间格中，超出的时间
-	remainingDuration := d % curLevelTimeHandDuration
+// 计算第几层第几格、剩余时长
+func (receiver *timingWheel) rewind(duration time.Duration) (wheelLevel, timeHand, time.Duration) {
+	// 计算出第几层
+	level := receiver.getLevel(duration)
+
+	// 初始化这一层的一格时长
+	receiver.initLevelTimeHandDuration(level)
+
+	// 时间 / 当前一格的时间，就能算出第几格（向上取整）
+	curLevelTimeHand := timeHand(math.Ceil(float64(duration)/float64(receiver.duration[level]))) - 1
+	if curLevelTimeHand == -1 {
+		curLevelTimeHand = 0
+	}
+
+	// 得到在level层的剩余时长 duration - (receiver.duration[level] * time.Duration(curLevelTimeHand))
+	remainingDuration := duration % receiver.duration[level]
+
 	// 如果小于3ms，则退一格（用于更精确控制时间），并且不能是第一层，第一格，否则无法再退了
-	if remainingDuration <= 3*time.Millisecond && (level > 0 || nextLevelTimeHand > 0) {
-		nextLevelTimeHand--
-		// 当前时间格无法再往后退，只能下降一层
-		if nextLevelTimeHand == -1 {
-			nextLevelTimeHand = receiver.bucketsNum - 1
+	if remainingDuration <= 3*time.Millisecond && (level > 0 || curLevelTimeHand > 1) {
+		curLevelTimeHand--
+
+		// 第1层+的第0格，是不会被运行到的，因为默认就是第0格
+		if curLevelTimeHand == 0 {
+			curLevelTimeHand = receiver.bucketsNum - 1
 			level--
 		}
+		remainingDuration += receiver.duration[level]
 	}
-	return level, nextLevelTimeHand
+	return level, curLevelTimeHand, remainingDuration
+}
+
+// 初始化所在层的任务队列
+func (receiver *timingWheel) initTimeHandTimer(level wheelLevel) {
+	receiver.timerLock.Lock()
+	defer receiver.timerLock.Unlock()
+	// 如果所在的层没有初始化过，则先初始化
+	for level >= len(receiver.timeHandTimer) {
+		receiver.timeHandTimer = append(receiver.timeHandTimer, make(map[timeHand][]*Timer))
+	}
 }

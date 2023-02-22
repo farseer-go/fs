@@ -6,12 +6,13 @@ import (
 )
 
 type Timer struct {
-	Id          int64 // 唯一ID
-	C           chan time.Time
-	duration    time.Duration // 在level层的实际时长
-	PlanAt      time.Time     // 计划执行时间
-	isPrecision bool          // planAt是否需要精准
-	isStop      bool          // 是否停止
+	Id                int64 // 唯一ID
+	C                 chan time.Time
+	duration          time.Duration // 实际时长
+	remainingDuration time.Duration // 在level层剩余时长
+	PlanAt            time.Time     // 计划执行时间
+	isPrecision       bool          // planAt是否需要精准
+	isStop            bool          // 是否停止
 }
 
 func (receiver *Timer) Stop() {
