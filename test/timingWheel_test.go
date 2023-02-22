@@ -25,7 +25,7 @@ func TestTimingWheel(t *testing.T) {
 					201秒
 	*/
 	tw.Start()
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(20380 * time.Millisecond)
 	timer4 := tw.AddPrecision(123 * time.Millisecond)
 	timer5 := tw.AddPrecision(1003 * time.Millisecond)
 	timer6 := tw.AddPrecision(1443 * time.Millisecond)

@@ -4,6 +4,8 @@ import (
 	"github.com/farseer-go/fs/flog"
 	"github.com/farseer-go/fs/snowflake"
 	"math"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
@@ -39,7 +41,7 @@ func New(interval time.Duration, bucketsNum int) *timingWheel {
 		bucketsNum:    bucketsNum,
 		totalDuration: interval * time.Duration(bucketsNum),
 		timerQueue:    make(chan *Timer, 1000),
-		clock:         []timeHand{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		clock:         []timeHand{0, 0, 0},
 		timeHandTimer: []map[timeHand][]*Timer{make(map[timeHand][]*Timer)},
 		timerLock:     &sync.RWMutex{},
 	}
@@ -67,7 +69,15 @@ func (receiver *timingWheel) Add(d time.Duration) *Timer {
 	}
 
 	// 计算第几层第几格、剩余时长
-	level, curLevelTimeHand, remainingDuration := receiver.rewind(time.Since(receiver.startAt) + d)
+	level, curLevelTimeHand, remainingDuration := receiver.rewind(d)
+	curLevelTimeHand += receiver.clock[level]
+
+	// 超出了桶，则跳到下一级
+	for curLevelTimeHand >= receiver.bucketsNum {
+		remainingDuration += time.Duration(curLevelTimeHand-receiver.bucketsNum) * receiver.duration[level]
+		level++
+		curLevelTimeHand = receiver.clock[level] + 1
+	}
 
 	t.remainingDuration = remainingDuration
 
@@ -76,7 +86,12 @@ func (receiver *timingWheel) Add(d time.Duration) *Timer {
 		go receiver.popTimer(t)
 		return t
 	}
-	flog.Debugf("添加时间(%d):+%s %s 第%d层 第%d格 剩余%s，当前指针：%d", t.Id, t.duration.String(), t.PlanAt.Format("15:04:05.000"), level, curLevelTimeHand, t.remainingDuration.String(), receiver.clock[0])
+
+	var builder strings.Builder
+	for i := len(receiver.clock) - 1; i >= 0; i-- {
+		builder.WriteString(strconv.Itoa(receiver.clock[i]) + ".")
+	}
+	flog.Debugf("添加时间(%d):+%s %s 第%d层 第%d格 剩余%s，当前指针：%s", t.Id, t.duration.String(), t.PlanAt.Format("15:04:05.000"), level, curLevelTimeHand, t.remainingDuration.String(), builder.String())
 
 	// 初始化所在层的任务队列
 	receiver.initTimeHandTimer(level)
@@ -138,14 +153,23 @@ func (receiver *timingWheel) turning() {
 		<-receiver.ticker.C
 		// 时间指针向前一格
 		receiver.turningNextLevel(0)
-		flog.Debugf("当前指针，%d.%d.%d", receiver.clock[2], receiver.clock[1], receiver.clock[0])
+
+		var builder strings.Builder
+		for i := len(receiver.clock) - 1; i >= 0; i-- {
+			builder.WriteString(strconv.Itoa(receiver.clock[i]) + ".")
+		}
+		flog.Debugf("当前指针，%s", builder.String())
 	}
 }
 
 // 下一层指针+1
 func (receiver *timingWheel) turningNextLevel(level wheelLevel) {
+	if level >= len(receiver.clock) {
+		receiver.clock = append(receiver.clock, 0)
+	}
 	// 时间指针向前一格
 	receiver.clock[level]++
+
 	// 超出最大格子时
 	if receiver.clock[level] >= receiver.bucketsNum {
 		// 指针重新回到0
