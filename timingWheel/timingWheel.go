@@ -81,8 +81,14 @@ func (receiver *timingWheel) Add(d time.Duration) *Timer {
 
 	t.remainingDuration = remainingDuration
 
+	// 晚于当前时间，需要立即推送
+	if t.remainingDuration < 0 || t.PlanAt.Before(time.Now()) {
+		receiver.popTimer(t)
+		return t
+	}
+
 	// 在同一格，说明需要立即执行
-	if (level == 0 && curLevelTimeHand == receiver.clock[0]) || t.remainingDuration < 0 {
+	if level == 0 && curLevelTimeHand == receiver.clock[0] {
 		go receiver.popTimer(t)
 		return t
 	}
@@ -125,7 +131,7 @@ func (receiver *timingWheel) AddTimePrecision(t time.Time) *Timer {
 
 // 时间轮开始转动
 func (receiver *timingWheel) turning() {
-	flog.Debugf("当前指针，%d.%d.%d", receiver.clock[2], receiver.clock[1], receiver.clock[0])
+	//flog.Debugf("当前指针，%d.%d.%d", receiver.clock[2], receiver.clock[1], receiver.clock[0])
 	for {
 		go func(tHand timeHand) {
 			receiver.timerLock.Lock()
@@ -154,11 +160,11 @@ func (receiver *timingWheel) turning() {
 		// 时间指针向前一格
 		receiver.turningNextLevel(0)
 
-		var builder strings.Builder
-		for i := len(receiver.clock) - 1; i >= 0; i-- {
-			builder.WriteString(strconv.Itoa(receiver.clock[i]) + ".")
-		}
-		flog.Debugf("当前指针，%s", builder.String())
+		//var builder strings.Builder
+		//for i := len(receiver.clock) - 1; i >= 0; i-- {
+		//	builder.WriteString(strconv.Itoa(receiver.clock[i]) + ".")
+		//}
+		//flog.Debugf("当前指针，%s", builder.String())
 	}
 }
 
@@ -225,8 +231,8 @@ func (receiver *timingWheel) getLevel(d time.Duration) int {
 // 将到达时间的任务推送给C
 func (receiver *timingWheel) popTimer(timer *Timer) {
 	microseconds := timer.PlanAt.Sub(time.Now()).Microseconds()
-	flog.Debugf("休眠时间(%d):+%s %d us", timer.Id, timer.PlanAt.Format("15:04:05.000"), timer.PlanAt.Sub(time.Now()).Microseconds())
 	if microseconds > 0 {
+		flog.Debugf("休眠时间(%d):+%s %d us", timer.Id, timer.PlanAt.Format("15:04:05.000"), timer.PlanAt.Sub(time.Now()).Microseconds())
 		// 使用精确的时间
 		if timer.isPrecision {
 			timer.precision()
@@ -234,7 +240,7 @@ func (receiver *timingWheel) popTimer(timer *Timer) {
 		time.Sleep(timer.PlanAt.Sub(time.Now()))
 	}
 	timer.C <- time.Now()
-	flog.Debugf("推送时间(%d):+%s 当前指针：%d 精确度：%v", timer.Id, timer.PlanAt.Format("15:04:05.000"), receiver.clock[0], timer.isPrecision)
+	flog.Debugf("推送时间(%d):+%s 精确度：%v", timer.Id, timer.PlanAt.Format("15:04:05.000"), timer.isPrecision)
 }
 
 // 排序任务，按时间从小到大
