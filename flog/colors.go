@@ -37,3 +37,8 @@ func RedInt64(v int64) string {
 func RedInt(v int) string {
 	return Colors[4](strconv.Itoa(v))
 }
+
+// RedInt64 转为红色字体
+func RedString(v string) string {
+	return Colors[4](v)
+}
