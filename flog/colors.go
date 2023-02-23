@@ -42,3 +42,8 @@ func RedInt(v int) string {
 func RedString(v string) string {
 	return Colors[4](v)
 }
+
+// RedInt64 转为红色字体
+func YellowString(v string) string {
+	return Colors[3](v)
+}
