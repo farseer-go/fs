@@ -9,6 +9,9 @@ import (
 
 func TestSingle(t *testing.T) {
 	container.InitContainer()
+
+	assert.Equal(t, 0, len(container.ResolveAll[IDatabase]()))
+
 	// 注册单例
 	container.Register(func() IDatabase { return &mysql{} })
 
@@ -19,6 +22,8 @@ func TestSingle(t *testing.T) {
 
 	container.Register(func() IDatabase { return &mysql{} }, "mysql")
 	container.Register(func() IDatabase { return &sqlserver{} }, "sqlserver")
+
+	assert.Equal(t, 3, len(container.ResolveAll[IDatabase]()))
 
 	assert.True(t, container.IsRegister[IDatabase]())
 	assert.True(t, container.IsRegister[IDatabase]("mysql"))

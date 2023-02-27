@@ -30,3 +30,15 @@ func ResolveType(interfaceType reflect.Type, iocName ...string) any {
 func ResolveIns[TIns any](ins TIns) TIns {
 	return defContainer.inject(ins).(TIns)
 }
+
+// ResolveAll 从容器中获取所有实例
+func ResolveAll[TInterface any]() []TInterface {
+	//var t TInterface
+	interfaceType := reflect.TypeOf((*TInterface)(nil)).Elem()
+	arrAny := defContainer.resolveAll(interfaceType)
+	var arrIns []TInterface
+	for _, ins := range arrAny {
+		arrIns = append(arrIns, ins.(TInterface))
+	}
+	return arrIns
+}

@@ -121,6 +121,33 @@ func (r *container) resolve(interfaceType reflect.Type, name string) any {
 	return nil
 }
 
+// 获取所有对象
+func (r *container) resolveAll(interfaceType reflect.Type) []any {
+	if interfaceType.Kind() == reflect.Pointer {
+		interfaceType = interfaceType.Elem()
+	}
+	if interfaceType.Kind() != reflect.Interface {
+		_ = flog.Errorf("container：When resolve all objects，%s must is Interface type", interfaceType.String())
+		return nil
+	}
+
+	// 通过Interface查找注册过的container
+	r.lock.RLock()
+	componentModels, exists := r.dependency[interfaceType]
+	r.lock.RUnlock()
+	if !exists {
+		_ = flog.Errorf("container：%s Unregistered", interfaceType.String())
+		return nil
+	}
+
+	var ins []any
+	for i := 0; i < len(componentModels); i++ {
+		// 找到了实现类
+		ins = append(ins, r.getOrCreateIns(interfaceType, i))
+	}
+	return ins
+}
+
 // 根据lifecycle获取实例
 func (r *container) getOrCreateIns(interfaceType reflect.Type, index int) any {
 	// 单例
