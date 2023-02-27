@@ -58,3 +58,9 @@ func TestErrorConfig(t *testing.T) {
 		fs.Exit(0)
 	})
 }
+
+func TestEnvConfig(t *testing.T) {
+	fs.Initialize[modules.FarseerKernelModule]("unit test")
+	_ = os.Setenv("Database_default", "aaa=bb")
+	assert.Equal(t, "aaa=bb", configure.GetSubNodes("Database")["default"])
+}

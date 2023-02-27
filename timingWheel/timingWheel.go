@@ -1,6 +1,7 @@
 package timingWheel
 
 import (
+	"context"
 	"github.com/farseer-go/fs/flog"
 	"github.com/farseer-go/fs/snowflake"
 	"math"
@@ -25,25 +26,26 @@ type timingWheel struct {
 	onceStart     sync.Once       // 保证只执行一次
 	timerQueue    chan *Timer     // 到达时间的任务，会立即放到此队列中
 	clock         []timeHand      // 时钟模型（数组索引 = wheelLevel）
+	timerLock     *sync.RWMutex   // 锁
+	startAt       time.Time       // 开始时间
+	ctx           context.Context // 用于停止时间轮
 	// 数组索引 = wheelLevel
 	// 当前时间轮的层数的时间格做为MAP KEY
 	// 根据当前时间轮层数 + 时间格子 ，就能找出对应的Timer
 	timeHandTimer []map[timeHand][]*Timer
-	timerLock     *sync.RWMutex
-	startAt       time.Time
 }
 
 // New 初始化
-// duration 每个时间格子的时长
+// interval 每个时间格子的时长，建议设置为100ms
 func New(interval time.Duration, bucketsNum int) *timingWheel {
 	return &timingWheel{
 		duration:      []time.Duration{interval},
 		bucketsNum:    bucketsNum,
 		totalDuration: interval * time.Duration(bucketsNum),
+		timerLock:     &sync.RWMutex{},
+		timeHandTimer: []map[timeHand][]*Timer{make(map[timeHand][]*Timer)},
 		timerQueue:    make(chan *Timer, 1000),
 		clock:         []timeHand{0, 0, 0},
-		timeHandTimer: []map[timeHand][]*Timer{make(map[timeHand][]*Timer)},
-		timerLock:     &sync.RWMutex{},
 	}
 }
 
@@ -53,6 +55,7 @@ func (receiver *timingWheel) Start() {
 		receiver.initLevelTimeHandDuration(10)
 		receiver.ticker = time.NewTicker(receiver.duration[0])
 		receiver.startAt = time.Now()
+
 		// 启动时间轮盘
 		go receiver.turning()
 	})
@@ -159,12 +162,6 @@ func (receiver *timingWheel) turning() {
 		<-receiver.ticker.C
 		// 时间指针向前一格
 		receiver.turningNextLevel(0)
-
-		//var builder strings.Builder
-		//for i := len(receiver.clock) - 1; i >= 0; i-- {
-		//	builder.WriteString(strconv.Itoa(receiver.clock[i]) + ".")
-		//}
-		//flog.Debugf("当前指针，%s", builder.String())
 	}
 }
 
@@ -193,7 +190,7 @@ func (receiver *timingWheel) turningNextLevel(level wheelLevel) {
 // 任务降级，把level层的任务降到level-1层
 func (receiver *timingWheel) timerDowngrade(curLevel wheelLevel) {
 	clockHand := receiver.clock[curLevel]
-	flog.Debugf("任务第%d层第%d格 降级", curLevel, clockHand)
+	//flog.Debugf("任务第%d层第%d格 降级", curLevel, clockHand)
 	if curLevel < len(receiver.timeHandTimer) {
 		receiver.timerLock.Lock()
 		defer receiver.timerLock.Unlock()
@@ -206,7 +203,7 @@ func (receiver *timingWheel) timerDowngrade(curLevel wheelLevel) {
 
 			// 将上层任务降级到下层
 			receiver.timeHandTimer[level][curLevelTimeHand] = append(receiver.timeHandTimer[level][curLevelTimeHand], timers[i])
-			flog.Debugf("任务(%d)，放到第%d层第%d格 %s", timers[i].Id, level, curLevelTimeHand, timers[i].PlanAt.Format("15:04:05.000"))
+			//flog.Debugf("任务(%d)，放到第%d层第%d格 %s", timers[i].Id, level, curLevelTimeHand, timers[i].PlanAt.Format("15:04:05.000"))
 		}
 
 		// 把当前这一层这一格的任务移除
@@ -232,7 +229,7 @@ func (receiver *timingWheel) getLevel(d time.Duration) int {
 func (receiver *timingWheel) popTimer(timer *Timer) {
 	microseconds := timer.PlanAt.Sub(time.Now()).Microseconds()
 	if microseconds > 0 {
-		flog.Debugf("休眠时间(%d):+%s %d us", timer.Id, timer.PlanAt.Format("15:04:05.000"), timer.PlanAt.Sub(time.Now()).Microseconds())
+		//flog.Debugf("休眠时间(%d):+%s %d us", timer.Id, timer.PlanAt.Format("15:04:05.000"), timer.PlanAt.Sub(time.Now()).Microseconds())
 		// 使用精确的时间
 		if timer.isPrecision {
 			timer.precision()

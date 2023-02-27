@@ -29,7 +29,7 @@ func (t testModule) Initialize() {
 
 func (t testModule) PostInitialize() {
 	lst = append(lst, 3)
-	fs.AddInitCallback(func() {
+	fs.AddInitCallback("test", func() {
 		lst = append(lst, 4)
 	})
 }
