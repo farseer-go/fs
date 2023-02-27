@@ -68,21 +68,26 @@ func (c *config) Get(key string) any {
 
 // GetSubNodes 获取所有子节点
 func (c *config) GetSubNodes(key string) map[string]any {
-	// 遍历配置提供者
-	for _, provider := range c.configProvider {
-		v, exists := provider.GetSubNodes(key)
-		if exists {
-			return v
-		}
-	}
-
+	// 这里需要倒序获取列表，利用后面覆盖前面的方式来获取
 	m := make(map[string]any)
+	// 先添加默认值
 	prefixKey := key + "."
 	for k, v := range c.def {
 		if strings.HasPrefix(k, prefixKey) {
 			m[k[len(prefixKey):]] = v
 		}
 	}
+
+	// 再添加yaml、环境变量
+	for i := len(c.configProvider) - 1; i >= 0; i-- {
+		subMap, exists := c.configProvider[i].GetSubNodes(key)
+		if exists {
+			for k, v := range subMap {
+				m[k] = v
+			}
+		}
+	}
+
 	return m
 }
 

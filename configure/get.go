@@ -8,8 +8,8 @@ import (
 func ReadInConfig() error {
 	configurationBuilder.AddYamlFile("./farseer.yaml")
 	configurationBuilder.AddEnvironmentVariables()
-	// 配置文件，我们都是通过a.b访问的。而环境变量是A_B。
-	// 让环境变量支持A.B的方式，使用替换的方式以支持。
+	// 配置文件，我们都是通过a.b访问的。而环境变量是a_b。
+	// 让环境变量支持a.b的方式，使用替换的方式以支持。
 	configurationBuilder.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	// 找到并读取配置文件
 	return configurationBuilder.Build()
