@@ -5,6 +5,8 @@ import (
 	"github.com/farseer-go/fs/configure"
 	"github.com/farseer-go/fs/core/eumLogLevel"
 	"github.com/farseer-go/fs/dateTime"
+	"runtime"
+	"strconv"
 	"strings"
 )
 
@@ -54,11 +56,13 @@ func Warningf(format string, a ...any) {
 
 // Error 打印Error日志
 func Error(contents ...any) error {
+	Println(fileWithLineNum())
 	return fmt.Errorf(Log(eumLogLevel.Error, contents...))
 }
 
 // Errorf 打印Error日志
 func Errorf(format string, a ...any) error {
+	Println(fileWithLineNum())
 	content := fmt.Sprintf(format, a...)
 	return fmt.Errorf(Log(eumLogLevel.Error, content))
 }
@@ -125,26 +129,26 @@ func Log(logLevel eumLogLevel.Enum, contents ...any) string {
 // Print 打印日志
 func Print(contents ...any) {
 	content := fmt.Sprint(contents...)
-	fmt.Printf("%s %s", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss"), content)
+	fmt.Printf("%s %s", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss.ffffff"), content)
 }
 
 // Println 打印日志
 func Println(a ...any) {
 	content := fmt.Sprintln(a...)
-	fmt.Printf("%s %s", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss"), content)
+	fmt.Printf("%s %s", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss.ffffff"), content)
 }
 
 // Printf 打印日志
 func Printf(format string, a ...any) {
 	content := fmt.Sprintf(format, a...)
-	fmt.Printf("%s %s", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss"), content)
+	fmt.Printf("%s %s", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss.ffffff"), content)
 }
 
 // ComponentInfo 打印应用日志
 func ComponentInfo(appName string, contents ...any) {
 	if configure.GetBool("Log.Component." + appName) {
 		content := fmt.Sprint(contents...)
-		fmt.Printf("%s %s %s\r\n", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss"), Colors[0]("["+appName+"]"), content)
+		fmt.Printf("%s %s %s\r\n", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss.ffffff"), Colors[0]("["+appName+"]"), content)
 	}
 }
 
@@ -152,6 +156,18 @@ func ComponentInfo(appName string, contents ...any) {
 func ComponentInfof(appName string, format string, a ...any) {
 	if configure.GetBool("Log.Component." + appName) {
 		content := fmt.Sprintf(format, a...)
-		fmt.Printf("%s %s %s\r\n", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss"), Colors[0]("["+appName+"]"), content)
+		fmt.Printf("%s %s %s\r\n", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss.ffffff"), Colors[0]("["+appName+"]"), content)
 	}
+}
+
+func fileWithLineNum() string {
+	// the second caller usually from internal, so set i start from 1
+	for i := 2; i < 15; i++ {
+		_, file, line, ok := runtime.Caller(i)
+		if ok && (!strings.HasSuffix(file, "_test.go")) { // !strings.HasPrefix(file, gormSourceDir) ||
+			return file + ":" + strconv.FormatInt(int64(line), 10)
+		}
+	}
+
+	return ""
 }
