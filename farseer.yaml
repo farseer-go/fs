@@ -20,8 +20,9 @@ ElasticSearch:
 WebApi:
   Url: ":888"
 Log:
-  LogLevel: "Information"
+  LogLevel: "info"
   Component:
     httpInvoke: true
     task: true
     cacheManage: true
+    webapi: true
