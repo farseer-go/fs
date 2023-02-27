@@ -76,7 +76,7 @@ func (sw *Watch) ElapsedMilliseconds() int64 {
 // ElapsedMicroseconds 返回当前已计时的时间（微秒）
 func (sw *Watch) ElapsedMicroseconds() int64 {
 	if sw.isRunning {
-		return time.Since(sw.startTime).Microseconds() + sw.lastElapsedMicroseconds
+		return time.Now().Sub(sw.startTime).Microseconds() + sw.lastElapsedMicroseconds
 	}
 	return sw.lastElapsedMicroseconds
 }
@@ -91,15 +91,15 @@ func (sw *Watch) ElapsedNanoseconds() int64 {
 
 // GetMillisecondsText 返回当前已计时的时间（毫秒）
 func (sw *Watch) GetMillisecondsText() string {
-	return flog.Colors[4](strconv.FormatInt(sw.ElapsedMilliseconds(), 10) + " ms ")
+	return flog.Red(strconv.FormatInt(sw.ElapsedMilliseconds(), 10) + " ms")
 }
 
 // GetMicrosecondsText 返回当前已计时的时间（微秒）
 func (sw *Watch) GetMicrosecondsText() string {
-	return flog.Colors[4](strconv.FormatInt(sw.ElapsedMicroseconds(), 10) + " us ")
+	return flog.Red(strconv.FormatInt(sw.ElapsedMicroseconds(), 10) + " us")
 }
 
 // GetNanosecondsText 返回当前已计时的时间（纳秒）
 func (sw *Watch) GetNanosecondsText() string {
-	return flog.Colors[4](strconv.FormatInt(sw.ElapsedNanoseconds(), 10) + " ns ")
+	return flog.Red(strconv.FormatInt(sw.ElapsedNanoseconds(), 10) + " ns")
 }
