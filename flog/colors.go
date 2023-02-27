@@ -2,7 +2,7 @@ package flog
 
 import (
 	"fmt"
-	"strconv"
+	"github.com/farseer-go/fs/parse"
 )
 
 // brush is a color join function
@@ -21,29 +21,24 @@ var Colors = []brush{
 }
 
 func newBrush(color string) brush {
-	pre := "\033["
-	reset := "\033[0m"
+	//pre := "\033["
+	//reset := "\033[0m"
 	return func(text any) string {
-		return fmt.Sprintf("%s%sm%v%s", pre, color, text, reset)
+		return fmt.Sprintf("\u001B[%sm%v\u001B[0m", color, text)
 	}
 }
 
-// RedInt64 转为红色字体
-func RedInt64(v int64) string {
-	return Colors[4](strconv.FormatInt(v, 10))
+// Red 转为红色字体
+func Red(text any) string {
+	return "\u001B[1;31m" + parse.Convert(text, "") + "\u001B[0m"
 }
 
-// RedInt64 转为红色字体
-func RedInt(v int) string {
-	return Colors[4](strconv.Itoa(v))
+// Yellow 转为黄色字体
+func Yellow(text any) string {
+	return "\u001B[1;33m" + parse.Convert(text, "") + "\u001B[0m"
 }
 
-// RedInt64 转为红色字体
-func RedString(v string) string {
-	return Colors[4](v)
-}
-
-// RedInt64 转为红色字体
-func YellowString(v string) string {
-	return Colors[3](v)
+// Green 转为绿色字体
+func Green(text any) string {
+	return "\u001B[1;32m" + parse.Convert(text, "") + "\u001B[0m"
 }
