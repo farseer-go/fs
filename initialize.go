@@ -3,6 +3,8 @@ package fs
 import (
 	"context"
 	"github.com/farseer-go/fs/configure"
+	"github.com/farseer-go/fs/container"
+	"github.com/farseer-go/fs/core"
 	"github.com/farseer-go/fs/dateTime"
 	"github.com/farseer-go/fs/flog"
 	"github.com/farseer-go/fs/modules"
@@ -80,6 +82,24 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 	flog.Println("---------------------------------------")
 	flog.Println("Initialization completed, total time：" + sw.GetMillisecondsText())
 
+	// 健康检查
+	healthChecks := container.ResolveAll[core.IHealthCheck]()
+	if len(healthChecks) > 0 {
+		flog.Println("开始健康检查")
+		isSuccess := true
+		for _, healthCheck := range healthChecks {
+			item, err := healthCheck.Check()
+			if err == nil {
+				flog.Printf("[%s] %s\n", item, flog.Green("检查通过！"))
+			} else {
+				flog.Errorf("[%s] %s %s", item, flog.Red("检查失败！"), flog.Red(err.Error()))
+				isSuccess = false
+			}
+		}
+		if !isSuccess {
+			os.Exit(-1)
+		}
+	}
 	// 加载callbackFnList，启动后才执行的模块
 	if len(callbackFnList) > 0 {
 		for index, fn := range callbackFnList {
