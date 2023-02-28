@@ -75,7 +75,7 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 	var startupModule TModule
 	flog.Println("Loading Module...")
 	dependModules = modules.Distinct(modules.GetDependModule(startupModule))
-	flog.Println("Loaded, " + strconv.Itoa(len(dependModules)) + " modules in total")
+	flog.Println("Loaded, " + flog.Red(len(dependModules)) + " modules in total")
 	flog.Println("---------------------------------------")
 
 	modules.StartModules(dependModules)
@@ -85,20 +85,21 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 	// 健康检查
 	healthChecks := container.ResolveAll[core.IHealthCheck]()
 	if len(healthChecks) > 0 {
-		flog.Println("开始健康检查")
+		flog.Println("Health Check...")
 		isSuccess := true
 		for _, healthCheck := range healthChecks {
 			item, err := healthCheck.Check()
 			if err == nil {
-				flog.Printf("[%s] %s\n", item, flog.Green("检查通过！"))
+				flog.Printf("%s%s\n", flog.Green("【✓】"), item)
 			} else {
-				flog.Errorf("[%s] %s %s", item, flog.Red("检查失败！"), flog.Red(err.Error()))
+				flog.Errorf("%s%s：%s", flog.Red("【✕】"), item, flog.Red(err.Error()))
 				isSuccess = false
 			}
 		}
 		if !isSuccess {
 			os.Exit(-1)
 		}
+		flog.Println("---------------------------------------")
 	}
 	// 加载callbackFnList，启动后才执行的模块
 	if len(callbackFnList) > 0 {

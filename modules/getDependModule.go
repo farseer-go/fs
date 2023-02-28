@@ -50,7 +50,7 @@ func StartModules(farseerModules []FarseerModule) {
 		moduleName := reflect.TypeOf(farseerModule).String()
 		sw.Restart()
 		farseerModule.PreInitialize()
-		flog.Println("Elapsed time：" + sw.GetMillisecondsText() + moduleName + ".PreInitialize()")
+		flog.Println("Elapsed time：" + sw.GetMillisecondsText() + " " + moduleName + ".PreInitialize()")
 	}
 	flog.Println("---------------------------------------")
 
@@ -58,7 +58,7 @@ func StartModules(farseerModules []FarseerModule) {
 		moduleName := reflect.TypeOf(farseerModule).String()
 		sw.Restart()
 		farseerModule.Initialize()
-		flog.Println("Elapsed time：" + sw.GetMillisecondsText() + moduleName + ".Initialize()")
+		flog.Println("Elapsed time：" + sw.GetMillisecondsText() + " " + moduleName + ".Initialize()")
 	}
 	flog.Println("---------------------------------------")
 
@@ -66,7 +66,7 @@ func StartModules(farseerModules []FarseerModule) {
 		moduleName := reflect.TypeOf(farseerModule).String()
 		sw.Restart()
 		farseerModule.PostInitialize()
-		flog.Println("Elapsed time：" + sw.GetMillisecondsText() + moduleName + ".PostInitialize()")
+		flog.Println("Elapsed time：" + sw.GetMillisecondsText() + " " + moduleName + ".PostInitialize()")
 		moduleMap[moduleName] = sw.ElapsedMilliseconds()
 	}
 }
@@ -78,7 +78,7 @@ func ShutdownModules(farseerModules []FarseerModule) {
 	for _, farseerModule := range farseerModules {
 		sw.Restart()
 		farseerModule.Shutdown()
-		flog.Println("Elapsed time：" + sw.GetMillisecondsText() + reflect.TypeOf(farseerModule).String() + ".Shutdown()")
+		flog.Println("Elapsed time：" + sw.GetMillisecondsText() + " " + reflect.TypeOf(farseerModule).String() + ".Shutdown()")
 	}
 	flog.Println("---------------------------------------")
 }

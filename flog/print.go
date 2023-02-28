@@ -56,13 +56,13 @@ func Warningf(format string, a ...any) {
 
 // Error 打印Error日志
 func Error(contents ...any) error {
-	Println(fileWithLineNum())
+	Println(Blue(fileWithLineNum()))
 	return fmt.Errorf(Log(eumLogLevel.Error, contents...))
 }
 
 // Errorf 打印Error日志
 func Errorf(format string, a ...any) error {
-	Println(fileWithLineNum())
+	Println(Blue(fileWithLineNum()))
 	content := fmt.Sprintf(format, a...)
 	return fmt.Errorf(Log(eumLogLevel.Error, content))
 }
@@ -168,6 +168,5 @@ func fileWithLineNum() string {
 			return file + ":" + strconv.FormatInt(int64(line), 10)
 		}
 	}
-
 	return ""
 }

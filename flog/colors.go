@@ -42,3 +42,8 @@ func Yellow(text any) string {
 func Green(text any) string {
 	return "\u001B[1;32m" + parse.Convert(text, "") + "\u001B[0m"
 }
+
+// Blue 转为蓝色字体
+func Blue(text any) string {
+	return "\u001B[1;34m" + parse.Convert(text, "") + "\u001B[0m"
+}
