@@ -136,7 +136,6 @@ func (r *container) resolveAll(interfaceType reflect.Type) []any {
 	componentModels, exists := r.dependency[interfaceType]
 	r.lock.RUnlock()
 	if !exists {
-		_ = flog.Errorf("container：%s Unregistered", interfaceType.String())
 		return nil
 	}
 
