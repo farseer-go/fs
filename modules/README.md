@@ -9,7 +9,7 @@ Use instead of `func init() { }` to accomplish what you expect by an explicit in
 * data.Module
 * elasticSearch.Module
 * eventBus.Module
-* fss.Module
+* fSchedule.Module
 * queue.Module
 * rabbit.Module
 * redis.Module
