@@ -54,7 +54,7 @@ func New(interval time.Duration, bucketsNum int) *timingWheel {
 		clockLock:     &sync.RWMutex{},
 		timeHandTimer: []map[timeHand][]*Timer{make(map[timeHand][]*Timer)},
 		timerQueue:    make(chan *Timer, 1000),
-		clock:         []timeHand{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		clock:         []timeHand{0},
 	}
 }
 
@@ -89,13 +89,16 @@ func (receiver *timingWheel) Add(d time.Duration, opts ...OpOption) *Timer {
 	// 计算第几层第几格、剩余时长
 	level, curLevelTimeHand, remainingDuration := receiver.rewind(d)
 	receiver.clockLock.RLock()
+	defer receiver.clockLock.RUnlock()
 	curLevelTimeHand += receiver.clock[level]
-	receiver.clockLock.RUnlock()
 
 	// 超出了桶，则跳到下一级
 	for curLevelTimeHand >= receiver.bucketsNum {
 		remainingDuration += time.Duration(curLevelTimeHand-receiver.bucketsNum) * receiver.duration[level]
 		level++
+		if level >= len(receiver.clock) {
+			receiver.clock = append(receiver.clock, 0)
+		}
 		curLevelTimeHand = receiver.clock[level] + 1
 	}
 
@@ -108,7 +111,6 @@ func (receiver *timingWheel) Add(d time.Duration, opts ...OpOption) *Timer {
 	}
 
 	// 在同一格，说明需要立即执行
-	receiver.clockLock.RLock()
 	if level == 0 && curLevelTimeHand == receiver.clock[0] {
 		go receiver.popTimer(t)
 		return t
@@ -118,7 +120,6 @@ func (receiver *timingWheel) Add(d time.Duration, opts ...OpOption) *Timer {
 	for i := len(receiver.clock) - 1; i >= 0; i-- {
 		builder.WriteString(strconv.Itoa(receiver.clock[i]) + ".")
 	}
-	receiver.clockLock.RUnlock()
 	flog.Debugf("添加时间(%d):+%s %s 第%d层 第%d格 剩余%s，当前指针：%s", t.Id, t.duration.String(), t.PlanAt.Format("15:04:05.000"), level, curLevelTimeHand, t.remainingDuration.String(), builder.String())
 
 	// 初始化所在层的任务队列
@@ -155,27 +156,28 @@ func (receiver *timingWheel) AddTimePrecision(t time.Time) *Timer {
 func (receiver *timingWheel) turning() {
 	//flog.Debugf("当前指针，%d.%d.%d", receiver.clock[2], receiver.clock[1], receiver.clock[0])
 	for {
-		go func(tHand timeHand) {
-			receiver.timerLock.Lock()
-			// 取出当前格子的任务
-			timers := receiver.timeHandTimer[0][tHand]
-			if len(timers) > 0 {
-				// 需要提前删除，否则会与降级任务冲突
-				delete(receiver.timeHandTimer[0], tHand)
-			}
-			receiver.timerLock.Unlock()
+		tHand := receiver.clock[0]
+		receiver.timerLock.Lock()
+		// 取出当前格子的任务
+		timers := receiver.timeHandTimer[0][tHand]
+		if len(timers) > 0 {
+			// 需要提前删除，否则会与降级任务冲突
+			delete(receiver.timeHandTimer[0], tHand)
+		}
+		receiver.timerLock.Unlock()
 
-			if len(timers) > 1 {
-				receiver.order(timers)
-			}
+		if len(timers) > 1 {
+			receiver.order(timers)
+		}
 
+		go func(timers []*Timer) {
 			for i := 0; i < len(timers); i++ {
 				if !timers[i].isStop {
 					flog.Debugf("休眠时间(%d):+%s %d us", timers[i].Id, timers[i].PlanAt.Format("15:04:05.000"), timers[i].PlanAt.Sub(time.Now()).Microseconds())
 					receiver.popTimer(timers[i])
 				}
 			}
-		}(receiver.clock[0])
+		}(timers)
 
 		// 每timingWheel.duration 转动一次
 		<-receiver.ticker.C

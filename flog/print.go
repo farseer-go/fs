@@ -162,11 +162,13 @@ func ComponentInfof(appName string, format string, a ...any) {
 
 func fileWithLineNum() string {
 	// the second caller usually from internal, so set i start from 1
+	var fileLineNum string
 	for i := 2; i < 15; i++ {
 		_, file, line, ok := runtime.Caller(i)
 		if ok && (!strings.HasSuffix(file, "_test.go")) { // !strings.HasPrefix(file, gormSourceDir) ||
-			return file + ":" + strconv.FormatInt(int64(line), 10)
+			fileLineNum = file + ":" + strconv.FormatInt(int64(line), 10)
+			break
 		}
 	}
-	return ""
+	return fileLineNum
 }

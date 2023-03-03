@@ -7,8 +7,8 @@ import (
 // defaultTimingWheel 在farseer.yaml配置时间轮大小、格数
 var defaultTimingWheel *timingWheel
 
-func Init() {
-	defaultTimingWheel = New(100*time.Millisecond, 60)
+func NewDefault(interval time.Duration, bucketsNum int) {
+	defaultTimingWheel = New(interval, bucketsNum)
 }
 
 // Start 开始运行

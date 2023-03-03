@@ -12,6 +12,8 @@ func TestSingle(t *testing.T) {
 
 	assert.Equal(t, 0, len(container.ResolveAll[IDatabase]()))
 
+	assert.Nil(t, container.ResolveAll[mysql]())
+
 	// 注册单例
 	container.Register(func() IDatabase { return &mysql{} })
 

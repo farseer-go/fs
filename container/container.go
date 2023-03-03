@@ -123,9 +123,9 @@ func (r *container) resolve(interfaceType reflect.Type, name string) any {
 
 // 获取所有对象
 func (r *container) resolveAll(interfaceType reflect.Type) []any {
-	if interfaceType.Kind() == reflect.Pointer {
-		interfaceType = interfaceType.Elem()
-	}
+	//if interfaceType.Kind() == reflect.Pointer {
+	//	interfaceType = interfaceType.Elem()
+	//}
 	if interfaceType.Kind() != reflect.Interface {
 		_ = flog.Errorf("container：When resolve all objects，%s must is Interface type", interfaceType.String())
 		return nil

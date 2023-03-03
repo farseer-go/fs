@@ -96,10 +96,12 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 				isSuccess = false
 			}
 		}
-		if !isSuccess {
-			os.Exit(-1)
-		}
 		flog.Println("---------------------------------------")
+
+		if !isSuccess {
+			//os.Exit(-1)
+			panic("健康检查失败")
+		}
 	}
 	// 加载callbackFnList，启动后才执行的模块
 	if len(callbackFnList) > 0 {
