@@ -11,7 +11,7 @@ type Timer struct {
 	duration          time.Duration // 实际时长
 	remainingDuration time.Duration // 在level层剩余时长
 	PlanAt            time.Time     // 计划执行时间
-	isPrecision       bool          // planAt是否需要精准
+	isPrecision       bool          // 是否使用高精度时间格
 	isStop            bool          // 是否停止
 }
 

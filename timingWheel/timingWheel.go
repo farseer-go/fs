@@ -11,6 +11,13 @@ import (
 	"time"
 )
 
+// OpOption 选项
+type OpOption func(*Op)
+
+// Op 选项
+type Op struct {
+	IsPrecision bool // 是否使用高精度时间格
+}
 type wheelLevel = int // 时间轮的层数
 type timeHand = int   // 第几个格子（桶）
 
@@ -27,6 +34,7 @@ type timingWheel struct {
 	timerQueue    chan *Timer     // 到达时间的任务，会立即放到此队列中
 	clock         []timeHand      // 时钟模型（数组索引 = wheelLevel）
 	timerLock     *sync.RWMutex   // 锁
+	clockLock     *sync.RWMutex   // 锁
 	startAt       time.Time       // 开始时间
 	ctx           context.Context // 用于停止时间轮
 	// 数组索引 = wheelLevel
@@ -43,9 +51,10 @@ func New(interval time.Duration, bucketsNum int) *timingWheel {
 		bucketsNum:    bucketsNum,
 		totalDuration: interval * time.Duration(bucketsNum),
 		timerLock:     &sync.RWMutex{},
+		clockLock:     &sync.RWMutex{},
 		timeHandTimer: []map[timeHand][]*Timer{make(map[timeHand][]*Timer)},
 		timerQueue:    make(chan *Timer, 1000),
-		clock:         []timeHand{0, 0, 0},
+		clock:         []timeHand{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 	}
 }
 
@@ -62,18 +71,26 @@ func (receiver *timingWheel) Start() {
 }
 
 // Add 添加一个定时任务
-func (receiver *timingWheel) Add(d time.Duration) *Timer {
+func (receiver *timingWheel) Add(d time.Duration, opts ...OpOption) *Timer {
+	op := &Op{}
+	for _, opt := range opts {
+		opt(op)
+	}
+
 	t := &Timer{
 		Id:                snowflake.GenerateId(),
 		C:                 make(chan time.Time, 1),
 		duration:          d,
 		remainingDuration: 0,
 		PlanAt:            time.Now().Add(d),
+		isPrecision:       op.IsPrecision,
 	}
 
 	// 计算第几层第几格、剩余时长
 	level, curLevelTimeHand, remainingDuration := receiver.rewind(d)
+	receiver.clockLock.RLock()
 	curLevelTimeHand += receiver.clock[level]
+	receiver.clockLock.RUnlock()
 
 	// 超出了桶，则跳到下一级
 	for curLevelTimeHand >= receiver.bucketsNum {
@@ -91,6 +108,7 @@ func (receiver *timingWheel) Add(d time.Duration) *Timer {
 	}
 
 	// 在同一格，说明需要立即执行
+	receiver.clockLock.RLock()
 	if level == 0 && curLevelTimeHand == receiver.clock[0] {
 		go receiver.popTimer(t)
 		return t
@@ -100,6 +118,7 @@ func (receiver *timingWheel) Add(d time.Duration) *Timer {
 	for i := len(receiver.clock) - 1; i >= 0; i-- {
 		builder.WriteString(strconv.Itoa(receiver.clock[i]) + ".")
 	}
+	receiver.clockLock.RUnlock()
 	flog.Debugf("添加时间(%d):+%s %s 第%d层 第%d格 剩余%s，当前指针：%s", t.Id, t.duration.String(), t.PlanAt.Format("15:04:05.000"), level, curLevelTimeHand, t.remainingDuration.String(), builder.String())
 
 	// 初始化所在层的任务队列
@@ -120,16 +139,16 @@ func (receiver *timingWheel) AddTime(t time.Time) *Timer {
 
 // AddPrecision 添加一个定时任务（高精度）
 func (receiver *timingWheel) AddPrecision(d time.Duration) *Timer {
-	timer := receiver.Add(d)
-	timer.isPrecision = true
-	return timer
+	return receiver.Add(d, func(op *Op) {
+		op.IsPrecision = true
+	})
 }
 
 // AddTimePrecision 添加一个定时任务（高精度）
 func (receiver *timingWheel) AddTimePrecision(t time.Time) *Timer {
-	timer := receiver.Add(t.Sub(time.Now()))
-	timer.isPrecision = true
-	return timer
+	return receiver.Add(t.Sub(time.Now()), func(op *Op) {
+		op.IsPrecision = true
+	})
 }
 
 // 时间轮开始转动
@@ -160,8 +179,10 @@ func (receiver *timingWheel) turning() {
 
 		// 每timingWheel.duration 转动一次
 		<-receiver.ticker.C
+		receiver.clockLock.Lock()
 		// 时间指针向前一格
 		receiver.turningNextLevel(0)
+		receiver.clockLock.Unlock()
 	}
 }
 
