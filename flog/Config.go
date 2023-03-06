@@ -14,7 +14,6 @@ type Config struct {
 }
 
 type componentConfig struct {
-	HttpInvoke  bool
 	Task        bool
 	CacheManage bool
 }

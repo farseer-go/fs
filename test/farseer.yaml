@@ -23,7 +23,6 @@ WebApi:
   Url: ":888"
 Log:
   Component:
-    httpInvoke: true
     task: true
     cacheManage: true
 A:
