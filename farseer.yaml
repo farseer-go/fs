@@ -22,7 +22,6 @@ WebApi:
 Log:
   LogLevel: "info"
   Component:
-    httpInvoke: true
     task: true
     cacheManage: true
     webapi: true
