@@ -15,8 +15,10 @@ func GetDependModule(module ...FarseerModule) []FarseerModule {
 			modules = append(modules, GetDependModule(dependsModules...)...)
 		}
 
-		flog.Println("Loading Module：" + flog.Colors[5](reflect.TypeOf(farseerModule).String()) + "")
+		moduleName := reflect.TypeOf(farseerModule).String()
+		flog.Println("Loading Module：" + flog.Colors[5](moduleName) + "")
 		modules = append(modules, farseerModule)
+		moduleMap[moduleName] = 0
 	}
 	return modules
 }
@@ -45,40 +47,49 @@ func exists(lst []FarseerModule, module FarseerModule) bool {
 // StartModules 启动模块
 func StartModules(farseerModules []FarseerModule) {
 	//flog.Println("module initialization...")
-	sw := stopwatch.StartNew()
 	for _, farseerModule := range farseerModules {
-		moduleName := reflect.TypeOf(farseerModule).String()
-		sw.Restart()
-		farseerModule.PreInitialize()
-		flog.Println("Elapsed time：" + sw.GetMillisecondsText() + " " + moduleName + ".PreInitialize()")
+		if module, ok := farseerModule.(FarseerPreInitializeModule); ok {
+			sw := stopwatch.StartNew()
+			moduleName := reflect.TypeOf(farseerModule).String()
+			module.PreInitialize()
+			flog.Println("Elapsed time：" + sw.GetMillisecondsText() + " " + moduleName + flog.Yellow(".PreInitialize()"))
+			moduleMap[moduleName] += sw.ElapsedMilliseconds()
+		}
 	}
 	flog.Println("---------------------------------------")
 
 	for _, farseerModule := range farseerModules {
-		moduleName := reflect.TypeOf(farseerModule).String()
-		sw.Restart()
-		farseerModule.Initialize()
-		flog.Println("Elapsed time：" + sw.GetMillisecondsText() + " " + moduleName + ".Initialize()")
+		if module, ok := farseerModule.(FarseerInitializeModule); ok {
+			sw := stopwatch.StartNew()
+			moduleName := reflect.TypeOf(farseerModule).String()
+			module.Initialize()
+			flog.Println("Elapsed time：" + sw.GetMillisecondsText() + " " + moduleName + flog.Blue(".Initialize()"))
+			moduleMap[moduleName] += sw.ElapsedMilliseconds()
+		}
 	}
 	flog.Println("---------------------------------------")
 
 	for _, farseerModule := range farseerModules {
-		moduleName := reflect.TypeOf(farseerModule).String()
-		sw.Restart()
-		farseerModule.PostInitialize()
-		flog.Println("Elapsed time：" + sw.GetMillisecondsText() + " " + moduleName + ".PostInitialize()")
-		moduleMap[moduleName] = sw.ElapsedMilliseconds()
+		if module, ok := farseerModule.(FarseerPostInitializeModule); ok {
+			sw := stopwatch.StartNew()
+			moduleName := reflect.TypeOf(farseerModule).String()
+			module.PostInitialize()
+			flog.Println("Elapsed time：" + sw.GetMillisecondsText() + " " + moduleName + flog.Green(".PostInitialize()"))
+			moduleMap[moduleName] += sw.ElapsedMilliseconds()
+		}
 	}
 }
 
 // ShutdownModules 关闭模块
 func ShutdownModules(farseerModules []FarseerModule) {
 	flog.Println("Modules close...")
-	sw := stopwatch.StartNew()
 	for _, farseerModule := range farseerModules {
-		sw.Restart()
-		farseerModule.Shutdown()
-		flog.Println("Elapsed time：" + sw.GetMillisecondsText() + " " + reflect.TypeOf(farseerModule).String() + ".Shutdown()")
+		if module, ok := farseerModule.(FarseerShutdownModule); ok {
+			sw := stopwatch.StartNew()
+			moduleName := reflect.TypeOf(farseerModule).String()
+			module.Shutdown()
+			flog.Println("Elapsed time：" + sw.GetMillisecondsText() + " " + moduleName + flog.Red(".Shutdown()"))
+		}
 	}
 	flog.Println("---------------------------------------")
 }

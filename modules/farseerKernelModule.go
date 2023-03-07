@@ -19,12 +19,3 @@ func (module FarseerKernelModule) PreInitialize() {
 	flog.Init()
 	timingWheel.NewDefault(100*time.Millisecond, 60)
 }
-
-func (module FarseerKernelModule) Initialize() {
-}
-
-func (module FarseerKernelModule) PostInitialize() {
-}
-
-func (module FarseerKernelModule) Shutdown() {
-}

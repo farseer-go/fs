@@ -14,16 +14,6 @@ func (module StartupModule) DependsModule() []modules.FarseerModule {
 	return []modules.FarseerModule{modules.FarseerKernelModule{}, modules.FarseerKernelModule{}}
 }
 
-func (module StartupModule) PreInitialize() {
-}
-
-func (module StartupModule) Initialize() {
-}
-
-func (module StartupModule) PostInitialize() {
-
-}
-
 func (module StartupModule) Shutdown() {
 }
 
