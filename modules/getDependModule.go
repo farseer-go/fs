@@ -56,7 +56,6 @@ func StartModules(farseerModules []FarseerModule) {
 			moduleMap[moduleName] += sw.ElapsedMilliseconds()
 		}
 	}
-	flog.Println("---------------------------------------")
 
 	for _, farseerModule := range farseerModules {
 		if module, ok := farseerModule.(FarseerInitializeModule); ok {
@@ -67,7 +66,6 @@ func StartModules(farseerModules []FarseerModule) {
 			moduleMap[moduleName] += sw.ElapsedMilliseconds()
 		}
 	}
-	flog.Println("---------------------------------------")
 
 	for _, farseerModule := range farseerModules {
 		if module, ok := farseerModule.(FarseerPostInitializeModule); ok {
@@ -91,5 +89,4 @@ func ShutdownModules(farseerModules []FarseerModule) {
 			flog.Println("Elapsed time：" + sw.GetMillisecondsText() + " " + moduleName + flog.Red(".Shutdown()"))
 		}
 	}
-	flog.Println("---------------------------------------")
 }

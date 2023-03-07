@@ -73,7 +73,7 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 	flog.Println("---------------------------------------")
 
 	var startupModule TModule
-	flog.Println("Loading Module...")
+	//flog.Println("Loading Module...")
 	dependModules = modules.Distinct(modules.GetDependModule(startupModule))
 	flog.Println("Loaded, " + flog.Red(len(dependModules)) + " modules in total")
 	flog.Println("---------------------------------------")
