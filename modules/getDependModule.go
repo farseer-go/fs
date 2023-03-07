@@ -31,13 +31,16 @@ func Distinct(modules []FarseerModule) []FarseerModule {
 			lst = append(lst, module)
 		}
 	}
-	return append([]FarseerModule{FarseerKernelModule{}}, lst...)
+	if !exists(lst, FarseerKernelModule{}) {
+		return append([]FarseerModule{FarseerKernelModule{}}, lst...)
+	}
+	return lst
 }
 
 // 判断模块是否存在于数组中
 func exists(lst []FarseerModule, module FarseerModule) bool {
-	for _, farseerModule := range lst {
-		if reflect.ValueOf(farseerModule).String() == reflect.ValueOf(module).String() {
+	for i := 0; i < len(lst); i++ {
+		if reflect.ValueOf(lst[i]).String() == reflect.ValueOf(module).String() {
 			return true
 		}
 	}
