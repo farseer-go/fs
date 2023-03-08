@@ -30,8 +30,6 @@ years and is great
 > Don't worry about the framework making you depend on too many packages, farseer-go's components are all separate
 > packages and unused packages are not downloaded into your application
 
-> Each component is a separate package, so the version number is also released separately
-
 ## Features
 
 - `Unified configuration`: all configurations are consolidated into `. /farseer.yaml`
@@ -126,10 +124,18 @@ After running the console prints the loading message.
 2023-01-05 16:15:00 Initialization completed, total time：0 ms 
 2023-01-05 16:15:00 [Info] Web service is started：http://localhost:8888/
 ```
+
+## farseer-go framework demo
+We have provided simulations of a [small e-commerce website](https://github.com/farseer-go/demo/tree/main/shopping) using the following techniques.
+* ddd: using domain-driven design
+* ioc: use ioc/container, do decoupling, injection, dependency inversion
+* webapi: api service, and use dynamic api technology
+* data: database operations
+* redis: redis operation
+* eventBus: event driver
+  You can download it locally and run it
+
+
 ## Stargazers
 
 [![Stargazers repo roster for @farseer-go/fs](https://reporoster.com/stars/farseer-go/fs)](https://github.com/farseer-go/fs/stargazers)
-
-## Forks
-
-[![Forks repo roster for @farseer-go/fs](https://reporoster.com/forks/farseer-go/fs)](https://github.com/farseer-go/fs/network/members)
