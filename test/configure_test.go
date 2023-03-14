@@ -32,7 +32,7 @@ func TestConfigureGet(t *testing.T) {
 	assert.Equal(t, "Url: :888\n", configure.GetString("WebApi"))
 	assert.Equal(t, 20, configure.GetInt("FSchedule.ReservedTaskCount"))
 	assert.Equal(t, int64(20), configure.GetInt64("FSchedule.ReservedTaskCount"))
-	assert.Equal(t, true, configure.GetBool("Log.Component.httpInvoke"))
+	assert.Equal(t, true, configure.GetBool("Log.Component.task"))
 
 	assert.Len(t, configure.GetSubNodes("A.B"), 0)
 	assert.Len(t, configure.GetSlice("A.B"), 0)

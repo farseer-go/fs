@@ -33,14 +33,14 @@ type timingWheel struct {
 	onceStart     sync.Once       // 保证只执行一次
 	timerQueue    chan *Timer     // 到达时间的任务，会立即放到此队列中
 	clock         []timeHand      // 时钟模型（数组索引 = wheelLevel）
-	timerLock     *sync.RWMutex   // 锁
 	clockLock     *sync.RWMutex   // 锁
-	startAt       time.Time       // 开始时间
-	ctx           context.Context // 用于停止时间轮
 	// 数组索引 = wheelLevel
 	// 当前时间轮的层数的时间格做为MAP KEY
 	// 根据当前时间轮层数 + 时间格子 ，就能找出对应的Timer
 	timeHandTimer []map[timeHand][]*Timer
+	timerLock     *sync.RWMutex   // 锁
+	startAt       time.Time       // 开始时间
+	ctx           context.Context // 用于停止时间轮
 }
 
 // New 初始化
@@ -54,7 +54,7 @@ func New(interval time.Duration, bucketsNum int) *timingWheel {
 		clockLock:     &sync.RWMutex{},
 		timeHandTimer: []map[timeHand][]*Timer{make(map[timeHand][]*Timer)},
 		timerQueue:    make(chan *Timer, 1000),
-		clock:         []timeHand{0},
+		clock:         []timeHand{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 	}
 }
 
@@ -96,9 +96,6 @@ func (receiver *timingWheel) Add(d time.Duration, opts ...OpOption) *Timer {
 	for curLevelTimeHand >= receiver.bucketsNum {
 		remainingDuration += time.Duration(curLevelTimeHand-receiver.bucketsNum) * receiver.duration[level]
 		level++
-		if level >= len(receiver.clock) {
-			receiver.clock = append(receiver.clock, 0)
-		}
 		curLevelTimeHand = receiver.clock[level] + 1
 	}
 
@@ -154,7 +151,7 @@ func (receiver *timingWheel) AddTimePrecision(t time.Time) *Timer {
 
 // 时间轮开始转动
 func (receiver *timingWheel) turning() {
-	//flog.Debugf("当前指针，%d.%d.%d", receiver.clock[2], receiver.clock[1], receiver.clock[0])
+	//flog.Debugf("当前指针，%d.%d.%d", receiver.clock[2], receiver.clock[1], receiver.getClockVal(0))
 	for {
 		tHand := receiver.clock[0]
 		receiver.timerLock.Lock()
@@ -181,6 +178,7 @@ func (receiver *timingWheel) turning() {
 
 		// 每timingWheel.duration 转动一次
 		<-receiver.ticker.C
+
 		receiver.clockLock.Lock()
 		// 时间指针向前一格
 		receiver.turningNextLevel(0)
@@ -190,9 +188,6 @@ func (receiver *timingWheel) turning() {
 
 // 下一层指针+1
 func (receiver *timingWheel) turningNextLevel(level wheelLevel) {
-	if level >= len(receiver.clock) {
-		receiver.clock = append(receiver.clock, 0)
-	}
 	// 时间指针向前一格
 	receiver.clock[level]++
 
@@ -200,6 +195,10 @@ func (receiver *timingWheel) turningNextLevel(level wheelLevel) {
 	if receiver.clock[level] >= receiver.bucketsNum {
 		// 指针重新回到0
 		receiver.clock[level] = 0
+
+		for level+1 >= len(receiver.clock) {
+			receiver.clock = append(receiver.clock, 0)
+		}
 
 		// 下一层指针+1
 		receiver.turningNextLevel(level + 1)
@@ -325,6 +324,14 @@ func (receiver *timingWheel) rewind(duration time.Duration) (wheelLevel, timeHan
 		}
 		remainingDuration += receiver.duration[level]
 	}
+
+	// 这里+1，是因为在后面执行的时候，有可能会跳到下一层
+	for level+1 >= len(receiver.clock) {
+		receiver.clockLock.Lock()
+		receiver.clock = append(receiver.clock, 0)
+		receiver.clockLock.Unlock()
+	}
+
 	return level, curLevelTimeHand, remainingDuration
 }
 
