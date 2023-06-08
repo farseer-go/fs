@@ -6,13 +6,20 @@ import (
 
 // GetRealType 获取真实类型
 func GetRealType(val reflect.Value) reflect.Type {
-	if val.Kind() == reflect.Pointer {
-		val = val.Elem()
+	realValue := val
+	if realValue.Kind() == reflect.Pointer {
+		realValue = realValue.Elem()
 	}
-	if val.Kind() == reflect.Interface && !val.IsZero() {
-		val = val.Elem()
+	if realValue.Kind() == reflect.Interface && !realValue.IsZero() {
+		realValue = realValue.Elem()
 	}
-	return val.Type()
+
+	// 无效的值，只能返回原型
+	if realValue.Kind() == reflect.Invalid {
+		return val.Type()
+	}
+
+	return realValue.Type()
 }
 
 func GetRealType2(val reflect.Type) reflect.Type {
