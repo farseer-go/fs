@@ -6,21 +6,21 @@ type FarseerModule interface {
 	DependsModule() []FarseerModule
 }
 
-// FarseerPreInitializeModule 预初始化
+// FarseerPreInitializeModule 预初始化（常用于全局变量初始化）
 type FarseerPreInitializeModule interface {
 	FarseerModule
 	// PreInitialize 预初始化
 	PreInitialize()
 }
 
-// FarseerInitializeModule 初始化
+// FarseerInitializeModule 初始化（常用于根据配置设置初始化对象）
 type FarseerInitializeModule interface {
 	FarseerModule
 	// Initialize 初始化
 	Initialize()
 }
 
-// FarseerPostInitializeModule 初始化之后
+// FarseerPostInitializeModule 初始化之后（常用于启动协程服务）
 type FarseerPostInitializeModule interface {
 	FarseerModule
 	// PostInitialize 初始化之后
