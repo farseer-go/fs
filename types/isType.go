@@ -81,6 +81,12 @@ func IsDataTableSet(val reflect.Value) (reflect.Type, bool) {
 	return realType, strings.HasPrefix(realType.String(), "data.TableSet[")
 }
 
+// IsDataDomainSet 判断类型是否为Data的DomainSet类型
+func IsDataDomainSet(val reflect.Value) (reflect.Type, bool) {
+	realType := GetRealType(val)
+	return realType, strings.HasPrefix(realType.String(), "data.DomainSet[")
+}
+
 // IsDtoModelIgnoreInterface 当第一个模型为struct，其它类型为interface时，判断为DTO
 func IsDtoModelIgnoreInterface(lst []reflect.Type) bool {
 	if len(lst) < 1 {
