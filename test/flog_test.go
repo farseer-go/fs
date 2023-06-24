@@ -2,7 +2,6 @@ package test
 
 import (
 	"github.com/farseer-go/fs/configure"
-	"github.com/farseer-go/fs/core/eumLogLevel"
 	"github.com/farseer-go/fs/flog"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -42,25 +41,25 @@ func TestFlog(t *testing.T) {
 
 	configure.SetDefault("Log.LogLevel", "Trace")
 	flog.Init()
-	flog.Log(0, "aaa")
+	flog.Print("aaa")
 
 	configure.SetDefault("Log.LogLevel", "debug")
 	flog.Init()
-	flog.Log(eumLogLevel.Trace, "aaa")
+	flog.Trace("aaa")
 
 	configure.SetDefault("Log.LogLevel", "Information")
 	flog.Init()
-	flog.Log(eumLogLevel.Debug, "aaa")
+	flog.Debug("aaa")
 
 	configure.SetDefault("Log.LogLevel", "Warning")
 	flog.Init()
-	flog.Log(eumLogLevel.Information, "aaa")
+	flog.Info("aaa")
 
 	configure.SetDefault("Log.LogLevel", "Error")
 	flog.Init()
-	flog.Log(eumLogLevel.Warning, "aaa")
+	flog.Warning("aaa")
 
 	configure.SetDefault("Log.LogLevel", "Critical")
 	flog.Init()
-	flog.Log(eumLogLevel.Error, "aaa")
+	flog.Error("aaa")
 }

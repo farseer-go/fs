@@ -14,6 +14,8 @@ func (module StartupModule) DependsModule() []modules.FarseerModule {
 	return []modules.FarseerModule{modules.FarseerKernelModule{}, modules.FarseerKernelModule{}}
 }
 
+func (module StartupModule) Shutdown() {}
+
 func TestModules(t *testing.T) {
 	assert.New(t).Panics(func() {
 		modules.ThrowIfNotLoad(StartupModule{})
@@ -22,4 +24,6 @@ func TestModules(t *testing.T) {
 	fs.Initialize[StartupModule]("test module")
 
 	assert.True(t, modules.IsLoad(StartupModule{}))
+
+	modules.ShutdownModules([]modules.FarseerModule{modules.FarseerKernelModule{}, modules.FarseerKernelModule{}, StartupModule{}})
 }

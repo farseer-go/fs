@@ -59,6 +59,9 @@ func TestType(t *testing.T) {
 	_, b = types.IsDataTableSet(reflect.ValueOf(""))
 	assert.False(t, b)
 
+	_, b = types.IsDataDomainSet(reflect.ValueOf(""))
+	assert.False(t, b)
+
 	assert.True(t, types.IsDtoModel([]reflect.Type{reflect.TypeOf(core.ApiResponseLongError403(""))}))
 	assert.False(t, types.IsDtoModel([]reflect.Type{reflect.TypeOf(core.ApiResponseLongError403("")), reflect.TypeOf("")}))
 	assert.False(t, types.IsDtoModel([]reflect.Type{reflect.TypeOf("")}))
@@ -72,6 +75,9 @@ func TestType(t *testing.T) {
 
 	var a any = 0
 	assert.Equal(t, reflect.TypeOf(0).String(), types.GetRealType(reflect.ValueOf(&a)).String())
+	assert.Panics(t, func() {
+		types.GetRealType(reflect.ValueOf(nil))
+	})
 
 	v := 0
 	assert.Equal(t, reflect.TypeOf(0).String(), types.GetRealType2(reflect.TypeOf(&v)).String())
