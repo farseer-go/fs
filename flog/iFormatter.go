@@ -26,15 +26,15 @@ type TextFormatter struct {
 
 func (r *TextFormatter) Formatter(log *logData) string {
 	var logLevelString string
-	if log.logLevel != eumLogLevel.NoneLevel {
-		logLevelString = Colors[log.logLevel]("[" + log.logLevel.ToString() + "]")
-	} else if log.component != "" {
-		logLevelString = Colors[0]("[" + log.component + "]")
+	if log.LogLevel != eumLogLevel.NoneLevel {
+		logLevelString = Colors[log.LogLevel]("[" + log.LogLevel.ToString() + "]")
+	} else if log.Component != "" {
+		logLevelString = Colors[0]("[" + log.Component + "]")
 	}
 
 	if logLevelString != "" {
-		return fmt.Sprintf("%s %s %s", log.createAt.ToString("yyyy-MM-dd hh:mm:ss.ffffff"), logLevelString, log.content)
+		return fmt.Sprintf("%s %s %s", log.CreateAt.ToString("yyyy-MM-dd hh:mm:ss.ffffff"), logLevelString, log.Content)
 	}
 
-	return fmt.Sprintf("%s %s", log.createAt.ToString("yyyy-MM-dd hh:mm:ss.ffffff"), log.content)
+	return fmt.Sprintf("%s %s", log.CreateAt.ToString("yyyy-MM-dd hh:mm:ss.ffffff"), log.Content)
 }

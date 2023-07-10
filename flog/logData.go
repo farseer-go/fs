@@ -7,12 +7,13 @@ import (
 
 // 日志结构
 type logData struct {
-	content   string
-	createAt  dateTime.DateTime
-	logLevel  eumLogLevel.Enum
-	component string
+	CreateAt  dateTime.DateTime
+	LogLevel  eumLogLevel.Enum
+	Component string // 组件名称
+	Content   string
+	newLine   bool // 是否需要换行
 }
 
 func newLogData(logLevel eumLogLevel.Enum, content string, component string) *logData {
-	return &logData{content: content, createAt: dateTime.Now(), logLevel: logLevel, component: component}
+	return &logData{Content: content, CreateAt: dateTime.Now(), LogLevel: logLevel, Component: component, newLine: true}
 }

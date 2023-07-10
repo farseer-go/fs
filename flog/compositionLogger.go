@@ -41,9 +41,9 @@ func (r *CompositionLogger) isEnabled(logLevel eumLogLevel.Enum) bool {
 
 // 调用所有日志记录器的实现
 func (r *CompositionLogger) log(log *logData) {
-	if r.isEnabled(log.logLevel) {
+	if r.isEnabled(log.LogLevel) {
 		for i := 0; i < len(r.loggerPersistentList); i++ {
-			r.loggerPersistentList[i].Log(log.logLevel, log, nil)
+			r.loggerPersistentList[i].Log(log.LogLevel, log, nil)
 		}
 	}
 }
@@ -130,6 +130,7 @@ func (r *CompositionLogger) Panicf(format string, a ...any) {
 
 func (r *CompositionLogger) Print(contents ...any) {
 	log := newLogData(eumLogLevel.NoneLevel, fmt.Sprint(contents...), "")
+	log.newLine = false
 	r.log(log)
 }
 
@@ -140,6 +141,7 @@ func (r *CompositionLogger) Println(contents ...any) {
 
 func (r *CompositionLogger) Printf(format string, a ...any) {
 	log := newLogData(eumLogLevel.NoneLevel, fmt.Sprintf(format, a...), "")
+	log.newLine = false
 	r.log(log)
 }
 
