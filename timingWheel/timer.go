@@ -1,7 +1,7 @@
 package timingWheel
 
 import (
-	"github.com/farseer-go/fs/flog"
+	"github.com/farseer-go/fs/flog2"
 	"time"
 )
 
@@ -29,7 +29,7 @@ func (receiver *Timer) precision() {
 		for receiver.PlanAt.Sub(time.Now()).Microseconds() >= 1100 {
 			time.Sleep(1 * time.Millisecond)
 		}
-		flog.Debugf("休眠时间(%d):+%s %d us", receiver.Id, receiver.PlanAt.Format("15:04:05.000"), receiver.PlanAt.Sub(time.Now()).Microseconds())
+		flog2.Debugf("休眠时间(%d):+%s %d us", receiver.Id, receiver.PlanAt.Format("15:04:05.000"), receiver.PlanAt.Sub(time.Now()).Microseconds())
 		// 每次休眠0.2ms
 		for receiver.PlanAt.Sub(time.Now()).Microseconds() >= 55 {
 			time.Sleep(50 * time.Microsecond)

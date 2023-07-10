@@ -2,6 +2,7 @@ package fs
 
 import (
 	"context"
+	"fmt"
 	"github.com/farseer-go/fs/configure"
 	"github.com/farseer-go/fs/container"
 	"github.com/farseer-go/fs/core"
@@ -40,9 +41,13 @@ var ProcessId int
 // Context 最顶层的上下文
 var Context context.Context
 
+// Log 日志
+var Log core.ILog
+
 // 依赖的模块
 var dependModules []modules.FarseerModule
 
+// 回调函数列表
 var callbackFnList []callbackFn
 
 type callbackFn struct {
@@ -59,68 +64,67 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 	HostName, _ = os.Hostname()
 	StartupAt = dateTime.Now()
 	rand.Seed(time.Now().UnixNano())
+
 	snowflake.Init(parse.HashCode64(HostName), rand.Int63n(32))
 	AppId = snowflake.GenerateId()
 	AppIp = net.GetIp()
 
-	flog.Println("AppName： ", flog.Colors[2](AppName))
-	flog.Println("AppID：   ", flog.Colors[2](AppId))
-	flog.Println("AppIP：   ", flog.Colors[2](AppIp))
-	flog.Println("HostName：", flog.Colors[2](HostName))
-	flog.Println("HostTime：", flog.Colors[2](StartupAt.ToString("yyyy-MM-dd hh:mm:ss")))
-	flog.Println("PID：     ", flog.Colors[2](ProcessId))
+	flog.LogBuffer <- fmt.Sprint("AppName： ", flog.Colors[2](AppName))
+	flog.LogBuffer <- fmt.Sprint("AppID：   ", flog.Colors[2](AppId))
+	flog.LogBuffer <- fmt.Sprint("AppIP：   ", flog.Colors[2](AppIp))
+	flog.LogBuffer <- fmt.Sprint("HostName：", flog.Colors[2](HostName))
+	flog.LogBuffer <- fmt.Sprint("HostTime：", flog.Colors[2](StartupAt.ToString("yyyy-MM-dd hh:mm:ss")))
+	flog.LogBuffer <- fmt.Sprint("PID：     ", flog.Colors[2](ProcessId))
 	showComponentLog()
-	flog.Println("---------------------------------------")
+	flog.LogBuffer <- fmt.Sprint("---------------------------------------")
 
 	var startupModule TModule
-	//flog.Println("Loading Module...")
 	dependModules = modules.Distinct(modules.GetDependModule(startupModule))
-	flog.Println("Loaded, " + flog.Red(len(dependModules)) + " modules in total")
-	flog.Println("---------------------------------------")
+	flog.LogBuffer <- fmt.Sprint("Loaded, " + flog.Red(len(dependModules)) + " modules in total")
 
 	modules.StartModules(dependModules)
-	flog.Println("---------------------------------------")
-	flog.Println("Initialization completed, total time：" + sw.GetMillisecondsText())
+	flog.LogBuffer <- fmt.Sprint("Initialization completed, total time：" + sw.GetMillisecondsText())
+	flog.LogBuffer <- fmt.Sprint("---------------------------------------")
+
+	Log = container.Resolve[core.ILog]()
+	flog.ClearLogBuffer(Log)
+	go flog.LoadLogBuffer(Log)
 
 	// 健康检查
 	healthChecks := container.ResolveAll[core.IHealthCheck]()
 	if len(healthChecks) > 0 {
-		flog.Println("Health Check...")
+		flog.LogBuffer <- fmt.Sprint("Health Check...")
 		isSuccess := true
 		for _, healthCheck := range healthChecks {
 			item, err := healthCheck.Check()
 			if err == nil {
-				flog.Printf("%s%s\n", flog.Green("【✓】"), item)
+				flog.LogBuffer <- fmt.Sprintf("%s%s", flog.Green("【✓】"), item)
 			} else {
-				flog.Errorf("%s%s：%s", flog.Red("【✕】"), item, flog.Red(err.Error()))
+				flog.LogBuffer <- fmt.Sprintf("%s%s：%s", flog.Red("【✕】"), item, flog.Red(err.Error()))
 				isSuccess = false
 			}
 		}
-		flog.Println("---------------------------------------")
+		flog.LogBuffer <- fmt.Sprint("---------------------------------------")
 
 		if !isSuccess {
 			//os.Exit(-1)
 			panic("健康检查失败")
 		}
 	}
+
 	// 加载callbackFnList，启动后才执行的模块
 	if len(callbackFnList) > 0 {
 		for index, fn := range callbackFnList {
 			sw.Restart()
 			fn.f()
-			flog.Println("Run " + strconv.Itoa(index+1) + "：" + fn.name + "，Use：" + sw.GetMillisecondsText())
+			flog.LogBuffer <- fmt.Sprint("Run " + strconv.Itoa(index+1) + "：" + fn.name + "，Use：" + sw.GetMillisecondsText())
 		}
-		flog.Println("---------------------------------------")
+		flog.LogBuffer <- fmt.Sprint("---------------------------------------")
 	}
 }
 
 // 组件日志
 func showComponentLog() {
-	err := configure.ReadInConfig()
-	if err != nil { // 捕获读取中遇到的error
-		_ = flog.Errorf("An error occurred while reading: %s \n", err)
-	}
-
 	logConfig := configure.GetSubNodes("Log.Component")
 	var logSets []string
 	for k, v := range logConfig {
@@ -129,7 +133,7 @@ func showComponentLog() {
 		}
 	}
 	if len(logSets) > 0 {
-		flog.Println("Log Switch：", flog.Colors[2](strings.Join(logSets, " ")))
+		flog.LogBuffer <- fmt.Sprint("Log Switch：", flog.Colors[2](strings.Join(logSets, " ")))
 	}
 }
 

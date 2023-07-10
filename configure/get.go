@@ -1,18 +1,23 @@
 package configure
 
 import (
+	"fmt"
 	"github.com/farseer-go/fs/parse"
 	"strings"
 )
 
-func ReadInConfig() error {
+// InitConfig 初始化配置文件
+func InitConfig() {
 	configurationBuilder.AddYamlFile("./farseer.yaml")
 	configurationBuilder.AddEnvironmentVariables()
 	// 配置文件，我们都是通过a.b访问的。而环境变量是a_b。
 	// 让环境变量支持a.b的方式，使用替换的方式以支持。
 	configurationBuilder.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	// 找到并读取配置文件
-	return configurationBuilder.Build()
+	err := configurationBuilder.Build()
+	if err != nil { // 捕获读取中遇到的error
+		fmt.Printf("An error occurred while reading: %s \n", err)
+	}
 }
 
 // GetString 获取配置

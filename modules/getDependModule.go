@@ -1,6 +1,9 @@
 package modules
 
 import (
+	"fmt"
+	"github.com/farseer-go/fs/container"
+	"github.com/farseer-go/fs/core"
 	"github.com/farseer-go/fs/flog"
 	"github.com/farseer-go/fs/stopwatch"
 	"reflect"
@@ -16,7 +19,7 @@ func GetDependModule(module ...FarseerModule) []FarseerModule {
 		}
 
 		moduleName := reflect.TypeOf(farseerModule).String()
-		flog.Println("Loading Module：" + flog.Colors[5](moduleName) + "")
+		flog.LogBuffer <- fmt.Sprint("Loading Module：" + flog.Colors[5](moduleName) + "")
 		modules = append(modules, farseerModule)
 		moduleMap[moduleName] = 0
 	}
@@ -49,13 +52,12 @@ func exists(lst []FarseerModule, module FarseerModule) bool {
 
 // StartModules 启动模块
 func StartModules(farseerModules []FarseerModule) {
-	//flog.Println("module initialization...")
 	for _, farseerModule := range farseerModules {
 		if module, ok := farseerModule.(FarseerPreInitializeModule); ok {
 			sw := stopwatch.StartNew()
 			moduleName := reflect.TypeOf(farseerModule).String()
 			module.PreInitialize()
-			flog.Println("Elapsed time：" + sw.GetMillisecondsText() + " " + moduleName + flog.Yellow(".PreInitialize()"))
+			flog.LogBuffer <- fmt.Sprint("Elapsed time：" + sw.GetMillisecondsText() + " " + moduleName + flog.Yellow(".PreInitialize()"))
 			moduleMap[moduleName] += sw.ElapsedMilliseconds()
 		}
 	}
@@ -65,7 +67,7 @@ func StartModules(farseerModules []FarseerModule) {
 			sw := stopwatch.StartNew()
 			moduleName := reflect.TypeOf(farseerModule).String()
 			module.Initialize()
-			flog.Println("Elapsed time：" + sw.GetMillisecondsText() + " " + moduleName + flog.Blue(".Initialize()"))
+			flog.LogBuffer <- fmt.Sprint("Elapsed time：" + sw.GetMillisecondsText() + " " + moduleName + flog.Blue(".Initialize()"))
 			moduleMap[moduleName] += sw.ElapsedMilliseconds()
 		}
 	}
@@ -75,7 +77,7 @@ func StartModules(farseerModules []FarseerModule) {
 			sw := stopwatch.StartNew()
 			moduleName := reflect.TypeOf(farseerModule).String()
 			module.PostInitialize()
-			flog.Println("Elapsed time：" + sw.GetMillisecondsText() + " " + moduleName + flog.Green(".PostInitialize()"))
+			flog.LogBuffer <- fmt.Sprint("Elapsed time：" + sw.GetMillisecondsText() + " " + moduleName + flog.Green(".PostInitialize()"))
 			moduleMap[moduleName] += sw.ElapsedMilliseconds()
 		}
 	}
@@ -83,13 +85,14 @@ func StartModules(farseerModules []FarseerModule) {
 
 // ShutdownModules 关闭模块
 func ShutdownModules(farseerModules []FarseerModule) {
-	flog.Println("Modules close...")
+	log := container.Resolve[core.ILog]()
+	log.Println("Modules close...")
 	for _, farseerModule := range farseerModules {
 		if module, ok := farseerModule.(FarseerShutdownModule); ok {
 			sw := stopwatch.StartNew()
 			moduleName := reflect.TypeOf(farseerModule).String()
 			module.Shutdown()
-			flog.Println("Elapsed time：" + sw.GetMillisecondsText() + " " + moduleName + flog.Red(".Shutdown()"))
+			log.Println("Elapsed time：" + sw.GetMillisecondsText() + " " + moduleName + flog.Red(".Shutdown()"))
 		}
 	}
 }

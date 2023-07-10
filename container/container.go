@@ -3,7 +3,7 @@ package container
 import (
 	"fmt"
 	"github.com/farseer-go/fs/container/eumLifecycle"
-	"github.com/farseer-go/fs/flog"
+	"github.com/farseer-go/fs/core"
 	"reflect"
 	"sync"
 )
@@ -14,15 +14,17 @@ type container struct {
 	dependency map[reflect.Type][]componentModel // 依赖
 	component  []componentModel                  // 实现类
 	lock       *sync.RWMutex
+	log        core.ILog // 日志
 }
 
 // NewContainer 实例化一个默认容器
-func NewContainer() *container {
+func NewContainer(log core.ILog) *container {
 	return &container{
 		name:       "default",
 		dependency: make(map[reflect.Type][]componentModel),
 		component:  []componentModel{},
 		lock:       &sync.RWMutex{},
+		log:        log,
 	}
 }
 
@@ -102,7 +104,7 @@ func (r *container) resolve(interfaceType reflect.Type, name string) any {
 		componentModels, exists := r.dependency[interfaceType]
 		r.lock.RUnlock()
 		if !exists {
-			_ = flog.Errorf("container：%s Unregistered", interfaceType.String())
+			_ = r.log.Errorf("container：%s Unregistered", interfaceType.String())
 			return nil
 		}
 
@@ -112,7 +114,7 @@ func (r *container) resolve(interfaceType reflect.Type, name string) any {
 				return r.getOrCreateIns(interfaceType, i)
 			}
 		}
-		_ = flog.Errorf("container：%s Unregistered，name=%s", interfaceType.String(), name)
+		_ = r.log.Errorf("container：%s Unregistered，name=%s", interfaceType.String(), name)
 
 		// 结构对象，直接动态创建
 	} else if interfaceType.Kind() == reflect.Struct {
@@ -127,7 +129,7 @@ func (r *container) resolveAll(interfaceType reflect.Type) []any {
 	//	interfaceType = interfaceType.Elem()
 	//}
 	if interfaceType.Kind() != reflect.Interface {
-		_ = flog.Errorf("container：When resolve all objects，%s must is Interface type", interfaceType.String())
+		_ = r.log.Errorf("container：When resolve all objects，%s must is Interface type", interfaceType.String())
 		return nil
 	}
 
@@ -180,7 +182,7 @@ func (r *container) resolveDefaultOrFirstComponent(interfaceType reflect.Type) a
 	componentModels, exists := r.dependency[interfaceType]
 	r.lock.Unlock()
 	if !exists {
-		_ = flog.Errorf("container：%s Unregistered", interfaceType.String())
+		_ = r.log.Errorf("container：%s Unregistered", interfaceType.String())
 		return nil
 	}
 

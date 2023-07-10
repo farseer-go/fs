@@ -1,0 +1,23 @@
+package flog
+
+import (
+	"fmt"
+	"github.com/farseer-go/fs/core/eumLogLevel"
+)
+
+// ConsoleProvider 控制台打印
+type ConsoleProvider struct {
+}
+
+func (r *ConsoleProvider) CreateLogger(categoryName string, formatter IFormatter, logLevel eumLogLevel.Enum) ILoggerPersistent {
+	return &consoleLoggerPersistent{formatter: formatter, logLevel: logLevel}
+}
+
+type consoleLoggerPersistent struct {
+	formatter IFormatter
+	logLevel  eumLogLevel.Enum
+}
+
+func (r *consoleLoggerPersistent) Log(LogLevel eumLogLevel.Enum, log *logData, exception error) {
+	fmt.Print(r.formatter.Formatter(log))
+}

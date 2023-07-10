@@ -2,6 +2,7 @@ package container
 
 import (
 	"github.com/farseer-go/fs/container/eumLifecycle"
+	"github.com/farseer-go/fs/core"
 	"github.com/farseer-go/fs/exception"
 	"reflect"
 )
@@ -9,8 +10,8 @@ import (
 // Container 容器操作
 var defContainer *container
 
-func InitContainer() {
-	defContainer = NewContainer()
+func InitContainer(log core.ILog) {
+	defContainer = NewContainer(log)
 }
 
 // Register 注册实例，默认使用单例
