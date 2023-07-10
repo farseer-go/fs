@@ -7,7 +7,7 @@ import (
 )
 
 func TestTransient(t *testing.T) {
-	container.InitContainer()
+	container.InitContainer(nil)
 
 	// 注册临时对象
 	container.RegisterTransient(func() IDatabase { return &mysql{} })

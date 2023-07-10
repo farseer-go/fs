@@ -48,7 +48,7 @@ func TestParseString(t *testing.T) {
 }
 
 func TestParseConfigs(t *testing.T) {
-	_ = configure.ReadInConfig()
+	configure.InitConfig()
 	rabbitConfigs := configure.ParseConfigs[rabbitConfig]("Rabbit")
 	assert.Equal(t, 2, len(rabbitConfigs))
 	assert.Equal(t, "rabbit1:5672", rabbitConfigs[0].Server.Server)

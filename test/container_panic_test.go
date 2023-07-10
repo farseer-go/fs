@@ -2,13 +2,14 @@ package test
 
 import (
 	"github.com/farseer-go/fs/container"
+	"github.com/farseer-go/fs/flog"
 	"github.com/farseer-go/fs/modules"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestContainerPanic_test(t *testing.T) {
-	container.InitContainer()
+	container.InitContainer(flog.InitLog())
 	assert.Panics(t, func() {
 		container.Register(func(db IDatabase) IDatabase { return &mysql{} })
 	})

@@ -2,13 +2,14 @@ package test
 
 import (
 	"github.com/farseer-go/fs/container"
+	"github.com/farseer-go/fs/flog"
 	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
 )
 
 func TestSingle(t *testing.T) {
-	container.InitContainer()
+	container.InitContainer(flog.InitLog())
 
 	assert.Equal(t, 0, len(container.ResolveAll[IDatabase]()))
 
