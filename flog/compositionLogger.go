@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/farseer-go/fs/configure"
 	"github.com/farseer-go/fs/core/eumLogLevel"
-	"strings"
 )
 
 // CompositionLogger 根据已添加的Provider，创建组合模式的Logger（壳）
@@ -12,37 +11,10 @@ type CompositionLogger struct {
 	loggerPersistentList []ILoggerPersistent
 }
 
-// 根据日志等级确定是否需要记录
-func (r *CompositionLogger) isEnabled(logLevel eumLogLevel.Enum) bool {
-	switch strings.ToLower(logLevel.ToString()) {
-	case "debug":
-		if logLevel < 1 {
-			return false
-		}
-	case "information", "info":
-		if logLevel < 2 {
-			return false
-		}
-	case "warning", "warn":
-		if logLevel < 3 {
-			return false
-		}
-	case "error":
-		if logLevel < 4 {
-			return false
-		}
-	case "critical":
-		if logLevel < 5 {
-			return false
-		}
-	}
-	return true
-}
-
 // 调用所有日志记录器的实现
 func (r *CompositionLogger) log(log *logData) {
-	if r.isEnabled(log.LogLevel) {
-		for i := 0; i < len(r.loggerPersistentList); i++ {
+	for i := 0; i < len(r.loggerPersistentList); i++ {
+		if r.loggerPersistentList[i].IsEnabled(log.LogLevel) {
 			r.loggerPersistentList[i].Log(log.LogLevel, log, nil)
 		}
 	}
