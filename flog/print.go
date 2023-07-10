@@ -1,11 +1,10 @@
-package flog2
+package flog
 
 import (
 	"fmt"
 	"github.com/farseer-go/fs/configure"
 	"github.com/farseer-go/fs/core/eumLogLevel"
 	"github.com/farseer-go/fs/dateTime"
-	"github.com/farseer-go/fs/flog"
 	"runtime"
 	"strconv"
 	"strings"
@@ -57,13 +56,13 @@ func Warningf(format string, a ...any) {
 
 // Error 打印Error日志
 func Error(contents ...any) error {
-	Println(flog.Blue(fileWithLineNum()))
+	Println(Blue(fileWithLineNum()))
 	return fmt.Errorf(log(eumLogLevel.Error, contents...))
 }
 
 // Errorf 打印Error日志
 func Errorf(format string, a ...any) error {
-	Println(flog.Blue(fileWithLineNum()))
+	Println(Blue(fileWithLineNum()))
 	content := fmt.Sprintf(format, a...)
 	return fmt.Errorf(log(eumLogLevel.Error, content))
 }
@@ -98,7 +97,7 @@ func Criticalf(format string, a ...any) {
 // log 打印日志
 func log(logLevel eumLogLevel.Enum, contents ...any) string {
 	content := fmt.Sprint(contents...)
-	msg := fmt.Sprintf("%s %s %s\r\n", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss.ffffff"), flog.Colors[logLevel]("["+logLevel.ToString()+"]"), content)
+	msg := fmt.Sprintf("%s %s %s\r\n", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss.ffffff"), Colors[logLevel]("["+logLevel.ToString()+"]"), content)
 
 	switch strings.ToLower(logLevel.ToString()) {
 	case "debug":
@@ -149,7 +148,7 @@ func Printf(format string, a ...any) {
 func ComponentInfo(appName string, contents ...any) {
 	if configure.GetBool("Log.Component." + appName) {
 		content := fmt.Sprint(contents...)
-		fmt.Printf("%s %s %s\r\n", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss.ffffff"), flog.Colors[0]("["+appName+"]"), content)
+		fmt.Printf("%s %s %s\r\n", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss.ffffff"), Colors[0]("["+appName+"]"), content)
 	}
 }
 
@@ -157,7 +156,7 @@ func ComponentInfo(appName string, contents ...any) {
 func ComponentInfof(appName string, format string, a ...any) {
 	if configure.GetBool("Log.Component." + appName) {
 		content := fmt.Sprintf(format, a...)
-		fmt.Printf("%s %s %s\r\n", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss.ffffff"), flog.Colors[0]("["+appName+"]"), content)
+		fmt.Printf("%s %s %s\r\n", dateTime.Now().ToString("yyyy-MM-dd hh:mm:ss.ffffff"), Colors[0]("["+appName+"]"), content)
 	}
 }
 
