@@ -19,5 +19,9 @@ type consoleLoggerPersistent struct {
 }
 
 func (r *consoleLoggerPersistent) Log(LogLevel eumLogLevel.Enum, log *logData, exception error) {
-	fmt.Print(r.formatter.Formatter(log))
+	if log.newLine {
+		fmt.Println(r.formatter.Formatter(log))
+	} else {
+		fmt.Print(r.formatter.Formatter(log))
+	}
 }
