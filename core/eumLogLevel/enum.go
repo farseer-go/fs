@@ -1,6 +1,9 @@
 package eumLogLevel
 
-import "strings"
+import (
+	"encoding/json"
+	"strings"
+)
 
 // Enum 日志等级
 type Enum int
@@ -50,4 +53,18 @@ func (r Enum) ToString() string {
 		return "Critical"
 	}
 	return "Info"
+}
+
+// MarshalJSON to output non base64 encoded []byte
+// 此处不能用指针，否则json序列化时不执行
+func (d Enum) MarshalJSON() ([]byte, error) {
+	return json.Marshal(d.ToString())
+}
+
+// UnmarshalJSON to deserialize []byte
+func (d *Enum) UnmarshalJSON(b []byte) error {
+	var numStr string
+	err := json.Unmarshal(b, &numStr)
+	*d = GetEnum(numStr)
+	return err
 }

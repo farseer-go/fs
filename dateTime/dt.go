@@ -1,6 +1,7 @@
 package dateTime
 
 import (
+	"encoding/json"
 	"strings"
 	"time"
 )
@@ -116,3 +117,14 @@ func (d DateTime) AddSeconds(seconds int) DateTime {
 
 // ToTime 获取time.Time类型
 func (d DateTime) ToTime() time.Time { return d.time }
+
+// MarshalJSON to output non base64 encoded []byte
+// 此处不能用指针，否则json序列化时不执行
+func (d DateTime) MarshalJSON() ([]byte, error) {
+	return json.Marshal(d.ToString("yyyy-MM-dd hh:mm:ss"))
+}
+
+// UnmarshalJSON to deserialize []byte
+func (d DateTime) UnmarshalJSON(b []byte) error {
+	return json.Unmarshal(b, &d.time)
+}
