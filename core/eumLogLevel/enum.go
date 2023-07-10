@@ -1,5 +1,7 @@
 package eumLogLevel
 
+import "strings"
+
 // Enum 日志等级
 type Enum int
 
@@ -13,27 +15,27 @@ const (
 	NoneLevel
 )
 
-func (r Enum) ToString() string {
-	switch r {
-	case Trace:
-		return "Trace"
-	case Debug:
-		return "Debug"
-	case Information:
-		return "Info"
-	case Warning:
-		return "Warn"
-	case Error:
-		return "Error"
-	case Critical:
-		return "Critical"
+// GetEnum 名称转枚举
+func GetEnum(name string) Enum {
+	switch strings.ToLower(name) {
+	case "trace":
+		return Trace
+	case "debug":
+		return Debug
+	case "information", "info":
+		return Information
+	case "warning", "warn":
+		return Warning
+	case "error":
+		return Error
+	case "critical":
+		return Critical
 	}
-	return "Info"
+	return NoneLevel
 }
 
-// GetName 获取标签名称
-func GetName(eum Enum) string {
-	switch eum {
+func (r Enum) ToString() string {
+	switch r {
 	case Trace:
 		return "Trace"
 	case Debug:

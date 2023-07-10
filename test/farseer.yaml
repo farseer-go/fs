@@ -22,6 +22,9 @@ ElasticSearch:
 WebApi:
   Url: ":888"
 Log:
+  Default:
+    LogLevel: "info"
+    Format: "json"
   Component:
     task: true
     cacheManage: true
