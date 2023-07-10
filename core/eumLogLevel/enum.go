@@ -52,7 +52,7 @@ func (r Enum) ToString() string {
 	case Critical:
 		return "Critical"
 	}
-	return "Info"
+	return "None"
 }
 
 // MarshalJSON to output non base64 encoded []byte

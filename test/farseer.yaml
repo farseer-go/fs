@@ -24,7 +24,7 @@ WebApi:
 Log:
   Default:
     LogLevel: "info"
-    Format: "json"
+    Format: "text"
   Component:
     task: true
     cacheManage: true

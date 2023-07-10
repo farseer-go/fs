@@ -135,7 +135,7 @@ func (r *CompositionLogger) Print(contents ...any) {
 }
 
 func (r *CompositionLogger) Println(contents ...any) {
-	log := newLogData(eumLogLevel.NoneLevel, fmt.Sprintln(contents...), "")
+	log := newLogData(eumLogLevel.NoneLevel, fmt.Sprint(contents...), "")
 	r.log(log)
 }
 
