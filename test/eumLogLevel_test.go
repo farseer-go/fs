@@ -7,7 +7,7 @@ import (
 )
 
 func TestEumLogLevel(t *testing.T) {
-	assert.Equal(t, "Info", eumLogLevel.NoneLevel.ToString())
+	assert.Equal(t, "None", eumLogLevel.NoneLevel.ToString())
 	assert.Equal(t, eumLogLevel.NoneLevel, eumLogLevel.GetEnum("???"))
 
 	assert.Equal(t, "Error", eumLogLevel.Error.ToString())
