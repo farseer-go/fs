@@ -23,7 +23,8 @@ func InitLog() core.ILog {
 	consoleFormat, consoleLevel := loadLevelFormat(logConfig.Console, defaultLevel, defaultFormat)
 	factory.AddProviderFormatter(&ConsoleProvider{}, consoleFormat, consoleLevel)
 
-	return factory.CreateLogger("")
+	Log = factory.CreateLogger("")
+	return Log
 }
 
 // 使用具体配置还是默认配置
@@ -49,7 +50,7 @@ type Config struct {
 	Component componentConfig
 	Default   levelFormat
 	Console   levelFormat
-	File      levelFormat
+	File      fileConfig
 }
 
 // 组件日志
@@ -61,4 +62,13 @@ type componentConfig struct {
 type levelFormat struct {
 	LogLevel string
 	Format   string
+}
+
+type fileConfig struct {
+	levelFormat
+	Path               string // 日志存放的目录位置
+	FileName           string // 日志文件名称
+	RollingInterval    string // 日志滚动间隔
+	FileSizeLimitBytes int64  // 日志文件大小限制
+	FileCountLimit     int    // 日志文件数量限制
 }

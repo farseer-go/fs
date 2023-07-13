@@ -2,12 +2,21 @@ package modules
 
 import (
 	"fmt"
-	"github.com/farseer-go/fs/container"
-	"github.com/farseer-go/fs/core"
 	"github.com/farseer-go/fs/flog"
 	"github.com/farseer-go/fs/stopwatch"
 	"reflect"
 )
+
+func GetDependModules(startupModule FarseerModule) []FarseerModule {
+	dependModules := Distinct(GetDependModule(startupModule))
+
+	// 加载核心模块
+	if !exists(dependModules, FarseerKernelModule{}) {
+		return append([]FarseerModule{FarseerKernelModule{}}, dependModules...)
+	}
+
+	return dependModules
+}
 
 // GetDependModule 查找模块的依赖
 func GetDependModule(module ...FarseerModule) []FarseerModule {
@@ -33,9 +42,6 @@ func Distinct(modules []FarseerModule) []FarseerModule {
 		if !exists(lst, module) {
 			lst = append(lst, module)
 		}
-	}
-	if !exists(lst, FarseerKernelModule{}) {
-		return append([]FarseerModule{FarseerKernelModule{}}, lst...)
 	}
 	return lst
 }
@@ -85,14 +91,13 @@ func StartModules(farseerModules []FarseerModule) {
 
 // ShutdownModules 关闭模块
 func ShutdownModules(farseerModules []FarseerModule) {
-	log := container.Resolve[core.ILog]()
-	log.Println("Modules close...")
+	flog.Println("Modules close...")
 	for _, farseerModule := range farseerModules {
 		if module, ok := farseerModule.(FarseerShutdownModule); ok {
 			sw := stopwatch.StartNew()
 			moduleName := reflect.TypeOf(farseerModule).String()
 			module.Shutdown()
-			log.Println("Elapsed time：" + sw.GetMillisecondsText() + " " + moduleName + flog.Red(".Shutdown()"))
+			flog.Println("Elapsed time：" + sw.GetMillisecondsText() + " " + moduleName + flog.Red(".Shutdown()"))
 		}
 	}
 }

@@ -20,7 +20,7 @@ func (m myDb) GetAllDbType() string {
 
 // 测试注入
 func TestInject(t *testing.T) {
-	container.InitContainer(nil)
+	container.InitContainer()
 	// 注册单例
 	container.RegisterTransient(func() IDatabase { return &mysql{} })
 	// 注册单例

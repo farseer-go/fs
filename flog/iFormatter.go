@@ -15,7 +15,7 @@ type IFormatter interface {
 type JsonFormatter struct {
 }
 
-func (r *JsonFormatter) Formatter(log *logData) string {
+func (r JsonFormatter) Formatter(log *logData) string {
 	marshal, _ := json.Marshal(log)
 	return string(marshal)
 }
@@ -24,7 +24,7 @@ func (r *JsonFormatter) Formatter(log *logData) string {
 type TextFormatter struct {
 }
 
-func (r *TextFormatter) Formatter(log *logData) string {
+func (r TextFormatter) Formatter(log *logData) string {
 	var logLevelString string
 	if log.LogLevel != eumLogLevel.NoneLevel {
 		logLevelString = Colors[log.LogLevel]("[" + log.LogLevel.ToString() + "]")

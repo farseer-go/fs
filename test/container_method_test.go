@@ -18,7 +18,7 @@ func (d *databaseFactory) CreateDatabase() IDatabase {
 }
 
 func TestContainerMethod(t *testing.T) {
-	container.InitContainer(nil)
+	container.InitContainer()
 
 	// 注册获取IDatabase接口的方法
 	container.Register(func(factory IDatabaseFactory) IDatabase {

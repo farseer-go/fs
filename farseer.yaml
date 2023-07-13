@@ -29,7 +29,10 @@ Log:
   File:
     LogLevel: "info"
     Format: "json"
-    Path: ""
+    Path: "./log"
+    RollingInterval: "Day|Hour|Week|Month|Year" # 滚动间隔
+    FileSizeLimitBytes: 1024 * 10
+    FileCountLimit: 20
   Database:
   ElasticSearch:
   Component:

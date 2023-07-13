@@ -41,9 +41,6 @@ var ProcessId int
 // Context 最顶层的上下文
 var Context context.Context
 
-// Log 日志
-var Log core.ILog
-
 // 依赖的模块
 var dependModules []modules.FarseerModule
 
@@ -78,17 +75,15 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 	showComponentLog()
 	flog.LogBuffer <- fmt.Sprint("---------------------------------------")
 
+	// 加载模块依赖
 	var startupModule TModule
-	dependModules = modules.Distinct(modules.GetDependModule(startupModule))
+	dependModules = modules.GetDependModules(startupModule)
 	flog.LogBuffer <- fmt.Sprint("Loaded, " + flog.Red(len(dependModules)) + " modules in total")
 
+	// 执行所有模块初始化
 	modules.StartModules(dependModules)
 	flog.LogBuffer <- fmt.Sprint("Initialization completed, total time：" + sw.GetMillisecondsText())
 	flog.LogBuffer <- fmt.Sprint("---------------------------------------")
-
-	Log = container.Resolve[core.ILog]()
-	flog.ClearLogBuffer(Log)
-	go flog.LoadLogBuffer(Log)
 
 	// 健康检查
 	healthChecks := container.ResolveAll[core.IHealthCheck]()
