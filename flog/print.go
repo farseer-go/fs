@@ -54,6 +54,14 @@ func Error(contents ...any) error {
 	return Log.Error(contents...)
 }
 
+// ErrorIfExists 打印Error日志（假如存在）
+func ErrorIfExists(err error) {
+	if err == nil {
+		return
+	}
+	_ = Log.Error(err)
+}
+
 // Errorf 打印Error日志
 func Errorf(format string, a ...any) error {
 	return Log.Errorf(format, a...)

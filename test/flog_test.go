@@ -1,6 +1,7 @@
 package test
 
 import (
+	"fmt"
 	"github.com/farseer-go/fs/configure"
 	"github.com/farseer-go/fs/flog"
 	"github.com/stretchr/testify/assert"
@@ -19,6 +20,7 @@ func TestFlog(t *testing.T) {
 	flog.Warningf("")
 	_ = flog.Error("")
 	_ = flog.Errorf("")
+	flog.ErrorIfExists(fmt.Errorf("test error"))
 	flog.Critical("")
 	flog.Criticalf("")
 	flog.Print("")
