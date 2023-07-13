@@ -93,12 +93,23 @@ func (r *CompositionLogger) Log(logLevel eumLogLevel.Enum, content string, compo
 func (r *CompositionLogger) fileWithLineNum() string {
 	// the second caller usually from internal, so set i start from 1
 	var fileLineNum string
-	for i := 2; i < 15; i++ {
+	for i := 3; i < 15; i++ {
 		_, file, line, ok := runtime.Caller(i)
-		if ok && (!strings.HasSuffix(file, "_test.go")) { // !strings.HasPrefix(file, gormSourceDir) ||
+		if ok && !strings.HasSuffix(file, "_test.go") && (!r.isSysCom(file) || strings.HasSuffix(file, "healthCheck.go")) { // !strings.HasPrefix(file, gormSourceDir) ||
 			fileLineNum = file + ":" + strconv.FormatInt(int64(line), 10)
 			break
 		}
 	}
 	return fileLineNum
+}
+
+var comNames = []string{"/farseer-go/async/", "/farseer-go/cache/", "/farseer-go/cacheMemory/", "/farseer-go/collections/", "/farseer-go/data/", "/farseer-go/elasticSearch/", "/farseer-go/etcd/", "/farseer-go/eventBus/", "/farseer-go/fs/", "/farseer-go/linkTrack/", "/farseer-go/mapper/", "/farseer-go/queue/", "/farseer-go/rabbit/", "/farseer-go/redis/", "/farseer-go/redisStream/", "/farseer-go/tasks/", "/farseer-go/utils/", "/farseer-go/webapi/"}
+
+func (r *CompositionLogger) isSysCom(file string) bool {
+	for _, comName := range comNames {
+		if strings.Contains(file, comName) {
+			return true
+		}
+	}
+	return false
 }
