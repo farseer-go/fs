@@ -36,13 +36,31 @@ func (r *container) addComponent(model componentModel) {
 		r.dependency[model.interfaceType] = []componentModel{model}
 	} else {
 		for index := 0; index < len(componentModels); index++ {
-			if componentModels[index].name == model.name && componentModels[index].instanceType == model.instanceType {
+			if componentModels[index].name == model.name {
 				panic(fmt.Sprintf("container：The same registration object already exists,interfaceType=%s,name=%s,instanceType=%s", model.interfaceType.String(), model.name, reflect.TypeOf(model.instanceType).String()))
 			}
 		}
 		r.dependency[model.interfaceType] = append(componentModels, model)
 	}
 	r.component = append(r.component, model)
+}
+
+// 移除已注册的实例
+func (r *container) removeComponent(interfaceType reflect.Type, name string) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	componentModels, exists := r.dependency[interfaceType]
+	if !exists {
+		return
+	}
+	// 遍历已注册的实例列表
+	for index := 0; index < len(componentModels); index++ {
+		// 找到实例后，删除
+		if componentModels[index].name == name {
+			r.dependency[interfaceType] = append(componentModels[:index], componentModels[index+1:]...)
+		}
+	}
 }
 
 // 注册构造函数
