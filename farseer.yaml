@@ -20,7 +20,7 @@ ElasticSearch:
 WebApi:
   Url: ":888"
   Session:
-    Store: Redis
+    Store: "Redis"
     StoreConfigName: "default"
     Age: 1800
 Log:
