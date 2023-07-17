@@ -19,6 +19,10 @@ ElasticSearch:
   LinkTrack: "Server=http://192.168.1.8:9200,Username=es,Password=123456"
 WebApi:
   Url: ":888"
+  Session:
+    Store: Redis
+    StoreConfigName: "default"
+    Age: 1800
 Log:
   Default:
     LogLevel: "info"
