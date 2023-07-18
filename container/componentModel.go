@@ -3,6 +3,7 @@ package container
 import (
 	"github.com/farseer-go/fs/container/eumLifecycle"
 	"reflect"
+	"time"
 )
 
 // 实现类模型
@@ -13,10 +14,11 @@ type componentModel struct {
 	instanceType  reflect.Type      // 函数类型
 	instanceValue reflect.Value     // 函数值
 	instance      any               // 实例
+	lastVisitAt   time.Time         // 最后访问时间
 }
 
-func NewComponentModel(name string, lifecycle eumLifecycle.Enum, interfaceType reflect.Type, funcIns any) componentModel {
-	return componentModel{
+func NewComponentModel(name string, lifecycle eumLifecycle.Enum, interfaceType reflect.Type, funcIns any) *componentModel {
+	return &componentModel{
 		name:          name,
 		lifecycle:     lifecycle,
 		interfaceType: interfaceType,
@@ -25,8 +27,8 @@ func NewComponentModel(name string, lifecycle eumLifecycle.Enum, interfaceType r
 	}
 }
 
-func NewComponentModelByInstance(name string, lifecycle eumLifecycle.Enum, interfaceType reflect.Type, instance any) componentModel {
-	return componentModel{
+func NewComponentModelByInstance(name string, lifecycle eumLifecycle.Enum, interfaceType reflect.Type, instance any) *componentModel {
+	return &componentModel{
 		name:          name,
 		lifecycle:     lifecycle,
 		interfaceType: interfaceType,

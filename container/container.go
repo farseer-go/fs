@@ -6,34 +6,35 @@ import (
 	"github.com/farseer-go/fs/flog"
 	"reflect"
 	"sync"
+	"time"
 )
 
 // 容器
 type container struct {
 	name       string
-	dependency map[reflect.Type][]componentModel // 依赖
-	component  []componentModel                  // 实现类
-	lock       *sync.RWMutex
+	dependency map[reflect.Type][]*componentModel // 依赖
+	//component  []*componentModel                  // 实现类
+	lock *sync.RWMutex
 }
 
 // NewContainer 实例化一个默认容器
 func NewContainer() *container {
 	return &container{
 		name:       "default",
-		dependency: make(map[reflect.Type][]componentModel),
-		component:  []componentModel{},
-		lock:       &sync.RWMutex{},
+		dependency: make(map[reflect.Type][]*componentModel),
+		//component:  []*componentModel{},
+		lock: &sync.RWMutex{},
 	}
 }
 
 // 注册实例，添加到依赖列表
-func (r *container) addComponent(model componentModel) {
+func (r *container) addComponent(model *componentModel) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
 	componentModels, exists := r.dependency[model.interfaceType]
 	if !exists {
-		r.dependency[model.interfaceType] = []componentModel{model}
+		r.dependency[model.interfaceType] = []*componentModel{model}
 	} else {
 		for index := 0; index < len(componentModels); index++ {
 			if componentModels[index].name == model.name {
@@ -42,25 +43,7 @@ func (r *container) addComponent(model componentModel) {
 		}
 		r.dependency[model.interfaceType] = append(componentModels, model)
 	}
-	r.component = append(r.component, model)
-}
-
-// 移除已注册的实例
-func (r *container) removeComponent(interfaceType reflect.Type, name string) {
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
-	componentModels, exists := r.dependency[interfaceType]
-	if !exists {
-		return
-	}
-	// 遍历已注册的实例列表
-	for index := 0; index < len(componentModels); index++ {
-		// 找到实例后，删除
-		if componentModels[index].name == name {
-			r.dependency[interfaceType] = append(componentModels[:index], componentModels[index+1:]...)
-		}
-	}
+	//r.component = append(r.component, model)
 }
 
 // 注册构造函数
@@ -141,9 +124,6 @@ func (r *container) resolve(interfaceType reflect.Type, name string) any {
 
 // 获取所有对象
 func (r *container) resolveAll(interfaceType reflect.Type) []any {
-	//if interfaceType.Kind() == reflect.Pointer {
-	//	interfaceType = interfaceType.Elem()
-	//}
 	if interfaceType.Kind() != reflect.Interface {
 		_ = flog.Errorf("container：When resolve all objects，%s must is Interface type", interfaceType.String())
 		return nil
@@ -167,6 +147,8 @@ func (r *container) resolveAll(interfaceType reflect.Type) []any {
 
 // 根据lifecycle获取实例
 func (r *container) getOrCreateIns(interfaceType reflect.Type, index int) any {
+	// 更新实例访问时间
+	r.dependency[interfaceType][index].lastVisitAt = time.Now()
 	// 单例
 	if r.dependency[interfaceType][index].lifecycle == eumLifecycle.Single {
 		if r.dependency[interfaceType][index].instance == nil {
@@ -179,7 +161,7 @@ func (r *container) getOrCreateIns(interfaceType reflect.Type, index int) any {
 }
 
 // 根据类型，动态创建实例
-func (r *container) createIns(model componentModel) any {
+func (r *container) createIns(model *componentModel) any {
 	var arr []reflect.Value
 	// 构造函数，需要分别取出入参值
 	for inIndex := 0; inIndex < model.instanceType.NumIn(); inIndex++ {
@@ -257,4 +239,34 @@ func (r *container) isRegister(interfaceType reflect.Type, name string) bool {
 		}
 	}
 	return false
+}
+
+// 移除已注册的实例
+func (r *container) removeComponent(interfaceType reflect.Type, name string) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	componentModels, _ := r.dependency[interfaceType]
+	// 遍历已注册的实例列表
+	for index := 0; index < len(componentModels); index++ {
+		// 找到实例后，删除
+		if componentModels[index].name == name {
+			r.dependency[interfaceType] = append(componentModels[:index], componentModels[index+1:]...)
+		}
+	}
+}
+
+// 移除长时间未使用的实例
+func (r *container) removeUnused(interfaceType reflect.Type, ttl time.Duration) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	componentModels, _ := r.dependency[interfaceType]
+	// 遍历已注册的实例列表
+	for index := 0; index < len(componentModels); index++ {
+		// 删除超出ttl时间未访问的实例
+		if time.Now().Sub(componentModels[index].lastVisitAt) >= ttl {
+			r.dependency[interfaceType] = append(componentModels[:index], componentModels[index+1:]...)
+		}
+	}
 }

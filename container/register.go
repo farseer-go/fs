@@ -53,10 +53,3 @@ func getIocName(iocName ...string) string {
 	}
 	return ""
 }
-
-// Remove 移除已注册的实例
-func Remove[TInterface any](iocName ...string) {
-	name := getIocName(iocName...)
-	interfaceType := reflect.TypeOf((*TInterface)(nil)).Elem()
-	defContainer.removeComponent(interfaceType, name)
-}
