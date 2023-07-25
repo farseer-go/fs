@@ -32,11 +32,12 @@ Log:
     Format: "json"
   File:
     LogLevel: "info"
-    Format: "json"
+    Format: "text"
     Path: "./log"
-    RollingInterval: "Day|Hour|Week|Month|Year" # 滚动间隔
-    FileSizeLimitBytes: 1024 * 10
-    FileCountLimit: 20
+    RollingInterval: "Hour" # 滚动间隔（Hour|Day|Week|Month|Year）
+    FileSizeLimitMb: 1 # 文件大小限制
+    FileCountLimit: 20 # 文件数量限制
+    RefreshInterval: 1 # 写入到文件的时间间隔，秒单位，最少为1
   Database:
   ElasticSearch:
   Component:

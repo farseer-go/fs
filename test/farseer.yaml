@@ -24,11 +24,15 @@ WebApi:
 Log:
   Default:
     LogLevel: "info"
+    Format: "json"
+  Console:
+    LogLevel: "info"
+    Format: "json"
+  File:
+    LogLevel: "info"
     Format: "text"
-  Component:
-    task: true
-    cacheManage: true
-A:
-  - "a1"
-  - "a2"
-  - "a3"
+    Path: "./log"
+    RollingInterval: "Hour" # 滚动间隔（Hour|Day|Week|Month|Year）
+    FileSizeLimitMb: 1 # 文件大小限制
+    FileCountLimit: 20 # 文件数量限制
+    RefreshInterval: 1 # 写入到文件的时间间隔，秒单位，最少为1
