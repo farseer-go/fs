@@ -1,6 +1,7 @@
 package flog
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/farseer-go/fs/core/eumLogLevel"
 	"github.com/farseer-go/fs/parse"
@@ -36,7 +37,12 @@ func (r *FileProvider) CreateLogger(categoryName string, formatter IFormatter, l
 	}
 
 	persistent := &fileLoggerPersistent{formatter, logLevel, make(chan string, 10000), r.config}
+	// 异步定时写入日志文件
 	go persistent.writeFile()
+	// 开启日志文件数量限制
+	if r.config.FileCountLimit > 0 {
+		go persistent.removeLimitFile()
+	}
 	return persistent
 }
 
@@ -79,12 +85,24 @@ func (r *fileLoggerPersistent) writeFile() {
 
 		// 如果开启了日志文件的大小限制，则要拆分文件
 		if r.config.FileSizeLimitMb > 0 {
-			_, maxFileIndex := r.getFileIndex(fileName)
+			maxFileIndex := r.getFileIndex(fileName)
+
+			// 拼接最大索引号名称
 			fileName += strconv.Itoa(maxFileIndex)
 		}
 
-		// 设置文件位置
-		_ = os.WriteFile(r.config.Path+fileName+".log", []byte(strings.Join(logs, "")), 0766)
+		// 写日志到文件
+		file, err := os.OpenFile(r.config.Path+fileName+".log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
+		if err != nil {
+			continue
+		}
+		// 写入文件时，使用带缓存的 *Writer
+		write := bufio.NewWriter(file)
+		_, _ = write.WriteString(strings.Join(logs, ""))
+		//Flush将缓存的文件真正写入到文件中
+		_ = write.Flush()
+		//及时关闭file句柄
+		_ = file.Close()
 	}
 }
 
@@ -114,7 +132,7 @@ func (r *fileLoggerPersistent) getFilename() string {
 }
 
 // 获取文件索引号
-func (r *fileLoggerPersistent) getFileIndex(fileName string) (minFileIndex, maxFileIndex int) {
+func (r *fileLoggerPersistent) getFileIndex(fileName string) (maxFileIndex int) {
 	// 获取目录下的日志数量，用来确定FileCountLimit限制
 	logFiles := getFiles(r.config.Path, fileName+"*.log")
 	for _, file := range logFiles {
@@ -130,20 +148,46 @@ func (r *fileLoggerPersistent) getFileIndex(fileName string) (minFileIndex, maxF
 		if fileIndex > maxFileIndex {
 			maxFileIndex = fileIndex
 		}
-
-		// 取最小的索引号
-		if fileIndex < minFileIndex {
-			minFileIndex = fileIndex
-		}
 	}
 
 	// 获取最大索引号的文件大小
 	fileInfo, _ := os.Stat(r.config.Path + fileName + strconv.Itoa(maxFileIndex) + ".log")
 	// 如果文件超出大小限制
-	if fileInfo.Size()/1024 >= r.config.FileSizeLimitMb {
+	if fileInfo != nil && fileInfo.Size()/1024/1024 >= r.config.FileSizeLimitMb {
 		maxFileIndex++ // 增加索引号
 	}
 	return
+}
+
+// 移除超过数量的日志文件
+func (r *fileLoggerPersistent) removeLimitFile() {
+	// 1分钟判断一次
+	ticker := time.NewTicker(time.Minute)
+	for range ticker.C {
+		// 获取目录下的日志数量，用来确定FileCountLimit限制
+		logFiles := getFiles(r.config.Path, "*.log")
+		// 文件没有超出限制
+		if len(logFiles) < r.config.FileCountLimit {
+			continue
+		}
+
+		var oldFile string                       // 最旧的文件路径
+		oldFileModTime := time.Now().UnixMilli() // 最旧的文件修改时间（用来比较哪个是最旧的）
+		// 找出最早的文件，并删除
+		for _, file := range logFiles {
+			if !strings.HasPrefix(file, "./") && !strings.HasPrefix(file, "/") {
+				file = "./" + file
+			}
+			fileInfo, _ := os.Stat(file)
+			// 找到最早修改的文件
+			if oldFileModTime > fileInfo.ModTime().UnixMilli() {
+				oldFileModTime = fileInfo.ModTime().UnixMilli()
+				oldFile = file
+			}
+		}
+
+		_ = os.Remove(oldFile)
+	}
 }
 
 // GetFiles 读取指定目录下的文件
