@@ -1,7 +1,7 @@
 package test
 
 import (
-	"github.com/farseer-go/fs/flog"
+	"fmt"
 	"github.com/farseer-go/fs/stopwatch"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -19,9 +19,9 @@ func TestStopwatch(t *testing.T) {
 	assert.Equal(t, int64(1), sw.ElapsedMilliseconds())
 	sw.Start()
 	time.Sleep(time.Millisecond * 2)
-	flog.Println(sw.GetMillisecondsText())
-	flog.Println(sw.GetMicrosecondsText())
-	flog.Println(sw.GetNanosecondsText())
+	fmt.Println(sw.GetMillisecondsText())
+	fmt.Println(sw.GetMicrosecondsText())
+	fmt.Println(sw.GetNanosecondsText())
 	sw.Restart()
 	assert.LessOrEqual(t, int64(0), sw.ElapsedMilliseconds())
 	time.Sleep(time.Millisecond * 300)

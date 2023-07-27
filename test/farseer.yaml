@@ -36,3 +36,10 @@ Log:
     FileSizeLimitMb: 1 # 文件大小限制
     FileCountLimit: 20 # 文件数量限制
     RefreshInterval: 1 # 写入到文件的时间间隔，秒单位，最少为1
+  Component:
+    task: true
+    cacheManage: true
+A:
+  - "a1"
+  - "a2"
+  - "a3"
