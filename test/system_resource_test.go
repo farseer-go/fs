@@ -1,7 +1,6 @@
 package test
 
 import (
-	"fmt"
 	"github.com/farseer-go/fs/system"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -13,7 +12,7 @@ func TestResourceResource(t *testing.T) {
 	//	fmt.Println(system.GetResource().ToString())
 	//}
 
-	fmt.Println(system.GetResource().ToString())
+	//fmt.Println(system.GetResource().ToString())
 	resource := system.GetResource()
 	assert.Greater(t, resource.CpuCores, 0)
 }

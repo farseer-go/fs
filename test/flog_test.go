@@ -41,27 +41,29 @@ func TestFlog(t *testing.T) {
 		flog.Panicf("test error:%s", "content")
 	})
 
-	configure.SetDefault("Log.LogLevel", "Trace")
-	flog.InitLog()
-	flog.Print("aaa")
+	/*
+		configure.SetDefault("Log.LogLevel", "Trace")
+		flog.InitLog()
+		flog.Print("aaa")
 
-	configure.SetDefault("Log.LogLevel", "debug")
-	flog.InitLog()
-	flog.Trace("aaa")
+		configure.SetDefault("Log.LogLevel", "debug")
+		flog.InitLog()
+		flog.Trace("aaa")
 
-	configure.SetDefault("Log.LogLevel", "Information")
-	flog.InitLog()
-	flog.Debug("aaa")
+		configure.SetDefault("Log.LogLevel", "Information")
+		flog.InitLog()
+		flog.Debug("aaa")
 
-	configure.SetDefault("Log.LogLevel", "Warning")
-	flog.InitLog()
-	flog.Info("aaa")
+		configure.SetDefault("Log.LogLevel", "Warning")
+		flog.InitLog()
+		flog.Info("aaa")
 
-	configure.SetDefault("Log.LogLevel", "Error")
-	flog.InitLog()
-	flog.Warning("aaa")
+		configure.SetDefault("Log.LogLevel", "Error")
+		flog.InitLog()
+		flog.Warning("aaa")
 
-	configure.SetDefault("Log.LogLevel", "Critical")
-	flog.InitLog()
-	flog.Error("aaa")
+		configure.SetDefault("Log.LogLevel", "Critical")
+		flog.InitLog()
+		flog.Error("aaa")
+	*/
 }

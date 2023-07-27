@@ -34,8 +34,8 @@ func InitLog() core.ILog {
 		factory.AddProviderFormatter(&FileProvider{config: logConfig.File}, formatter, logLevel)
 	}
 
-	Log = factory.CreateLogger("")
-	return Log
+	log = factory.CreateLogger("")
+	return log
 }
 
 // 使用具体配置还是默认配置

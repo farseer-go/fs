@@ -29,8 +29,8 @@ func (module FarseerKernelModule) PreInitialize() {
 	container.RegisterInstance(log)
 
 	// 清空日志缓冲区
-	flog.ClearLogBuffer()
-	go flog.LoadLogBuffer()
+	flog.ClearLogBuffer(log)
+	go flog.LoadLogBuffer(log)
 
 	// 初始化时间轮
 	timingWheel.NewDefault(100*time.Millisecond, 60)
