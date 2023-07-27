@@ -4,12 +4,17 @@ import (
 	"fmt"
 	"github.com/farseer-go/fs/flog"
 	"reflect"
+	"sync"
 )
 
 var moduleMap = make(map[string]int64)
+var moduleMapLocker sync.RWMutex
 
 // IsLoad 模块是否加载
 func IsLoad(module FarseerModule) bool {
+	moduleMapLocker.RLock()
+	defer moduleMapLocker.RUnlock()
+
 	moduleName := reflect.TypeOf(module).String()
 	_, isExists := moduleMap[moduleName]
 	return isExists
