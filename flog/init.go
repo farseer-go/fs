@@ -14,6 +14,10 @@ func InitLog() core.ILog {
 	logConfig = configure.ParseConfig[Config]("Log")
 	// 读取默认等级、默认格式
 	defaultLevel := eumLogLevel.GetEnum(logConfig.Default.LogLevel)
+	// 如果配置文件没有设置日志级别，则默认为Trace级别
+	if logConfig.Default.LogLevel == "" {
+		defaultLevel = eumLogLevel.Trace
+	}
 	var defaultFormat IFormatter = &TextFormatter{}
 	if strings.ToLower(logConfig.Default.Format) == "json" {
 		defaultFormat = &JsonFormatter{}
