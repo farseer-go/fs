@@ -25,22 +25,26 @@ WebApi:
     Age: 1800
 Log:
   Default:
-    LogLevel: "info"
-    Format: "json"
+    LogLevel: "info"          # 只记录级别>=info的日志内容
+    Format: "json"            # 默认使用json格式输出
   Console:
-    LogLevel: "info"
-    Format: "json"
+    LogLevel: "info"          # 只记录级别>=info的日志内容
+    Format: "text"            # 控制台打印，使用text格式输出
   File:
-    LogLevel: "info"
-    Format: "text"
-    Path: "./log"
-    RollingInterval: "Hour" # 滚动间隔（Hour|Day|Week|Month|Year）
-    FileSizeLimitMb: 1 # 文件大小限制
-    FileCountLimit: 20 # 文件数量限制
-    RefreshInterval: 1 # 写入到文件的时间间隔，秒单位，最少为1
+    LogLevel: "info"          # 只记录级别>=info的日志内容
+    Format: "text"            # 使用text格式写入日志文件
+    Path: "./log"             # 日志文件存储在应用程序的./log目录中
+    RollingInterval: "Hour"   # 滚动间隔（Hour|Day|Week|Month|Year）
+    FileSizeLimitMb: 1        # 文件大小限制
+    FileCountLimit: 20        # 文件数量限制
+    RefreshInterval: 1        # 写入到文件的时间间隔，秒单位，最少为1
   Database:
   ElasticSearch:
   Component:
-    task: true
-    cacheManage: true
-    webapi: true
+    task: true                # 打印task组件的日志
+    cacheManage: true         # 打印cacheManage组件的日志
+    webapi: true              # 打印webapi组件的日志
+    event: true               # 打印event组件的日志
+    httpRequest: true         # 打印httpRequest组件的日志
+    queue: true               # 打印queue组件的日志
+    fSchedule: true           # 打印fSchedule组件的日志
