@@ -122,6 +122,8 @@ func (r *fileLoggerPersistent) getFilename() string {
 		fileName = time.Now().Format("2006-01")
 	case "year":
 		fileName = time.Now().Format("2006")
+	default:
+		fileName = time.Now().Format("2006-01-02") // day
 	}
 
 	// 如果有限制文件大小，则要加后缀
