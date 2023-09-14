@@ -104,6 +104,17 @@ func Convert[T any](source any, defVal T) T {
 			}
 			return slice.Interface().(T)
 		}
+
+		// list类型
+		if isList(defValType) {
+			lstReflectValue := types.ListNew(defValType)
+			lstItemType := types.GetListItemType(defValType)
+			arr := strings.Split(strSource, ",")
+			for i := 0; i < len(arr); i++ {
+				types.ListAdd(&lstReflectValue, ConvertValue(arr[i], lstItemType).Interface())
+			}
+			return lstReflectValue.Elem().Interface().(T)
+		}
 	}
 
 	// time.Time转...
@@ -157,4 +168,9 @@ func isString(kind reflect.Kind) bool {
 // 数组
 func isArray(kind reflect.Kind) bool {
 	return kind == reflect.Array || kind == reflect.Slice
+}
+
+// isList 判断类型是否为List
+func isList(realType reflect.Type) bool {
+	return strings.HasPrefix(realType.String(), "collections.List[")
 }

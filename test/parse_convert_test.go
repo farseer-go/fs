@@ -1,6 +1,7 @@
 package test
 
 import (
+	"github.com/farseer-go/collections"
 	"github.com/farseer-go/fs/dateTime"
 	"github.com/farseer-go/fs/parse"
 	"github.com/stretchr/testify/assert"
@@ -113,7 +114,7 @@ func TestConvert(t *testing.T) {
 
 	t.Run("time.Time转DateTime", func(t *testing.T) {
 		time1 := time.Now()
-		dt := parse.Convert(time1, dateTime.New(time.UnixMilli(0)))
+		dt := parse.Convert(time1, dateTime.DateTime{})
 		assert.Equal(t, time1.Year(), dt.Year())
 		assert.Equal(t, int(time1.Month()), dt.Month())
 		assert.Equal(t, time1.Day(), dt.Day())
@@ -151,5 +152,11 @@ func TestConvert(t *testing.T) {
 		assert.Equal(t, dt.UnixMilli(), dt2.UnixMilli())
 		assert.Equal(t, dt.UnixMicro(), dt2.UnixMicro())
 		assert.Equal(t, dt.UnixNano(), dt2.UnixNano())
+	})
+
+	t.Run("string转List", func(t *testing.T) {
+		lst := collections.NewList(1, 2, 3)
+		lst2 := parse.Convert("1,2,3", collections.NewList[int]())
+		assert.Equal(t, lst.ToArray(), lst2.ToArray())
 	})
 }
