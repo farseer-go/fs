@@ -115,13 +115,24 @@ func Convert[T any](source any, defVal T) T {
 			}
 			return lstReflectValue.Elem().Interface().(T)
 		}
+
+		layouts := []string{time.DateTime, time.DateOnly, time.RFC3339}
 		// 转time.Time
 		if types.IsTime(defValType) {
-			layouts := []string{time.DateTime, time.DateOnly, time.RFC3339}
 			for _, layout := range layouts {
 				parse, err := time.Parse(layout, source.(string))
 				if err == nil {
 					return any(parse).(T)
+				}
+			}
+		}
+
+		// 转DateTime
+		if types.IsDateTime(defValType) {
+			for _, layout := range layouts {
+				parse, err := time.Parse(layout, source.(string))
+				if err == nil {
+					return any(dateTime.New(parse)).(T)
 				}
 			}
 		}
