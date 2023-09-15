@@ -77,13 +77,13 @@ func Convert[T any](source any, defVal T) T {
 	// 字符串转...
 	if isString(sourceKind) {
 		strSource := source.(string)
-
-		if isBool(returnKind) { // 字符串转bool
+		// bool
+		if isBool(returnKind) {
 			var result any = strings.EqualFold(strSource, "true")
 			return result.(T)
 		}
 
-		// 字符串转数字
+		// 数字
 		if isNumber(returnKind) {
 			return stringToNumber(strSource, defVal, returnKind).(T)
 		}
@@ -114,6 +114,16 @@ func Convert[T any](source any, defVal T) T {
 				types.ListAdd(&lstReflectValue, ConvertValue(arr[i], lstItemType).Interface())
 			}
 			return lstReflectValue.Elem().Interface().(T)
+		}
+		// 转time.Time
+		if types.IsTime(defValType) {
+			layouts := []string{time.DateTime, time.DateOnly, time.RFC3339}
+			for _, layout := range layouts {
+				parse, err := time.Parse(layout, source.(string))
+				if err == nil {
+					return any(parse).(T)
+				}
+			}
 		}
 	}
 

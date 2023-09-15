@@ -154,6 +154,20 @@ func TestConvert(t *testing.T) {
 		assert.Equal(t, dt.UnixNano(), dt2.UnixNano())
 	})
 
+	t.Run("string转time.Time", func(t *testing.T) {
+		dt := parse.Convert("2023-09-15", time.Time{})
+		assert.Equal(t, 2023, dt.Year())
+		assert.Equal(t, 9, int(dt.Month()))
+		assert.Equal(t, 15, dt.Day())
+	})
+
+	t.Run("string转DateTime", func(t *testing.T) {
+		dt := parse.Convert("2023-09-15", dateTime.DateTime{})
+		assert.Equal(t, 2023, dt.Year())
+		assert.Equal(t, 9, dt.Month())
+		assert.Equal(t, 15, dt.Day())
+	})
+
 	t.Run("string转List", func(t *testing.T) {
 		lst := collections.NewList(1, 2, 3)
 		lst2 := parse.Convert("1,2,3", collections.NewList[int]())
