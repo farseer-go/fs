@@ -167,6 +167,15 @@ func Convert[T any](source any, defVal T) T {
 	return defVal
 }
 
+// ToInt 转换成int类型
+func ToInt(source any) int { return Convert(source, 0) }
+
+// ToInt64 转换成int64类型
+func ToInt64(source any) int64 { return Convert(source, int64(0)) }
+
+// ToString 转换成string类型
+func ToString(source any) string { return Convert(source, "") }
+
 // 数字类型
 func isNumber(kind reflect.Kind) bool {
 	switch kind {
