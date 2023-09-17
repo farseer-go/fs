@@ -60,6 +60,16 @@ func (d DateTime) Minute() int { return d.time.Minute() }
 // Second 获取秒
 func (d DateTime) Second() int { return d.time.Second() }
 
+// TotalSeconds 获取总秒数
+func (d DateTime) TotalSeconds() float64 {
+	return d.time.Sub(time.Date(0, 0, 0, 0, 0, 0, 0, time.Local)).Seconds()
+}
+
+// Duration 得到Duration
+func (d DateTime) Duration() time.Duration {
+	return d.time.Sub(time.Date(0, 0, 0, 0, 0, 0, 0, time.Local))
+}
+
 // UnixMilli 获取毫秒
 func (d DateTime) UnixMilli() int64 { return d.time.UnixMilli() }
 
