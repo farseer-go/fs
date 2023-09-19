@@ -30,8 +30,8 @@ func TestConfigureGet(t *testing.T) {
 	assert.Equal(t, "PoolMinSize=1", arr[2])
 
 	assert.Equal(t, "Url: :888\n", configure.GetString("WebApi"))
-	assert.Equal(t, 20, configure.GetInt("FSchedule.ReservedTaskCount"))
-	assert.Equal(t, int64(20), configure.GetInt64("FSchedule.ReservedTaskCount"))
+	assert.Equal(t, 20, configure.GetInt("Log.File.FileCountLimit"))
+	assert.Equal(t, int64(20), configure.GetInt64("Log.File.FileCountLimit"))
 	assert.Equal(t, true, configure.GetBool("Log.Component.task"))
 
 	assert.Len(t, configure.GetSubNodes("A.B"), 0)
