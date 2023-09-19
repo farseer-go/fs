@@ -176,6 +176,9 @@ func ToInt64(source any) int64 { return Convert(source, int64(0)) }
 // ToString 转换成string类型
 func ToString(source any) string { return Convert(source, "") }
 
+// ToTime 转换成time.Time类型
+func ToTime(source any) time.Time { return Convert(source, time.Time{}) }
+
 // 数字类型
 func isNumber(kind reflect.Kind) bool {
 	switch kind {
