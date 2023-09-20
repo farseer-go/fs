@@ -2,7 +2,6 @@ package timingWheel
 
 import (
 	"context"
-	"github.com/farseer-go/fs/flog"
 	"github.com/farseer-go/fs/snowflake"
 	"math"
 	"strconv"
@@ -117,7 +116,7 @@ func (receiver *timingWheel) Add(d time.Duration, opts ...OpOption) *Timer {
 	for i := len(receiver.clock) - 1; i >= 0; i-- {
 		builder.WriteString(strconv.Itoa(receiver.clock[i]) + ".")
 	}
-	flog.Debugf("添加时间(%d):+%s %s 第%d层 第%d格 剩余%s，当前指针：%s", t.Id, t.duration.String(), t.PlanAt.Format("15:04:05.000"), level, curLevelTimeHand, t.remainingDuration.String(), builder.String())
+	//flog.Debugf("添加时间(%d):+%s %s 第%d层 第%d格 剩余%s，当前指针：%s", t.Id, t.duration.String(), t.PlanAt.Format("15:04:05.000"), level, curLevelTimeHand, t.remainingDuration.String(), builder.String())
 
 	// 初始化所在层的任务队列
 	receiver.initTimeHandTimer(level)
@@ -170,7 +169,7 @@ func (receiver *timingWheel) turning() {
 		go func(timers []*Timer) {
 			for i := 0; i < len(timers); i++ {
 				if !timers[i].isStop {
-					flog.Debugf("休眠时间(%d):+%s %d us", timers[i].Id, timers[i].PlanAt.Format("15:04:05.000"), timers[i].PlanAt.Sub(time.Now()).Microseconds())
+					//flog.Debugf("休眠时间(%d):+%s %d us", timers[i].Id, timers[i].PlanAt.Format("15:04:05.000"), timers[i].PlanAt.Sub(time.Now()).Microseconds())
 					receiver.popTimer(timers[i])
 				}
 			}
