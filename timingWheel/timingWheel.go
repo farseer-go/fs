@@ -259,7 +259,7 @@ func (receiver *timingWheel) popTimer(timer *Timer) {
 		time.Sleep(timer.PlanAt.Sub(time.Now()))
 	}
 	timer.C <- time.Now()
-	flog.Debugf("推送时间(%d):+%s 精确度：%v", timer.Id, timer.PlanAt.Format("15:04:05.000"), timer.isPrecision)
+	//flog.Debugf("推送时间(%d):+%s 精确度：%v", timer.Id, timer.PlanAt.Format("15:04:05.000"), timer.isPrecision)
 }
 
 // 排序任务，按时间从小到大
