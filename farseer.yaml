@@ -26,6 +26,12 @@ WebApi:
     Store: "Redis"
     StoreConfigName: "default"
     Age: 1800
+  Jwt:
+    Key: "aaaaaaa"                    # 生成token的秘钥
+    KeyType: "HS384"                  # 支持 HS256/HS384/HS512，RS256/RS384/RS512，ES256/ES384/ES512，PS256/PS384/PS512，EdDSA
+    HeaderName: "Authorization"       # 前端提交Token，存放到header的name
+    InvalidStatusCode: 403            # token无效时的状态码
+    InvalidMessage: "您没有权限访问"     # token无效时的提示信息
 Log:
   Default:
     LogLevel: "info"          # 只记录级别>=info的日志内容
