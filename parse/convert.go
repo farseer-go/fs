@@ -116,11 +116,11 @@ func Convert[T any](source any, defVal T) T {
 			return lstReflectValue.Elem().Interface().(T)
 		}
 
-		layouts := []string{time.DateTime, time.DateOnly, time.RFC3339}
 		// 转time.Time
+		layouts := []string{time.DateTime, time.DateOnly, time.RFC3339}
 		if types.IsTime(defValType) {
 			for _, layout := range layouts {
-				parse, err := time.Parse(layout, source.(string))
+				parse, err := time.ParseInLocation(layout, source.(string), time.Local)
 				if err == nil {
 					return any(parse).(T)
 				}
@@ -130,7 +130,7 @@ func Convert[T any](source any, defVal T) T {
 		// 转DateTime
 		if types.IsDateTime(defValType) {
 			for _, layout := range layouts {
-				parse, err := time.Parse(layout, source.(string))
+				parse, err := time.ParseInLocation(layout, source.(string), time.Local)
 				if err == nil {
 					return any(dateTime.New(parse)).(T)
 				}
