@@ -10,13 +10,21 @@ Rabbit:
 Etcd:
   default: "Server=127.0.0.1:2379|127.0.0.1:2379,ConnectTimeout=5000"
 FSchedule:
-  ClientIp: ""
-  ClientPort: 8888
+  Debug:
+    Enable: false   # 启用调试模式，启用后不会向调度中心注册任务
+    JobName1:       # 调试模式下，配置任务的数据
+      Key1: "value1"
+      Key2: "value2"
+    JobName2:
+      Key3: "value3"
+      Key4: "value4"
+  ClientIp: ""      # 调度中心访问本机的IP地址，默认情况下不需要填写
+  ClientPort: 8888  # 调度中心访问本机的端口地址，必须填写
   Server:
-    Token: ""
-    Address:
-      #- "http://127.0.0.1:8886"
-      - "https://fschedule.fsgit.cc"
+    Token: ""       # 与调度中心通信的Token（未实现）
+    Address:        # 调度中心服务端地址（支持多个）
+      - "http://127.0.0.1:8886"
+      - "http://127.0.0.1:8887"
 ElasticSearch:
   es: "Server=http://192.168.1.8:9200,Username=es,Password=123456,ReplicasCount=1,ShardsCount=1,RefreshInterval=5,IndexFormat=yyyy_MM"
   LinkTrack: "Server=http://192.168.1.8:9200,Username=es,Password=123456"
@@ -27,7 +35,7 @@ WebApi:
     StoreConfigName: "default"
     Age: 1800
   Jwt:
-    Key: "aaaaaaa"                    # 生成token的秘钥
+    Key: "your token key"             # 生成token的秘钥
     KeyType: "HS384"                  # 支持 HS256/HS384/HS512，RS256/RS384/RS512，ES256/ES384/ES512，PS256/PS384/PS512，EdDSA
     HeaderName: "Authorization"       # 前端提交Token，存放到header的name
     InvalidStatusCode: 403            # token无效时的状态码
