@@ -42,19 +42,24 @@ WebApi:
     InvalidMessage: "您没有权限访问"     # token无效时的提示信息
 Log:
   Default:
-    LogLevel: "info"          # 只记录级别>=info的日志内容
-    Format: "json"            # 默认使用json格式输出
+    LogLevel: "info"                  # 只记录级别>=info的日志内容
+    Format: "json"                    # 默认使用json格式输出
+    TimeFormat: "yyyy-MM-dd hh:mm:ss" # 打印的时间格式，默认为：yyyy-MM-dd hh:mm:ss.ffffff
   Console:
-    LogLevel: "info"          # 只记录级别>=info的日志内容
-    Format: "text"            # 控制台打印，使用text格式输出
+    LogLevel: "info"                  # 只记录级别>=info的日志内容
+    Format: "text"                    # 控制台打印，使用text格式输出
+    TimeFormat: "yyyy-MM-dd hh:mm:ss" # 打印的时间格式，默认为：yyyy-MM-dd hh:mm:ss.ffffff
+    Disable: false
   File:
-    LogLevel: "info"          # 只记录级别>=info的日志内容
-    Format: "text"            # 使用text格式写入日志文件
-    Path: "./log"             # 日志文件存储在应用程序的./log目录中
-    RollingInterval: "Hour"   # 滚动间隔（Hour|Day|Week|Month|Year）
-    FileSizeLimitMb: 1        # 文件大小限制
-    FileCountLimit: 20        # 文件数量限制
-    RefreshInterval: 1        # 写入到文件的时间间隔，秒单位，最少为1
+    LogLevel: "info"                  # 只记录级别>=info的日志内容
+    Format: "text"                    # 使用text格式写入日志文件
+    TimeFormat: "yyyy-MM-dd hh:mm:ss" # 打印的时间格式，默认为：yyyy-MM-dd hh:mm:ss.ffffff
+    Path: "./log"                     # 日志文件存储在应用程序的./log目录中
+    RollingInterval: "Hour"           # 滚动间隔（Hour|Day|Week|Month|Year）
+    FileSizeLimitMb: 1                # 文件大小限制
+    FileCountLimit: 20                # 文件数量限制
+    RefreshInterval: 1                # 写入到文件的时间间隔，秒单位，最少为1
+    Disable: true
   Database:
   ElasticSearch:
   Component:

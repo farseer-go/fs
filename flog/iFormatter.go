@@ -22,6 +22,7 @@ func (r JsonFormatter) Formatter(log *logData) string {
 
 // TextFormatter 文本格式输出
 type TextFormatter struct {
+	config levelFormat
 }
 
 func (r TextFormatter) Formatter(log *logData) string {
@@ -33,8 +34,8 @@ func (r TextFormatter) Formatter(log *logData) string {
 	}
 
 	if logLevelString != "" {
-		return fmt.Sprintf("%s %s %s", log.CreateAt.ToString("yyyy-MM-dd hh:mm:ss.ffffff"), logLevelString, log.Content)
+		return fmt.Sprintf("%s %s %s", log.CreateAt.ToString(r.config.TimeFormat), logLevelString, log.Content)
 	}
 
-	return fmt.Sprintf("%s %s", log.CreateAt.ToString("yyyy-MM-dd hh:mm:ss.ffffff"), log.Content)
+	return fmt.Sprintf("%s %s", log.CreateAt.ToString(r.config.TimeFormat), log.Content)
 }
