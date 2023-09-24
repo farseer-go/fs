@@ -16,7 +16,13 @@ type JsonFormatter struct {
 }
 
 func (r JsonFormatter) Formatter(log *logData) string {
-	marshal, _ := json.Marshal(log)
+	marshal, _ := json.Marshal(logData{
+		CreateAt:  log.CreateAt,
+		LogLevel:  log.LogLevel,
+		Component: log.Component,
+		Content:   mustCompile.ReplaceAllString(log.Content, ""),
+		newLine:   log.newLine,
+	})
 	return string(marshal)
 }
 
@@ -29,6 +35,7 @@ func (r TextFormatter) Formatter(log *logData) string {
 	var logLevelString string
 	if log.LogLevel != eumLogLevel.NoneLevel {
 		logLevelString = Colors[log.LogLevel]("[" + log.LogLevel.ToString() + "]")
+
 	} else if log.Component != "" {
 		logLevelString = Colors[0]("[" + log.Component + "]")
 	}

@@ -58,11 +58,13 @@ func (r *fileLoggerPersistent) IsEnabled(logLevel eumLogLevel.Enum) bool {
 }
 
 func (r *fileLoggerPersistent) Log(LogLevel eumLogLevel.Enum, log *logData, exception error) {
+	var logContent string
 	if log.newLine {
-		r.logsBuffer <- r.formatter.Formatter(log) + "\r\n"
+		logContent = r.formatter.Formatter(log) + "\r\n"
 	} else {
-		r.logsBuffer <- r.formatter.Formatter(log)
+		logContent = r.formatter.Formatter(log)
 	}
+	r.logsBuffer <- mustCompile.ReplaceAllString(logContent, "")
 }
 
 // 将缓冲区的日志，每隔1秒，写入文件
