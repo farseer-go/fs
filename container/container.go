@@ -92,7 +92,7 @@ func (r *container) registerInstance(interfaceType any, ins any, name string, li
 }
 
 // 获取对象
-func (r *container) resolve(interfaceType reflect.Type, name string) any {
+func (r *container) resolve(interfaceType reflect.Type, name string) (any, error) {
 	if interfaceType.Kind() == reflect.Pointer {
 		interfaceType = interfaceType.Elem()
 	}
@@ -103,23 +103,22 @@ func (r *container) resolve(interfaceType reflect.Type, name string) any {
 		componentModels, exists := r.dependency[interfaceType]
 		r.lock.RUnlock()
 		if !exists {
-			_ = flog.Errorf("container：%s Unregistered", interfaceType.String())
-			return nil
+			return nil, fmt.Errorf("container：%s Unregistered", interfaceType.String())
 		}
 
 		for i := 0; i < len(componentModels); i++ {
 			// 找到了实现类
 			if componentModels[i].name == name {
-				return r.getOrCreateIns(interfaceType, i)
+				return r.getOrCreateIns(interfaceType, i), nil
 			}
 		}
-		_ = flog.Errorf("container：%s Unregistered，name=%s", interfaceType.String(), name)
+		return nil, fmt.Errorf("container：%s Unregistered，name=%s", interfaceType.String(), name)
 
 		// 结构对象，直接动态创建
 	} else if interfaceType.Kind() == reflect.Struct {
-		return r.injectByType(interfaceType)
+		return r.injectByType(interfaceType), nil
 	}
-	return nil
+	return nil, fmt.Errorf("container：%s Types not supported，name=%s", interfaceType.String(), name)
 }
 
 // 获取所有对象
@@ -204,7 +203,11 @@ func (r *container) inject(ins any) any {
 	for i := 0; i < insVal.NumField(); i++ {
 		field := insVal.Type().Field(i)
 		if field.IsExported() && field.Type.Kind() == reflect.Interface && insVal.Field(i).IsNil() {
-			fieldIns := r.resolve(field.Type, field.Tag.Get("inject"))
+			fieldIns, err := r.resolve(field.Type, field.Tag.Get("inject"))
+			if err != nil {
+				_ = flog.Error(err)
+				continue
+			}
 			insVal.Field(i).Set(reflect.ValueOf(fieldIns))
 		}
 	}
@@ -217,7 +220,11 @@ func (r *container) injectByType(instanceType reflect.Type) any {
 	for i := 0; i < instanceVal.NumField(); i++ {
 		field := instanceVal.Type().Field(i)
 		if field.IsExported() && field.Type.Kind() == reflect.Interface {
-			fieldIns := r.resolve(field.Type, field.Tag.Get("inject"))
+			fieldIns, err := r.resolve(field.Type, field.Tag.Get("inject"))
+			if err != nil {
+				_ = flog.Error(err)
+				continue
+			}
 			instanceVal.Field(i).Set(reflect.ValueOf(fieldIns))
 		}
 	}

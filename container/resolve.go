@@ -1,6 +1,7 @@
 package container
 
 import (
+	"github.com/farseer-go/fs/flog"
 	"reflect"
 )
 
@@ -10,8 +11,9 @@ func Resolve[TInterface any](iocName ...string) TInterface {
 	name := getIocName(iocName...)
 	//var t TInterface
 	interfaceType := reflect.TypeOf((*TInterface)(nil)).Elem()
-	ins := defContainer.resolve(interfaceType, name)
-	if ins == nil {
+	ins, err := defContainer.resolve(interfaceType, name)
+	if err != nil {
+		_ = flog.Error(err)
 		var nilResult TInterface
 		return nilResult
 	}
@@ -21,7 +23,7 @@ func Resolve[TInterface any](iocName ...string) TInterface {
 // ResolveType 从容器中获取实例
 // interfaceType = interface type
 // iocName = 别名
-func ResolveType(interfaceType reflect.Type, iocName ...string) any {
+func ResolveType(interfaceType reflect.Type, iocName ...string) (any, error) {
 	name := getIocName(iocName...)
 	return defContainer.resolve(interfaceType, name)
 }
