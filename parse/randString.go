@@ -8,8 +8,7 @@ import (
 // RandString 随机字符串
 func RandString(length int) string {
 	//rand.Seed(time.Now().UnixNano())
-	uLen := 6
-	b := make([]byte, uLen)
+	b := make([]byte, length)
 	rand.Read(b)
-	return hex.EncodeToString(b)[0:uLen]
+	return hex.EncodeToString(b)[0:length]
 }
