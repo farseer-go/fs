@@ -50,7 +50,7 @@ func ParseConfigs[TConfig any](key string) []TConfig {
 	nodes := GetSliceNodes(key)
 	// 遍历配置节点
 	for nodeIndex := 0; nodeIndex < len(nodes); nodeIndex++ {
-		config := ParseConfig[TConfig](fmt.Sprintf("Rabbit[%d]", nodeIndex))
+		config := ParseConfig[TConfig](fmt.Sprintf("%s[%d]", key, nodeIndex))
 		configs = append(configs, config)
 	}
 	return configs
