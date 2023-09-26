@@ -17,3 +17,17 @@ func ThrowWebException(statusCode int, err string) {
 func ThrowWebExceptionf(statusCode int, format string, a ...any) {
 	panic(WebException{StatusCode: statusCode, Message: fmt.Sprintf(format, a...)})
 }
+
+// ThrowWebExceptionBool 抛出WebException异常
+func ThrowWebExceptionBool(isTrue bool, statusCode int, err string) {
+	if isTrue {
+		panic(WebException{StatusCode: statusCode, Message: err})
+	}
+}
+
+// ThrowWebExceptionfBool 抛出WebException异常
+func ThrowWebExceptionfBool(isTrue bool, statusCode int, format string, a ...any) {
+	if isTrue {
+		panic(WebException{StatusCode: statusCode, Message: fmt.Sprintf(format, a...)})
+	}
+}
