@@ -176,6 +176,9 @@ func ToInt64(source any) int64 { return Convert(source, int64(0)) }
 // ToString 转换成string类型
 func ToString(source any) string { return Convert(source, "") }
 
+// ToBool 转换成bool类型
+func ToBool(source any) bool { return Convert(source, false) }
+
 // ToTime 转换成time.Time类型
 func ToTime(source any) time.Time { return Convert(source, time.Time{}) }
 
