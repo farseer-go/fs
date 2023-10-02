@@ -15,13 +15,13 @@ func Try(fn func()) (catch *catchException) {
 }
 
 // CatchRefuseException 捕获RefuseException异常
-func (catch *catchException) CatchRefuseException(expFn func(exp *RefuseException)) *catchException {
+func (catch *catchException) CatchRefuseException(expFn func(exp RefuseException)) *catchException {
 	if catch.exp == nil {
 		return catch
 	}
 	if exp, ok := catch.exp.(RefuseException); ok {
 		catch.exp = Try(func() {
-			expFn(&exp)
+			expFn(exp)
 		}).exp
 	}
 	return catch
@@ -41,13 +41,13 @@ func (catch *catchException) CatchStringException(expFn func(exp string)) *catch
 }
 
 // CatchWebException 捕获WebException异常
-func (catch *catchException) CatchWebException(expFn func(exp *WebException)) *catchException {
+func (catch *catchException) CatchWebException(expFn func(exp WebException)) *catchException {
 	if catch.exp == nil {
 		return catch
 	}
 	if exp, ok := catch.exp.(WebException); ok {
 		catch.exp = Try(func() {
-			expFn(&exp)
+			expFn(exp)
 		}).exp
 	}
 	return catch
@@ -58,9 +58,7 @@ func (catch *catchException) CatchException(expFn func(exp any)) {
 	if catch.exp == nil {
 		return
 	}
-	catch.exp = Try(func() {
-		expFn(catch.exp)
-	}).exp
+	expFn(catch.exp)
 }
 
 // ThrowUnCatch 抛出未捕获的异常
