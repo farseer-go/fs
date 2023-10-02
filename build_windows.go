@@ -3,4 +3,4 @@
 package fs
 
 const Newline = "\r\n"
-const PathSymbol = "\"
+const PathSymbol = "\\"
