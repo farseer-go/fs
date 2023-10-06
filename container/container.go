@@ -103,7 +103,7 @@ func (r *container) resolve(interfaceType reflect.Type, name string) (any, error
 		componentModels, exists := r.dependency[interfaceType]
 		r.lock.RUnlock()
 		if !exists {
-			return nil, fmt.Errorf("container：%s Unregistered", interfaceType.String())
+			return nil, fmt.Errorf("container：%s Unregistered，name=%s", interfaceType.String(), name)
 		}
 
 		for i := 0; i < len(componentModels); i++ {
