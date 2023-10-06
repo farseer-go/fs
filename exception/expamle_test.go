@@ -3,9 +3,9 @@ package exception
 import "github.com/farseer-go/fs/flog"
 
 func ExampleTry() {
-	try := exception.Try(func() {
+	try := Try(func() {
 		// 这里我们使用一个异常
-		exception.ThrowRefuseException("test is throw")
+		ThrowRefuseException("test is throw")
 	})
 
 	// 不会运行
@@ -14,7 +14,7 @@ func ExampleTry() {
 	})
 
 	// 会运行
-	try.CatchRefuseException(func(exp exception.RefuseException) {
+	try.CatchRefuseException(func(exp RefuseException) {
 		flog.Warning(exp.Message)
 	})
 
