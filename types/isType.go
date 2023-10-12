@@ -94,7 +94,7 @@ func IsDtoModelIgnoreInterface(lst []reflect.Type) bool {
 	}
 
 	// 第一个参数必须为struct类型
-	isDto := !IsCollections(lst[0]) && !IsGoBasicType(lst[0]) && lst[0].Kind() == reflect.Struct
+	isDto := !IsGoBasicType(lst[0]) && (lst[0].Kind() == reflect.Struct || lst[0].Kind() == reflect.Array || lst[0].Kind() == reflect.Slice)
 	if !isDto {
 		return false
 	}
