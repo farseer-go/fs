@@ -34,7 +34,12 @@ func Convert[T any](source any, defVal T) T {
 	if isNumber(sourceKind) {
 		// 数字转数字
 		if isNumber(returnKind) {
-			return anyToNumber(source, sourceKind, defVal, returnKind).(T)
+			result := anyToNumber(source, sourceKind, defVal, returnKind)
+			// 这是一个枚举类型
+			if strings.Contains(defValType.String(), ".") && returnKind == reflect.Int {
+				return toEnum[T](defValType, result.(int))
+			}
+			return result.(T)
 		}
 
 		// 数字转bool
@@ -85,7 +90,12 @@ func Convert[T any](source any, defVal T) T {
 
 		// 数字
 		if isNumber(returnKind) {
-			return stringToNumber(strSource, defVal, returnKind).(T)
+			result := stringToNumber(strSource, defVal, returnKind)
+			// 这是一个枚举类型
+			if strings.Contains(defValType.String(), ".") && returnKind == reflect.Int {
+				return toEnum[T](defValType, result.(int))
+			}
+			return result.(T)
 		}
 
 		// 数组
@@ -165,6 +175,12 @@ func Convert[T any](source any, defVal T) T {
 		}
 	}
 	return defVal
+}
+
+func toEnum[T any](tType reflect.Type, result int) T {
+	returnTypeNew := reflect.New(tType).Elem()
+	returnTypeNew.SetInt(int64(result))
+	return returnTypeNew.Interface().(T)
 }
 
 // ToInt 转换成int类型
