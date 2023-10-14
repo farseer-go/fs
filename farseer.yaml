@@ -25,7 +25,7 @@ FSchedule:
       - "http://127.0.0.1:8887"
 ElasticSearch:
   es: "Server=http://192.168.1.8:9200,Username=es,Password=123456,ReplicasCount=1,ShardsCount=1,RefreshInterval=5,IndexFormat=yyyy_MM"
-  LinkTrack: "Server=http://192.168.1.8:9200,Username=es,Password=123456"
+  LinkTrace: "Server=http://192.168.1.8:9200,Username=es,Password=123456"
 WebApi:
   Url: ":888"
   Session:
