@@ -183,11 +183,20 @@ func toEnum[T any](tType reflect.Type, result int) T {
 	return returnTypeNew.Interface().(T)
 }
 
+// ToInt64 转换成int64类型
+func ToUInt(source any) uint { return Convert(source, uint(0)) }
+
 // ToInt 转换成int类型
 func ToInt(source any) int { return Convert(source, 0) }
 
 // ToInt64 转换成int64类型
 func ToInt64(source any) int64 { return Convert(source, int64(0)) }
+
+// ToFloat32 转换成float32类型
+func ToFloat32(source any) float32 { return Convert(source, float32(0)) }
+
+// ToFloat64 转换成float64类型
+func ToFloat64(source any) float64 { return Convert(source, float64(0)) }
 
 // ToString 转换成string类型
 func ToString(source any) string { return Convert(source, "") }
