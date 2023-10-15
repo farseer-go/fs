@@ -5,9 +5,6 @@ Redis:
 Rabbit:
   Ex1: "Server=rabbit:5672,UserName=farseer,Password=farseer,Exchange=Ex1,RoutingKey=,Type=fanout,UseConfirm=false,AutoCreate=true"
   Ex2: "Server=rabbit:5672,UserName=farseer,Password=farseer,Exchange=Ex2,RoutingKey=,Type=fanout,UseConfirm=false,AutoCreate=true"
-ElasticSearch:
-  es: "Server=http://192.168.1.8:9200,Username=es,Password=123456,ReplicasCount=1,ShardsCount=1,RefreshInterval=5,IndexFormat=yyyy_MM"
-  LinkTrace: "Server=http://192.168.1.8:9200,Username=es,Password=123456"
 WebApi:
   Url: ":888"
 Log:
