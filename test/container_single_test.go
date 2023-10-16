@@ -33,7 +33,7 @@ func TestSingle(t *testing.T) {
 	assert.False(t, container.IsRegister[IDatabase]("oracle"))
 	assert.False(t, container.IsRegister[error]("oracle"))
 
-	mysqlAny := container.ResolveType(reflect.TypeOf((*IDatabase)(nil)))
+	mysqlAny, _ := container.ResolveType(reflect.TypeOf((*IDatabase)(nil)))
 	assert.NotNil(t, mysqlAny.(*mysql))
 
 	// 取一个不存在的别名的实例
