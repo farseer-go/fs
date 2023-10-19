@@ -15,4 +15,6 @@ type ITraceContext interface {
 	GetList() collections.List[ITraceDetail]
 	// AddDetail 添加链路明细
 	AddDetail(detail ITraceDetail)
+	// Error 异常信息
+	Error(err error)
 }

@@ -24,7 +24,7 @@ func (*EmptyManager) TraceEtcd(method string, key string, leaseID int64) ITraceD
 }
 func (*EmptyManager) TraceHand(name string) ITraceDetail        { return &emptyTraceDetail{} }
 func (*EmptyManager) TraceKeyLocation(name string) ITraceDetail { return &emptyTraceDetail{} }
-func (*EmptyManager) TraceMq(method string, server string, exchange string, routingKey string) ITraceDetail {
+func (*EmptyManager) TraceMqSend(method string, server string, exchange string, routingKey string) ITraceDetail {
 	return &emptyTraceDetail{}
 }
 func (*EmptyManager) TraceRedis(method string, key string, field string) ITraceDetail {
