@@ -35,4 +35,6 @@ type IManager interface {
 	TraceHttp(method string, url string) ITraceDetail
 	// EntryTask 创建本地任务入口
 	EntryTask(taskName string) ITraceContext
+	// EntryFSchedule 创建调度中心入口
+	EntryFSchedule(taskGroupName string, taskGroupId int64, taskId int64) ITraceContext
 }
