@@ -7,11 +7,31 @@ import (
 type EmptyManager struct {
 }
 
-func (*EmptyManager) GetCurTrace() ITraceContext { return nil }
-
-func (*EmptyManager) TraceWebApi(domain string, path string, method string, contentType string, headerDictionary collections.ReadonlyDictionary[string, string], requestBody string, requestIp string) ITraceContext {
+func (m *EmptyManager) EntryWebApi(domain string, path string, method string, contentType string, headerDictionary collections.ReadonlyDictionary[string, string], requestBody string, requestIp string) ITraceContext {
 	return &emptyTraceContext{}
 }
+
+func (m *EmptyManager) EntryMqConsumer(server string, queueName string, routingKey string) ITraceContext {
+	return &emptyTraceContext{}
+}
+
+func (m *EmptyManager) EntryQueueConsumer(subscribeName string) ITraceContext {
+	return &emptyTraceContext{}
+}
+
+func (m *EmptyManager) EntryTask(taskName string) ITraceContext {
+	return &emptyTraceContext{}
+}
+
+func (m *EmptyManager) EntryFSchedule(taskGroupName string, taskGroupId int64, taskId int64) ITraceContext {
+	return &emptyTraceContext{}
+}
+
+func (m *EmptyManager) EntryWatchKey(key string) ITraceContext { return &emptyTraceContext{} }
+func (m *EmptyManager) TraceMq(method string, server string, exchange string) ITraceDetail {
+	return &emptyTraceDetail{}
+}
+func (*EmptyManager) GetCurTrace() ITraceContext  { return nil }
 func (*EmptyManager) TraceDatabase() ITraceDetail { return &emptyTraceDetail{} }
 func (*EmptyManager) TraceDatabaseOpen(dbName string, connectString string) ITraceDetail {
 	return &emptyTraceDetail{}
