@@ -37,4 +37,6 @@ type IManager interface {
 	EntryTask(taskName string) ITraceContext
 	// EntryFSchedule 创建调度中心入口
 	EntryFSchedule(taskGroupName string, taskGroupId int64, taskId int64) ITraceContext
+	// EntryWatchKey 创建etcd入口
+	EntryWatchKey(key string) ITraceContext
 }
