@@ -34,6 +34,7 @@ func (*EmptyManager) TraceHttp(method string, url string) ITraceDetail { return 
 
 type emptyTraceContext struct{}
 
+func (receiver *emptyTraceContext) Error(err error)                                                 {}
 func (receiver *emptyTraceContext) SetBody(requestBody string, statusCode int, responseBody string) {}
 func (receiver *emptyTraceContext) GetTraceId() int64                                               { return 0 }
 func (receiver *emptyTraceContext) GetStartTs() int64                                               { return 0 }
