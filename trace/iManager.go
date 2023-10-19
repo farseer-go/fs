@@ -33,4 +33,6 @@ type IManager interface {
 	TraceRedis(method string, key string, field string) ITraceDetail
 	// TraceHttp http埋点
 	TraceHttp(method string, url string) ITraceDetail
+	// EntryTask 创建本地任务入口
+	EntryTask(taskName string) ITraceContext
 }
