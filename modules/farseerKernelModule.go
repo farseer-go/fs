@@ -5,6 +5,7 @@ import (
 	"github.com/farseer-go/fs/container"
 	"github.com/farseer-go/fs/flog"
 	"github.com/farseer-go/fs/timingWheel"
+	"github.com/farseer-go/fs/trace"
 	"time"
 )
 
@@ -34,4 +35,6 @@ func (module FarseerKernelModule) PreInitialize() {
 
 	// 初始化时间轮
 	timingWheel.NewDefault(100*time.Millisecond, 60)
+	// 注册空的链路实现
+	container.Register(func() trace.IManager { return &trace.EmptyManager{} })
 }
