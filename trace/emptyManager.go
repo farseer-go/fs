@@ -59,6 +59,7 @@ func (receiver *emptyTraceContext) SetBody(requestBody string, statusCode int, r
 func (receiver *emptyTraceContext) GetTraceId() int64                                               { return 0 }
 func (receiver *emptyTraceContext) GetStartTs() int64                                               { return 0 }
 func (receiver *emptyTraceContext) End()                                                            {}
+func (receiver *emptyTraceContext) Ignore()                                                         {}
 func (receiver *emptyTraceContext) AddDetail(detail ITraceDetail)                                   {}
 func (receiver *emptyTraceContext) GetList() collections.List[ITraceDetail] {
 	return collections.NewList[ITraceDetail]()
@@ -66,7 +67,9 @@ func (receiver *emptyTraceContext) GetList() collections.List[ITraceDetail] {
 
 type emptyTraceDetail struct{}
 
+func (receiver *emptyTraceDetail) IsIgnore() bool                                     { return true }
 func (receiver *emptyTraceDetail) ToString() string                                   { return "" }
 func (receiver *emptyTraceDetail) GetTraceDetail() *BaseTraceDetail                   { return &BaseTraceDetail{} }
 func (receiver *emptyTraceDetail) End(err error)                                      {}
+func (receiver *emptyTraceDetail) Ignore()                                            {}
 func (receiver *emptyTraceDetail) SetSql(DbName string, tableName string, sql string) {}

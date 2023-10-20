@@ -17,4 +17,6 @@ type ITraceContext interface {
 	AddDetail(detail ITraceDetail)
 	// Error 异常信息
 	Error(err error)
+	// Ignore 忽略这次的链路追踪
+	Ignore()
 }

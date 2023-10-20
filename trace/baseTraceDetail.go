@@ -16,6 +16,7 @@ type BaseTraceDetail struct {
 	UseTs            time.Duration    // 总共使用时间毫秒
 	IsException      bool             // 是否执行异常
 	ExceptionMessage string           // 异常信息
+	ignore           bool             // 忽略这次的链路追踪
 }
 
 func (receiver *BaseTraceDetail) SetSql(DbName string, tableName string, sql string) {
@@ -31,4 +32,12 @@ func (receiver *BaseTraceDetail) End(err error) {
 		receiver.IsException = true
 		receiver.ExceptionMessage = err.Error()
 	}
+}
+
+func (receiver *BaseTraceDetail) Ignore() {
+	receiver.ignore = true
+}
+
+func (receiver *BaseTraceDetail) IsIgnore() bool {
+	return receiver.ignore
 }
