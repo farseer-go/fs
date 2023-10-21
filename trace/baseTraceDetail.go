@@ -1,12 +1,20 @@
 package trace
 
 import (
+	"github.com/farseer-go/collections"
+	"github.com/farseer-go/fs/asyncLocal"
 	"github.com/farseer-go/linkTrace/eumCallType"
 	"time"
 )
 
+// ScopeLevel 层级列表
+var ScopeLevel = asyncLocal.New[collections.List[BaseTraceDetail]]()
+
 // BaseTraceDetail 埋点明细（基类）
 type BaseTraceDetail struct {
+	DetailId         int64            // 明细ID
+	ParentDetailId   int64            // 父级明细ID
+	Level            int              // 当前层级（入口为0层）
 	CallMethod       string           // 调用方法
 	CallType         eumCallType.Enum // 调用类型
 	Timeline         time.Duration    // 从入口开始统计
@@ -19,9 +27,7 @@ type BaseTraceDetail struct {
 	ignore           bool             // 忽略这次的链路追踪
 }
 
-func (receiver *BaseTraceDetail) SetSql(DbName string, tableName string, sql string) {
-
-}
+func (receiver *BaseTraceDetail) SetSql(DbName string, tableName string, sql string) {}
 
 // End 链路明细执行完后，统计用时
 func (receiver *BaseTraceDetail) End(err error) {
@@ -32,12 +38,21 @@ func (receiver *BaseTraceDetail) End(err error) {
 		receiver.IsException = true
 		receiver.ExceptionMessage = err.Error()
 	}
+
+	// 移除层级
+	lstScope := ScopeLevel.Get()
+	if !lstScope.IsNil() {
+		lstScope.RemoveAt(lstScope.Count() - 1)
+		ScopeLevel.Set(lstScope)
+	}
 }
 
 func (receiver *BaseTraceDetail) Ignore() {
 	receiver.ignore = true
 }
-
 func (receiver *BaseTraceDetail) IsIgnore() bool {
 	return receiver.ignore
+}
+func (receiver *BaseTraceDetail) GetLevel() int {
+	return receiver.Level
 }

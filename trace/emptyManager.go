@@ -67,6 +67,7 @@ func (receiver *emptyTraceContext) GetList() collections.List[ITraceDetail] {
 
 type emptyTraceDetail struct{}
 
+func (receiver *emptyTraceDetail) GetLevel() int                                      { return 0 }
 func (receiver *emptyTraceDetail) IsIgnore() bool                                     { return true }
 func (receiver *emptyTraceDetail) ToString() string                                   { return "" }
 func (receiver *emptyTraceDetail) GetTraceDetail() *BaseTraceDetail                   { return &BaseTraceDetail{} }

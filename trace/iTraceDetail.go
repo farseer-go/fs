@@ -9,4 +9,6 @@ type ITraceDetail interface {
 	Ignore()
 	// IsIgnore 是否忽略
 	IsIgnore() bool
+	// GetLevel 获取层级
+	GetLevel() int
 }
