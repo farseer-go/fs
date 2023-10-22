@@ -2,9 +2,9 @@ package trace
 
 import (
 	"github.com/farseer-go/collections"
-	"github.com/farseer-go/fs"
 	"github.com/farseer-go/fs/asyncLocal"
 	"github.com/farseer-go/fs/flog"
+	"github.com/farseer-go/fs/path"
 	"github.com/farseer-go/linkTrace/eumCallType"
 	"runtime"
 	"strings"
@@ -77,12 +77,12 @@ func getCallerInfo() (string, string, int) {
 		frame, more := frames.Next()
 		if !strings.HasSuffix(frame.File, "_test.go") && (!flog.IsSysCom(frame.File) || strings.HasSuffix(frame.File, "healthCheck.go")) { // !strings.HasPrefix(file, gormSourceDir) ||
 			// 移除绝对路径
-			prefixFunc := frame.Function[0 : strings.Index(frame.Function, fs.PathSymbol)+1]
+			prefixFunc := frame.Function[0 : strings.Index(frame.Function, path.PathSymbol)+len(path.PathSymbol)]
 			packageIndex := strings.Index(frame.File, prefixFunc)
 			file := frame.File[packageIndex:]
 
 			// 只要最后的方法名
-			funcName := frame.Function[strings.LastIndex(frame.Function, fs.PathSymbol)+1:] + "()"
+			funcName := frame.Function[strings.LastIndex(frame.Function, path.PathSymbol)+len(path.PathSymbol):] + "()"
 			return file, funcName, frame.Line
 		}
 		if !more {

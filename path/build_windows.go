@@ -1,6 +1,6 @@
 //go:build windows
 
-package fs
+package path
 
 const Newline = "\r\n"
 const PathSymbol = "\\"

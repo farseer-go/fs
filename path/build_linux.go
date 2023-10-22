@@ -1,6 +1,6 @@
-//go:build darwin
+//go:build linux
 
-package fs
+package path
 
 const Newline = "\n"
 const PathSymbol = "/"
