@@ -56,7 +56,7 @@ func (r *CompositionLogger) Warningf(format string, a ...any) {
 }
 
 func (r *CompositionLogger) Error(contents ...any) error {
-	r.log(newLogData(eumLogLevel.NoneLevel, Blue(r.fileWithLineNum()), ""))
+	r.log(newLogData(eumLogLevel.NoneLevel, Blue(fileWithLineNum()), ""))
 
 	log := newLogData(eumLogLevel.Error, fmt.Sprint(contents...), "")
 	r.log(log)
@@ -64,7 +64,7 @@ func (r *CompositionLogger) Error(contents ...any) error {
 }
 
 func (r *CompositionLogger) Errorf(format string, a ...any) error {
-	r.log(newLogData(eumLogLevel.NoneLevel, Blue(r.fileWithLineNum()), ""))
+	r.log(newLogData(eumLogLevel.NoneLevel, Blue(fileWithLineNum()), ""))
 
 	log := newLogData(eumLogLevel.Error, fmt.Sprintf(format, a...), "")
 	r.log(log)
@@ -90,26 +90,26 @@ func (r *CompositionLogger) Log(logLevel eumLogLevel.Enum, content string, compo
 	r.log(log)
 }
 
-func (r *CompositionLogger) fileWithLineNum() string {
-	// the second caller usually from internal, so set i start from 1
-	var fileLineNum string
-	for i := 3; i < 15; i++ {
-		_, file, line, ok := runtime.Caller(i)
-		if ok && !strings.HasSuffix(file, "_test.go") && (!r.isSysCom(file) || strings.HasSuffix(file, "healthCheck.go")) { // !strings.HasPrefix(file, gormSourceDir) ||
-			fileLineNum = file + ":" + strconv.FormatInt(int64(line), 10)
-			break
-		}
-	}
-	return fileLineNum
-}
+var ComNames = []string{"/farseer-go/async/", "/farseer-go/cache/", "/farseer-go/cacheMemory/", "/farseer-go/collections/", "/farseer-go/data/", "/farseer-go/elasticSearch/", "/farseer-go/etcd/", "/farseer-go/eventBus/", "/farseer-go/fs/", "/farseer-go/linkTrace/", "/farseer-go/mapper/", "/farseer-go/queue/", "/farseer-go/rabbit/", "/farseer-go/redis/", "/farseer-go/redisStream/", "/farseer-go/tasks/", "/farseer-go/utils/", "/farseer-go/webapi/", "/src/reflect/"}
 
-var comNames = []string{"/farseer-go/async/", "/farseer-go/cache/", "/farseer-go/cacheMemory/", "/farseer-go/collections/", "/farseer-go/data/", "/farseer-go/elasticSearch/", "/farseer-go/etcd/", "/farseer-go/eventBus/", "/farseer-go/fs/", "/farseer-go/linkTrace/", "/farseer-go/mapper/", "/farseer-go/queue/", "/farseer-go/rabbit/", "/farseer-go/redis/", "/farseer-go/redisStream/", "/farseer-go/tasks/", "/farseer-go/utils/", "/farseer-go/webapi/"}
-
-func (r *CompositionLogger) isSysCom(file string) bool {
-	for _, comName := range comNames {
+func IsSysCom(file string) bool {
+	for _, comName := range ComNames {
 		if strings.Contains(file, comName) {
 			return true
 		}
 	}
 	return false
+}
+
+func fileWithLineNum() string {
+	// the second caller usually from internal, so set i start from 1
+	var fileLineNum string
+	for i := 3; i < 15; i++ {
+		_, file, line, ok := runtime.Caller(i)
+		if ok && !strings.HasSuffix(file, "_test.go") && (!IsSysCom(file) || strings.HasSuffix(file, "healthCheck.go")) { // !strings.HasPrefix(file, gormSourceDir) ||
+			fileLineNum = file + ":" + strconv.FormatInt(int64(line), 10)
+			break
+		}
+	}
+	return fileLineNum
 }
