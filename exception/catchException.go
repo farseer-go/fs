@@ -1,5 +1,10 @@
 package exception
 
+import (
+	"fmt"
+	"github.com/farseer-go/fs/trace"
+)
+
 type catchException struct {
 	exp any
 }
@@ -9,6 +14,17 @@ func Try(fn func()) (catch *catchException) {
 	catch = &catchException{}
 	defer func() {
 		catch.exp = recover()
+		if catch.exp != nil {
+			switch catch.exp.(type) {
+			case RefuseException, WebException:
+			default:
+				// 如果使用了链路追踪，则记录异常
+				traceContext := trace.CurTraceContext.Get()
+				if traceContext != nil {
+					traceContext.Error(fmt.Errorf("%s", catch.exp))
+				}
+			}
+		}
 	}()
 	fn()
 	return

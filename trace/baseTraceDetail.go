@@ -16,22 +16,26 @@ var ScopeLevel = asyncLocal.New[collections.List[BaseTraceDetail]]()
 
 // BaseTraceDetail 埋点明细（基类）
 type BaseTraceDetail struct {
-	DetailId         int64            // 明细ID
-	ParentDetailId   int64            // 父级明细ID
-	Level            int              // 当前层级（入口为0层）
-	MethodName       string           // 调用方法
-	CallType         eumCallType.Enum // 调用类型
-	Timeline         time.Duration    // 从入口开始统计
-	UnTraceTs        time.Duration    // 上一次结束到现在开始之间未Trace的时间
-	StartTs          int64            // 调用开始时间戳
-	EndTs            int64            // 调用停止时间戳
-	UseTs            time.Duration    // 总共使用时间毫秒
-	IsException      bool             // 是否执行异常
-	ExceptionMessage string           // 异常信息
-	ignore           bool             // 忽略这次的链路追踪
-	CallFile         string           // 调用者文件路径
-	CallLine         int              // 调用者行号
-	CallFuncName     string           // 调用者函数名称
+	DetailId       int64            // 明细ID
+	ParentDetailId int64            // 父级明细ID
+	Level          int              // 当前层级（入口为0层）
+	MethodName     string           // 调用方法
+	CallType       eumCallType.Enum // 调用类型
+	Timeline       time.Duration    // 从入口开始统计
+	UnTraceTs      time.Duration    // 上一次结束到现在开始之间未Trace的时间
+	StartTs        int64            // 调用开始时间戳
+	EndTs          int64            // 调用停止时间戳
+	UseTs          time.Duration    // 总共使用时间毫秒
+	ignore         bool             // 忽略这次的链路追踪
+	Exception      ExceptionStack   // 异常信息
+}
+
+type ExceptionStack struct {
+	CallFile         string // 调用者文件路径
+	CallLine         int    // 调用者行号
+	CallFuncName     string // 调用者函数名称
+	IsException      bool   // 是否执行异常
+	ExceptionMessage string // 异常信息
 }
 
 func (receiver *BaseTraceDetail) SetSql(DbName string, tableName string, sql string) {}
@@ -42,10 +46,10 @@ func (receiver *BaseTraceDetail) End(err error) {
 	receiver.UseTs = time.Duration(receiver.EndTs-receiver.StartTs) * time.Microsecond
 
 	if err != nil {
-		receiver.IsException = true
-		receiver.ExceptionMessage = err.Error()
+		receiver.Exception.IsException = true
+		receiver.Exception.ExceptionMessage = err.Error()
 		// 调用者
-		receiver.CallFile, receiver.CallFuncName, receiver.CallLine = getCallerInfo()
+		receiver.Exception.CallFile, receiver.Exception.CallFuncName, receiver.Exception.CallLine = GetCallerInfo()
 	}
 
 	// 移除层级
@@ -66,10 +70,10 @@ func (receiver *BaseTraceDetail) GetLevel() int {
 	return receiver.Level
 }
 
-func getCallerInfo() (string, string, int) {
+func GetCallerInfo() (string, string, int) {
 	// 获取调用栈信息
 	pc := make([]uintptr, 15) // 假设最多获取 10 层调用栈
-	n := runtime.Callers(4, pc)
+	n := runtime.Callers(0, pc)
 	frames := runtime.CallersFrames(pc[:n])
 
 	// 遍历调用栈帧
