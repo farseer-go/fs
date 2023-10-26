@@ -3,7 +3,6 @@ package trace
 import (
 	"github.com/farseer-go/collections"
 	"github.com/farseer-go/fs/asyncLocal"
-	"github.com/farseer-go/fs/flog"
 	"github.com/farseer-go/fs/path"
 	"github.com/farseer-go/linkTrace/eumCallType"
 	"runtime"
@@ -70,6 +69,17 @@ func (receiver *BaseTraceDetail) GetLevel() int {
 	return receiver.Level
 }
 
+var ComNames = []string{"/farseer-go/async/", "/farseer-go/cache/", "/farseer-go/cacheMemory/", "/farseer-go/collections/", "/farseer-go/data/", "/farseer-go/elasticSearch/", "/farseer-go/etcd/", "/farseer-go/eventBus/", "/farseer-go/fs/", "/farseer-go/linkTrace/", "/farseer-go/mapper/", "/farseer-go/queue/", "/farseer-go/rabbit/", "/farseer-go/redis/", "/farseer-go/redisStream/", "/farseer-go/tasks/", "/farseer-go/utils/", "/farseer-go/webapi/", "/src/reflect/", "/usr/local/go/src/"}
+
+func IsSysCom(file string) bool {
+	for _, comName := range ComNames {
+		if strings.Contains(file, comName) {
+			return true
+		}
+	}
+	return false
+}
+
 func GetCallerInfo() (string, string, int) {
 	// 获取调用栈信息
 	pc := make([]uintptr, 15) // 假设最多获取 10 层调用栈
@@ -79,7 +89,7 @@ func GetCallerInfo() (string, string, int) {
 	// 遍历调用栈帧
 	for {
 		frame, more := frames.Next()
-		if !strings.HasSuffix(frame.File, "_test.go") && (!flog.IsSysCom(frame.File) || strings.HasSuffix(frame.File, "healthCheck.go")) { // !strings.HasPrefix(file, gormSourceDir) ||
+		if !strings.HasSuffix(frame.File, "_test.go") && (!IsSysCom(frame.File) || strings.HasSuffix(frame.File, "healthCheck.go")) { // !strings.HasPrefix(file, gormSourceDir) ||
 			// 移除绝对路径
 			prefixFunc := frame.Function[0 : strings.Index(frame.Function, path.PathSymbol)+len(path.PathSymbol)]
 			packageIndex := strings.Index(frame.File, prefixFunc)

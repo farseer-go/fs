@@ -4,9 +4,6 @@ import (
 	"fmt"
 	"github.com/farseer-go/fs/configure"
 	"github.com/farseer-go/fs/core/eumLogLevel"
-	"runtime"
-	"strconv"
-	"strings"
 )
 
 // CompositionLogger 根据已添加的Provider，创建组合模式的Logger（壳）
@@ -56,16 +53,12 @@ func (r *CompositionLogger) Warningf(format string, a ...any) {
 }
 
 func (r *CompositionLogger) Error(contents ...any) error {
-	r.log(newLogData(eumLogLevel.NoneLevel, Blue(fileWithLineNum()), ""))
-
 	log := newLogData(eumLogLevel.Error, fmt.Sprint(contents...), "")
 	r.log(log)
 	return fmt.Errorf(TextFormatter{}.Formatter(log))
 }
 
 func (r *CompositionLogger) Errorf(format string, a ...any) error {
-	r.log(newLogData(eumLogLevel.NoneLevel, Blue(fileWithLineNum()), ""))
-
 	log := newLogData(eumLogLevel.Error, fmt.Sprintf(format, a...), "")
 	r.log(log)
 	return fmt.Errorf(TextFormatter{}.Formatter(log))
@@ -88,28 +81,4 @@ func (r *CompositionLogger) Log(logLevel eumLogLevel.Enum, content string, compo
 	log := newLogData(logLevel, content, component)
 	log.newLine = newLine
 	r.log(log)
-}
-
-var ComNames = []string{"/farseer-go/async/", "/farseer-go/cache/", "/farseer-go/cacheMemory/", "/farseer-go/collections/", "/farseer-go/data/", "/farseer-go/elasticSearch/", "/farseer-go/etcd/", "/farseer-go/eventBus/", "/farseer-go/fs/", "/farseer-go/linkTrace/", "/farseer-go/mapper/", "/farseer-go/queue/", "/farseer-go/rabbit/", "/farseer-go/redis/", "/farseer-go/redisStream/", "/farseer-go/tasks/", "/farseer-go/utils/", "/farseer-go/webapi/", "/src/reflect/", "/usr/local/go/src/"}
-
-func IsSysCom(file string) bool {
-	for _, comName := range ComNames {
-		if strings.Contains(file, comName) {
-			return true
-		}
-	}
-	return false
-}
-
-func fileWithLineNum() string {
-	// the second caller usually from internal, so set i start from 1
-	var fileLineNum string
-	for i := 3; i < 15; i++ {
-		_, file, line, ok := runtime.Caller(i)
-		if ok && !strings.HasSuffix(file, "_test.go") && (!IsSysCom(file) || strings.HasSuffix(file, "healthCheck.go")) { // !strings.HasPrefix(file, gormSourceDir) ||
-			fileLineNum = file + ":" + strconv.FormatInt(int64(line), 10)
-			break
-		}
-	}
-	return fileLineNum
 }
