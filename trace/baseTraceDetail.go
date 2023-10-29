@@ -1,6 +1,7 @@
 package trace
 
 import (
+	"fmt"
 	"github.com/farseer-go/collections"
 	"github.com/farseer-go/fs/asyncLocal"
 	"github.com/farseer-go/fs/path"
@@ -37,7 +38,8 @@ type ExceptionStack struct {
 	ExceptionMessage string // 异常信息
 }
 
-func (receiver *BaseTraceDetail) SetSql(DbName string, tableName string, sql string) {}
+func (receiver *BaseTraceDetail) SetSql(DbName string, tableName string, sql string, rowsAffected int64) {
+}
 
 // End 链路明细执行完后，统计用时
 func (receiver *BaseTraceDetail) End(err error) {
@@ -90,9 +92,13 @@ func GetCallerInfo() (string, string, int) {
 	for {
 		frame, more := frames.Next()
 		if !strings.HasSuffix(frame.File, "_test.go") && (!IsSysCom(frame.File) || strings.HasSuffix(frame.File, "healthCheck.go")) { // !strings.HasPrefix(file, gormSourceDir) ||
+			frame.Function = strings.TrimPrefix(frame.Function, "github.com/")
 			// 移除绝对路径
-			prefixFunc := frame.Function[0 : strings.Index(frame.Function, path.PathSymbol)+len(path.PathSymbol)]
+			prefixFunc := frame.Function[0 : strings.LastIndex(frame.Function, path.PathSymbol)+len(path.PathSymbol)]
 			packageIndex := strings.Index(frame.File, prefixFunc)
+			if packageIndex == -1 {
+				fmt.Print(packageIndex)
+			}
 			file := frame.File[packageIndex:]
 
 			// 只要最后的方法名
