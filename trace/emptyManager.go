@@ -67,10 +67,11 @@ func (receiver *emptyTraceContext) GetList() collections.List[ITraceDetail] {
 
 type emptyTraceDetail struct{}
 
-func (receiver *emptyTraceDetail) GetLevel() int                                      { return 0 }
-func (receiver *emptyTraceDetail) IsIgnore() bool                                     { return true }
-func (receiver *emptyTraceDetail) ToString() string                                   { return "" }
-func (receiver *emptyTraceDetail) GetTraceDetail() *BaseTraceDetail                   { return &BaseTraceDetail{} }
-func (receiver *emptyTraceDetail) End(err error)                                      {}
-func (receiver *emptyTraceDetail) Ignore()                                            {}
-func (receiver *emptyTraceDetail) SetSql(DbName string, tableName string, sql string) {}
+func (receiver *emptyTraceDetail) GetLevel() int                    { return 0 }
+func (receiver *emptyTraceDetail) IsIgnore() bool                   { return true }
+func (receiver *emptyTraceDetail) ToString() string                 { return "" }
+func (receiver *emptyTraceDetail) GetTraceDetail() *BaseTraceDetail { return &BaseTraceDetail{} }
+func (receiver *emptyTraceDetail) End(err error)                    {}
+func (receiver *emptyTraceDetail) Ignore()                          {}
+func (receiver *emptyTraceDetail) SetSql(DbName string, tableName string, sql string, rowsAffected int64) {
+}
