@@ -13,20 +13,20 @@ type testConfig struct {
 	ConnectionString string
 	UsePool          bool
 }
-type rabbitConfig struct {
-	Server   serverConfig
-	Exchange []exchangeConfig
+type testGetSubNodesConfig struct {
+	Server serverConfig
+	Test   []exchangeConfig
 }
 
 type exchangeConfig struct {
-	ExchangeName       string // 交换器名称
-	RoutingKey         string // RoutingKey
-	ExchangeType       string // 交换器类型
-	UseConfirmModel    bool   // 是否需要ACK
-	AutoCreateExchange bool   // 交换器不存在，是否自动创建
+	TestName        string // 交换器名称
+	RoutingKey      string // RoutingKey
+	TestType        string // 交换器类型
+	UseConfirmModel bool   // 是否需要ACK
+	AutoCreateTest  bool   // 交换器不存在，是否自动创建
 }
 
-// rabbitConfig 配置项
+// testGetSubNodesConfig 配置项
 type serverConfig struct {
 	Server   string // 服务端地址
 	UserName string // 用户名
@@ -49,33 +49,33 @@ func TestParseString(t *testing.T) {
 
 func TestParseConfigs(t *testing.T) {
 	configure.InitConfig()
-	rabbitConfigs := configure.ParseConfigs[rabbitConfig]("Rabbit")
-	assert.Equal(t, 2, len(rabbitConfigs))
-	assert.Equal(t, "rabbit1:5672", rabbitConfigs[0].Server.Server)
-	assert.Equal(t, "farseer", rabbitConfigs[0].Server.UserName)
-	assert.Equal(t, "farseer", rabbitConfigs[0].Server.Password)
-	assert.Equal(t, "Ex1", rabbitConfigs[0].Exchange[0].ExchangeName)
-	assert.Equal(t, "", rabbitConfigs[0].Exchange[0].RoutingKey)
-	assert.Equal(t, "fanout", rabbitConfigs[0].Exchange[0].ExchangeType)
-	assert.Equal(t, false, rabbitConfigs[0].Exchange[0].UseConfirmModel)
-	assert.Equal(t, true, rabbitConfigs[0].Exchange[0].AutoCreateExchange)
-	assert.Equal(t, "Ex2", rabbitConfigs[0].Exchange[1].ExchangeName)
-	assert.Equal(t, "", rabbitConfigs[0].Exchange[1].RoutingKey)
-	assert.Equal(t, "fanout", rabbitConfigs[0].Exchange[1].ExchangeType)
-	assert.Equal(t, false, rabbitConfigs[0].Exchange[1].UseConfirmModel)
-	assert.Equal(t, true, rabbitConfigs[0].Exchange[1].AutoCreateExchange)
+	testConfigs := configure.ParseConfigs[testGetSubNodesConfig]("TestGetSubNodes")
+	assert.Equal(t, 2, len(testConfigs))
+	assert.Equal(t, "test:8888", testConfigs[0].Server.Server)
+	assert.Equal(t, "farseer", testConfigs[0].Server.UserName)
+	assert.Equal(t, "farseer", testConfigs[0].Server.Password)
+	assert.Equal(t, "Ex1", testConfigs[0].Test[0].TestName)
+	assert.Equal(t, "", testConfigs[0].Test[0].RoutingKey)
+	assert.Equal(t, "fanout", testConfigs[0].Test[0].TestType)
+	assert.Equal(t, false, testConfigs[0].Test[0].UseConfirmModel)
+	assert.Equal(t, true, testConfigs[0].Test[0].AutoCreateTest)
+	assert.Equal(t, "Ex2", testConfigs[0].Test[1].TestName)
+	assert.Equal(t, "", testConfigs[0].Test[1].RoutingKey)
+	assert.Equal(t, "fanout", testConfigs[0].Test[1].TestType)
+	assert.Equal(t, false, testConfigs[0].Test[1].UseConfirmModel)
+	assert.Equal(t, true, testConfigs[0].Test[1].AutoCreateTest)
 
-	assert.Equal(t, "rabbit2:5672", rabbitConfigs[1].Server.Server)
-	assert.Equal(t, "farseer", rabbitConfigs[1].Server.UserName)
-	assert.Equal(t, "farseer", rabbitConfigs[1].Server.Password)
-	assert.Equal(t, "Ex3", rabbitConfigs[1].Exchange[0].ExchangeName)
-	assert.Equal(t, "", rabbitConfigs[1].Exchange[0].RoutingKey)
-	assert.Equal(t, "fanout", rabbitConfigs[1].Exchange[0].ExchangeType)
-	assert.Equal(t, false, rabbitConfigs[1].Exchange[0].UseConfirmModel)
-	assert.Equal(t, true, rabbitConfigs[1].Exchange[0].AutoCreateExchange)
-	assert.Equal(t, "Ex4", rabbitConfigs[1].Exchange[1].ExchangeName)
-	assert.Equal(t, "", rabbitConfigs[1].Exchange[1].RoutingKey)
-	assert.Equal(t, "fanout", rabbitConfigs[1].Exchange[1].ExchangeType)
-	assert.Equal(t, false, rabbitConfigs[1].Exchange[1].UseConfirmModel)
-	assert.Equal(t, true, rabbitConfigs[1].Exchange[1].AutoCreateExchange)
+	assert.Equal(t, "test2:8888", testConfigs[1].Server.Server)
+	assert.Equal(t, "farseer", testConfigs[1].Server.UserName)
+	assert.Equal(t, "farseer", testConfigs[1].Server.Password)
+	assert.Equal(t, "Ex3", testConfigs[1].Test[0].TestName)
+	assert.Equal(t, "", testConfigs[1].Test[0].RoutingKey)
+	assert.Equal(t, "fanout", testConfigs[1].Test[0].TestType)
+	assert.Equal(t, false, testConfigs[1].Test[0].UseConfirmModel)
+	assert.Equal(t, true, testConfigs[1].Test[0].AutoCreateTest)
+	assert.Equal(t, "Ex4", testConfigs[1].Test[1].TestName)
+	assert.Equal(t, "", testConfigs[1].Test[1].RoutingKey)
+	assert.Equal(t, "fanout", testConfigs[1].Test[1].TestType)
+	assert.Equal(t, false, testConfigs[1].Test[1].UseConfirmModel)
+	assert.Equal(t, true, testConfigs[1].Test[1].AutoCreateTest)
 }

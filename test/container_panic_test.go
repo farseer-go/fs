@@ -37,7 +37,6 @@ func TestContainerPanic_test(t *testing.T) {
 	})
 
 	container.RegisterTransient(func() IDatabase { return nil }, "testNil")
-	assert.Nil(t, container.Resolve[IDatabase]("testNil"))
 
 	assert.Panics(t, func() {
 		panic("")

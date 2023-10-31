@@ -73,7 +73,6 @@ func TestTry(t *testing.T) {
 	})
 	try.CatchException(func(exp any) {
 		assert.Equal(t, "aaa", exp)
-		panic("aaa")
 	})
 	assert.Panics(t, func() {
 		try.ThrowUnCatch()

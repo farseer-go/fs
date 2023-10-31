@@ -3,8 +3,17 @@ Database:
 Redis:
   default: "Server=192.168.1.8:6379,DB=15,Password=steden@123,ConnectTimeout=600000,SyncTimeout=10000,ResponseTimeout=10000"
 Rabbit:
-  Ex1: "Server=rabbit:5672,UserName=farseer,Password=farseer,Exchange=Ex1,RoutingKey=,Type=fanout,UseConfirm=false,AutoCreate=true"
-  Ex2: "Server=rabbit:5672,UserName=farseer,Password=farseer,Exchange=Ex2,RoutingKey=,Type=fanout,UseConfirm=false,AutoCreate=true"
+  Ex1: "Server=rabbit:5672,UserName=farseer,Password=farseer,Test=Ex1,RoutingKey=,Type=fanout,UseConfirm=false,AutoCreate=true"
+  Ex2: "Server=rabbit:5672,UserName=farseer,Password=farseer,Test=Ex2,RoutingKey=,Type=fanout,UseConfirm=false,AutoCreate=true"
+TestGetSubNodes:
+  - Server: "Server=test:8888,UserName=farseer,Password=farseer"
+    Test:
+      - "TestName=Ex1,RoutingKey=,TestType=fanout,UseConfirmModel=false,AutoCreateTest=true"
+      - "TestName=Ex2,RoutingKey=,TestType=fanout,UseConfirmModel=false,AutoCreateTest=true"
+  - Server: "Server=test2:8888,UserName=farseer,Password=farseer"
+    Test:
+      - "TestName=Ex3,RoutingKey=,TestType=fanout,UseConfirmModel=false,AutoCreateTest=true"
+      - "TestName=Ex4,RoutingKey=,TestType=fanout,UseConfirmModel=false,AutoCreateTest=true"
 WebApi:
   Url: ":888"
 Log:
