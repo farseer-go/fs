@@ -127,7 +127,7 @@ func Convert[T any](source any, defVal T) T {
 		}
 
 		// 转time.Time
-		layouts := []string{time.DateTime, time.DateOnly, time.RFC3339}
+		layouts := []string{"2006-01-02 15:04:05", "2006-01-02", "2006-01-02T15:04:05Z07:00"}
 		if types.IsTime(defValType) {
 			for _, layout := range layouts {
 				parse, err := time.ParseInLocation(layout, source.(string), time.Local)
