@@ -23,6 +23,11 @@ func IsList(val reflect.Value) (reflect.Type, bool) {
 	return realType, strings.HasPrefix(realType.String(), "collections.List[")
 }
 
+// IsList 判断类型是否为List
+func IsListByType(realType reflect.Type) (reflect.Type, bool) {
+	return realType, strings.HasPrefix(realType.String(), "collections.List[")
+}
+
 // IsDictionary 判断类型是否为Dictionary
 func IsDictionary(val reflect.Value) (reflect.Type, bool) {
 	realType := GetRealType(val)
