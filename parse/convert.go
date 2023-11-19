@@ -121,7 +121,7 @@ func Convert[T any](source any, defVal T) T {
 			lstItemType := types.GetListItemType(defValType)
 			arr := strings.Split(strSource, ",")
 			for i := 0; i < len(arr); i++ {
-				types.ListAdd(&lstReflectValue, ConvertValue(arr[i], lstItemType).Interface())
+				types.ListAdd(lstReflectValue, ConvertValue(arr[i], lstItemType).Interface())
 			}
 			return lstReflectValue.Elem().Interface().(T)
 		}

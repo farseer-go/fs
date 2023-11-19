@@ -10,7 +10,7 @@ func ListNew(lstType reflect.Type) reflect.Value {
 }
 
 // ListAdd 动态添加元素
-func ListAdd(lstValue *reflect.Value, item any) {
+func ListAdd(lstValue reflect.Value, item any) {
 	itemValue := reflect.ValueOf(item)
 	if itemValue.Kind() == reflect.Ptr {
 		itemValue = itemValue.Elem()
