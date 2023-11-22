@@ -1,13 +1,9 @@
 package trace
 
-import (
-	"github.com/farseer-go/collections"
-)
-
 type EmptyManager struct {
 }
 
-func (m *EmptyManager) EntryWebApi(domain string, path string, method string, contentType string, headerDictionary collections.ReadonlyDictionary[string, string], requestBody string, requestIp string) ITraceContext {
+func (m *EmptyManager) EntryWebApi(domain string, path string, method string, contentType string, header map[string]string, requestBody string, requestIp string) ITraceContext {
 	return &emptyTraceContext{}
 }
 
@@ -61,8 +57,8 @@ func (receiver *emptyTraceContext) GetStartTs() int64                           
 func (receiver *emptyTraceContext) End()                                                            {}
 func (receiver *emptyTraceContext) Ignore()                                                         {}
 func (receiver *emptyTraceContext) AddDetail(detail ITraceDetail)                                   {}
-func (receiver *emptyTraceContext) GetList() collections.List[ITraceDetail] {
-	return collections.NewList[ITraceDetail]()
+func (receiver *emptyTraceContext) GetList() []ITraceDetail {
+	return []ITraceDetail{}
 }
 
 type emptyTraceDetail struct{}

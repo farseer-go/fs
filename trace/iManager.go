@@ -1,14 +1,10 @@
 package trace
 
-import (
-	"github.com/farseer-go/collections"
-)
-
 // IManager 链路追踪管理
 type IManager interface {
 	GetCurTrace() ITraceContext
 	// EntryWebApi 创建webapi的链路追踪入口
-	EntryWebApi(domain string, path string, method string, contentType string, headerDictionary collections.ReadonlyDictionary[string, string], requestBody string, requestIp string) ITraceContext
+	EntryWebApi(domain string, path string, method string, contentType string, headerDictionary map[string]string, requestBody string, requestIp string) ITraceContext
 	// TraceDatabaseOpen 数据库埋点
 	TraceDatabaseOpen(dbName string, connectString string) ITraceDetail
 	// TraceDatabase 数据库埋点

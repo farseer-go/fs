@@ -2,17 +2,16 @@ package trace
 
 import (
 	"fmt"
-	"github.com/farseer-go/collections"
 	"github.com/farseer-go/fs/asyncLocal"
 	"github.com/farseer-go/fs/path"
-	"github.com/farseer-go/linkTrace/eumCallType"
+	"github.com/farseer-go/fs/trace/eumCallType"
 	"runtime"
 	"strings"
 	"time"
 )
 
 // ScopeLevel 层级列表
-var ScopeLevel = asyncLocal.New[collections.List[BaseTraceDetail]]()
+var ScopeLevel = asyncLocal.New[[]BaseTraceDetail]()
 
 // BaseTraceDetail 埋点明细（基类）
 type BaseTraceDetail struct {
@@ -55,9 +54,8 @@ func (receiver *BaseTraceDetail) End(err error) {
 
 	// 移除层级
 	lstScope := ScopeLevel.Get()
-	if !lstScope.IsNil() {
-		lstScope.RemoveAt(lstScope.Count() - 1)
-		ScopeLevel.Set(lstScope)
+	if len(lstScope) > 0 {
+		ScopeLevel.Set(lstScope[:len(lstScope)-1])
 	}
 }
 
