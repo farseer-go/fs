@@ -10,6 +10,13 @@ import (
 )
 
 func TestConvert(t *testing.T) {
+	t.Run("enum转uint8", func(t *testing.T) {
+		type Enum uint8
+		const (
+			All Enum = 66 // 全部
+		)
+		assert.Equal(t, 66, parse.ToInt(All))
+	})
 
 	assert.Equal(t, 123, parse.ConvertValue("123", reflect.TypeOf(1)).Interface().(int))
 
@@ -166,7 +173,6 @@ func TestConvert(t *testing.T) {
 		assert.Equal(t, 9, dt.Month())
 		assert.Equal(t, 15, dt.Day())
 	})
-
 	//t.Run("string转List", func(t *testing.T) {
 	//	lst := collections.NewList(1, 2, 3)
 	//	lst2 := parse.Convert("1,2,3", collections.NewList[int]())
