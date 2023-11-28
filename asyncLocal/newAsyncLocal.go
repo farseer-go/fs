@@ -5,23 +5,23 @@ import (
 )
 
 type AsyncLocal[T any] struct {
-	threadLocal routine.ThreadLocal[T]
+	threadLocal routine.ThreadLocal
 }
 
 // New 创建一个AsyncLocal
 func New[T any]() AsyncLocal[T] {
 	return AsyncLocal[T]{
-		threadLocal: routine.NewInheritableThreadLocal[T](),
+		threadLocal: routine.NewInheritableThreadLocal(),
 	}
 }
 
 // Get 获取值
 func (receiver AsyncLocal[T]) Get() T {
 	val := receiver.threadLocal.Get()
-	//if val == nil {
-	//	var t T
-	//	return t
-	//}
+	if val == nil {
+		var t T
+		return t
+	}
 	return val
 }
 
