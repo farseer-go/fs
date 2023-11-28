@@ -18,10 +18,10 @@ func New[T any]() AsyncLocal[T] {
 // Get 获取值
 func (receiver AsyncLocal[T]) Get() T {
 	val := receiver.threadLocal.Get()
-	if val == nil {
-		var t T
-		return t
-	}
+	//if val == nil {
+	//	var t T
+	//	return t
+	//}
 	return val
 }
 
