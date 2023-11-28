@@ -22,7 +22,7 @@ func (receiver AsyncLocal[T]) Get() T {
 		var t T
 		return t
 	}
-	return val
+	return val.(T)
 }
 
 // Set 设置值
