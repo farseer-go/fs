@@ -5,13 +5,13 @@ import (
 )
 
 type AsyncLocal[T any] struct {
-	threadLocal routine.ThreadLocal
+	threadLocal routine.ThreadLocal[T]
 }
 
 // New 创建一个AsyncLocal
 func New[T any]() AsyncLocal[T] {
 	return AsyncLocal[T]{
-		threadLocal: routine.NewInheritableThreadLocal(),
+		threadLocal: routine.NewInheritableThreadLocal[T](),
 	}
 }
 
@@ -22,7 +22,7 @@ func (receiver AsyncLocal[T]) Get() T {
 		var t T
 		return t
 	}
-	return val.(T)
+	return val
 }
 
 // Set 设置值
