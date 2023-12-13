@@ -3,12 +3,18 @@ package configure
 import (
 	"fmt"
 	"github.com/farseer-go/fs/parse"
+	"os"
 	"strings"
 )
 
 // InitConfig 初始化配置文件
 func InitConfig() {
-	configurationBuilder.AddYamlFile("./farseer.yaml")
+	ymlFile := "./farseer.yaml"
+	fsenv := os.Getenv("fsenv")
+	if fsenv != "" {
+		ymlFile = fmt.Sprintf("./farseer.%s.yaml", fsenv)
+	}
+	configurationBuilder.AddYamlFile(ymlFile)
 	configurationBuilder.AddEnvironmentVariables()
 	// 配置文件，我们都是通过a.b访问的。而环境变量是a_b。
 	// 让环境变量支持a.b的方式，使用替换的方式以支持。
