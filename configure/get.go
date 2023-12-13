@@ -9,10 +9,11 @@ import (
 
 // InitConfig 初始化配置文件
 func InitConfig() {
-	ymlFile := "./farseer.yaml"
-	fsenv := os.Getenv("fsenv")
-	if fsenv != "" {
-		ymlFile = fmt.Sprintf("./farseer.%s.yaml", fsenv)
+	var ymlFile string
+	if fsEnv := os.Getenv("fsenv"); fsEnv != "" {
+		ymlFile = fmt.Sprintf("./farseer.%s.yaml", fsEnv)
+	} else {
+		ymlFile = "./farseer.yaml"
 	}
 	configurationBuilder.AddYamlFile(ymlFile)
 	configurationBuilder.AddEnvironmentVariables()
