@@ -26,7 +26,7 @@ func Convert[T any](source any, defVal T) T {
 	defValType := reflect.TypeOf(defVal)
 	returnKind := defValType.Kind()
 
-	if sourceKind != reflect.Struct && sourceKind == returnKind {
+	if sourceKind != reflect.Struct && sourceType.String() == defValType.String() {
 		return source.(T)
 	}
 
