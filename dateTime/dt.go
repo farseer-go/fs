@@ -1,7 +1,9 @@
 package dateTime
 
 import (
+	"database/sql/driver"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -26,7 +28,7 @@ func New(time time.Time) DateTime {
 }
 
 // ToString 转字符串，yyyy-MM-dd hh:mm:ss
-func (d *DateTime) ToString(format string) string {
+func (receiver *DateTime) ToString(format string) string {
 	// 2006-01-02 15:04:05
 	format = strings.Replace(format, "yyyy", "2006", -1)
 	format = strings.Replace(format, "yy", "06", -1)
@@ -40,112 +42,135 @@ func (d *DateTime) ToString(format string) string {
 	format = strings.Replace(format, "ffffff", "000000", -1)
 	format = strings.Replace(format, "fff", "000", -1)
 
-	return d.time.Format(format)
+	return receiver.time.Format(format)
 }
 
 // Year 获取年
-func (d *DateTime) Year() int { return d.time.Year() }
+func (receiver *DateTime) Year() int { return receiver.time.Year() }
 
 // Month 获取月
-func (d *DateTime) Month() int { return int(d.time.Month()) }
+func (receiver *DateTime) Month() int { return int(receiver.time.Month()) }
 
 // Day 获取日
-func (d *DateTime) Day() int { return d.time.Day() }
+func (receiver *DateTime) Day() int { return receiver.time.Day() }
 
 // Hour 获取小时
-func (d *DateTime) Hour() int { return d.time.Hour() }
+func (receiver *DateTime) Hour() int { return receiver.time.Hour() }
 
 // Minute 获取分钟
-func (d *DateTime) Minute() int { return d.time.Minute() }
+func (receiver *DateTime) Minute() int { return receiver.time.Minute() }
 
 // Second 获取秒
-func (d *DateTime) Second() int { return d.time.Second() }
+func (receiver *DateTime) Second() int { return receiver.time.Second() }
 
 // TotalSeconds 获取总秒数
-func (d *DateTime) TotalSeconds() float64 {
-	return d.time.Sub(time.Date(0, 0, 0, 0, 0, 0, 0, time.Local)).Seconds()
+func (receiver *DateTime) TotalSeconds() float64 {
+	return receiver.time.Sub(time.Date(0, 0, 0, 0, 0, 0, 0, time.Local)).Seconds()
 }
 
 // Duration 得到Duration
-func (d *DateTime) Duration() time.Duration {
-	return d.time.Sub(time.Date(0, 0, 0, 0, 0, 0, 0, time.Local))
+func (receiver *DateTime) Duration() time.Duration {
+	return receiver.time.Sub(time.Date(0, 0, 0, 0, 0, 0, 0, time.Local))
 }
 
 // UnixMilli 获取毫秒
-func (d *DateTime) UnixMilli() int64 { return d.time.UnixMilli() }
+func (receiver *DateTime) UnixMilli() int64 { return receiver.time.UnixMilli() }
 
 // UnixMicro 获取微秒
-func (d *DateTime) UnixMicro() int64 { return d.time.UnixMicro() }
+func (receiver *DateTime) UnixMicro() int64 { return receiver.time.UnixMicro() }
 
 // UnixNano 获取纳秒
-func (d *DateTime) UnixNano() int64 { return d.time.UnixNano() }
+func (receiver *DateTime) UnixNano() int64 { return receiver.time.UnixNano() }
 
 // Date 获取Date部份
-func (d *DateTime) Date() DateTime {
-	year, month, day := d.time.Date()
+func (receiver *DateTime) Date() DateTime {
+	year, month, day := receiver.time.Date()
 	return New(time.Date(year, month, day, 0, 0, 0, 0, time.Local))
 }
 
 // AddDate 添加Date
-func (d *DateTime) AddDate(years int, months int, days int) DateTime {
-	return New(d.time.AddDate(years, months, days))
+func (receiver *DateTime) AddDate(years int, months int, days int) DateTime {
+	return New(receiver.time.AddDate(years, months, days))
 }
 
 // AddTime 添加Time
-func (d *DateTime) AddTime(hours int, minutes int, seconds int) DateTime {
-	return New(d.time.Add(time.Hour * time.Duration(hours)).Add(time.Minute * time.Duration(minutes)).Add(time.Second * time.Duration(seconds)))
+func (receiver *DateTime) AddTime(hours int, minutes int, seconds int) DateTime {
+	return New(receiver.time.Add(time.Hour * time.Duration(hours)).Add(time.Minute * time.Duration(minutes)).Add(time.Second * time.Duration(seconds)))
 }
 
 // AddYears 添加年
-func (d *DateTime) AddYears(year int) DateTime {
-	return New(d.time.AddDate(year, 0, 0))
+func (receiver *DateTime) AddYears(year int) DateTime {
+	return New(receiver.time.AddDate(year, 0, 0))
 }
 
 // AddMonths 添加月份
-func (d *DateTime) AddMonths(months int) DateTime {
-	return New(d.time.AddDate(0, months, 0))
+func (receiver *DateTime) AddMonths(months int) DateTime {
+	return New(receiver.time.AddDate(0, months, 0))
 }
 
 // AddDays 添加天数
-func (d *DateTime) AddDays(days int) DateTime {
-	return New(d.time.AddDate(0, 0, days))
+func (receiver *DateTime) AddDays(days int) DateTime {
+	return New(receiver.time.AddDate(0, 0, days))
 }
 
 // AddHours 添加小时
-func (d *DateTime) AddHours(hours int) DateTime {
-	return New(d.time.Add(time.Hour * time.Duration(hours)))
+func (receiver *DateTime) AddHours(hours int) DateTime {
+	return New(receiver.time.Add(time.Hour * time.Duration(hours)))
 }
 
 // AddMinutes 添加分钟
-func (d *DateTime) AddMinutes(minutes int) DateTime {
-	return New(d.time.Add(time.Minute * time.Duration(minutes)))
+func (receiver *DateTime) AddMinutes(minutes int) DateTime {
+	return New(receiver.time.Add(time.Minute * time.Duration(minutes)))
 }
 
 // AddSeconds 添加秒
-func (d *DateTime) AddSeconds(seconds int) DateTime {
-	return New(d.time.Add(time.Second * time.Duration(seconds)))
+func (receiver *DateTime) AddSeconds(seconds int) DateTime {
+	return New(receiver.time.Add(time.Second * time.Duration(seconds)))
 }
 
 // ToTime 获取time.Time类型
-func (d *DateTime) ToTime() time.Time { return d.time }
+func (receiver *DateTime) ToTime() time.Time { return receiver.time }
 
 // MarshalJSON to output non base64 encoded []byte
 // 此处不能用指针，否则json序列化时不执行
-func (d DateTime) MarshalJSON() ([]byte, error) {
-	return json.Marshal(d.ToString("yyyy-MM-dd hh:mm:ss"))
+func (receiver DateTime) MarshalJSON() ([]byte, error) {
+	return json.Marshal(receiver.ToString("yyyy-MM-dd hh:mm:ss"))
 }
 
 // UnmarshalJSON to deserialize []byte
-func (d *DateTime) UnmarshalJSON(b []byte) error {
+func (receiver *DateTime) UnmarshalJSON(b []byte) error {
 	// 转time.Time
 	layouts := []string{"2006-01-02 15:04:05", "2006-01-02", "2006-01-02T15:04:05Z07:00"}
 	t := strings.Trim(string(b), "\"")
 	for _, layout := range layouts {
 		parse, err := time.ParseInLocation(layout, t, time.Local)
 		if err == nil {
-			d.time = parse
+			receiver.time = parse
 			return nil
 		}
 	}
 	return fmt.Errorf("时间：%s 无法转换成time.Time类型", string(b))
+}
+
+// Value return json value, implement driver.Valuer interface
+func (receiver DateTime) Value() (driver.Value, error) {
+	return receiver.time, nil
+}
+
+// Scan scan value into Jsonb, implements sql.Scanner interface
+func (receiver *DateTime) Scan(val any) error {
+	if val == nil {
+		return nil
+	}
+	var ba []byte
+	switch v := val.(type) {
+	case []byte:
+		ba = v
+	case string:
+		ba = []byte(v)
+	default:
+		return errors.New(fmt.Sprint("Failed to unmarshal JSONB value:", val))
+	}
+
+	return receiver.UnmarshalJSON(ba)
 }
