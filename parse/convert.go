@@ -165,7 +165,8 @@ func Convert[T any](source any, defVal T) T {
 	if types.IsDateTime(sourceType) {
 		// 转time.Time
 		if types.IsTime(defValType) {
-			var t any = source.(dateTime.DateTime).ToTime()
+			d := source.(dateTime.DateTime)
+			var t any = d.ToTime()
 			return t.(T)
 		}
 
