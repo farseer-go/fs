@@ -30,7 +30,7 @@ func New(time time.Time) DateTime {
 // New 初始化
 func NewUnix(sec int64) DateTime {
 	return DateTime{
-		time: time.Unix(sec,0),
+		time: time.Unix(sec, 0),
 	}
 }
 
@@ -82,10 +82,12 @@ func (receiver DateTime) Minute() int { return receiver.time.Minute() }
 // Second 获取秒
 func (receiver DateTime) Second() int { return receiver.time.Second() }
 
-// TotalSeconds 获取总秒数
-func (receiver DateTime) TotalSeconds() float64 {
-	return receiver.time.Sub(time.Date(0, 0, 0, 0, 0, 0, 0, time.Local)).Seconds()
-}
+//// TotalSeconds 获取总秒数
+//func (receiver DateTime) TotalSeconds() float64 {
+//	m, _ := time.ParseDuration(receiver.time.String())
+//	return m.Seconds()
+//	//return receiver.time.Sub(time.Date(0, 0, 0, 0, 0, 0, 0, time.Local)).Seconds()
+//}
 
 // Duration 得到Duration
 func (receiver DateTime) Duration() time.Duration {
@@ -153,7 +155,7 @@ func (receiver DateTime) AddMillisecond(millisecond int) DateTime {
 }
 
 // Sub 时间相减
-func (receiver DateTime) Sub(dt DateTime) time.Duration{
+func (receiver DateTime) Sub(dt DateTime) time.Duration {
 	return receiver.time.Sub(dt.time)
 }
 
@@ -161,7 +163,7 @@ func (receiver DateTime) Sub(dt DateTime) time.Duration{
 func (receiver DateTime) ToTime() time.Time { return receiver.time }
 
 // After 是否比dt时间大（晚）
-func (receiver DateTime) After(dt DateTime) bool{
+func (receiver DateTime) After(dt DateTime) bool {
 	return receiver.time.After(dt.time)
 }
 

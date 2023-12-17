@@ -32,10 +32,9 @@ func ThrowWebExceptionfBool(isTrue bool, statusCode int, format string, a ...any
 	}
 }
 
-
 // ThrowWebExceptionError 抛出WebException异常
 func ThrowWebExceptionError(statusCode int, err error) {
-	if err!=nil {
+	if err != nil {
 		panic(WebException{StatusCode: statusCode, Message: err.Error()})
 	}
 }

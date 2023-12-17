@@ -45,8 +45,15 @@ func TestDateTime_ToString(t *testing.T) {
 	assert.Equal(t, "2022-09-06 21:13:25", dt.AddMinutes(-1).ToString("yyyy-MM-dd HH:mm:ss"))
 	assert.Equal(t, "2022-09-06 21:14:27", dt.AddSeconds(2).ToString("yyyy-MM-dd HH:mm:ss"))
 	assert.Equal(t, "2022-09-06 21:14:24", dt.AddSeconds(-1).ToString("yyyy-MM-dd HH:mm:ss"))
+	assert.Equal(t, "2022-09-06 21:14:26", dt.AddMillisecond(1000).ToString("yyyy-MM-dd HH:mm:ss"))
+	assert.Equal(t, "2022-09-06 21:14:24", dt.AddMillisecond(-1000).ToString("yyyy-MM-dd HH:mm:ss"))
+	assert.Equal(t, float64(24), dt.Sub(dateTime.New(time.Date(2022, 9, 05, 21, 14, 25, 0, time.Local))).Hours())
 
 	assert.Equal(t, "2023-11-09 21:14:25", dt.AddDate(1, 2, 3).ToString("yyyy-MM-dd HH:mm:ss"))
 	assert.Equal(t, "2022-09-06 22:16:28", dt.AddTime(1, 2, 3).ToString("yyyy-MM-dd HH:mm:ss"))
 
+	assert.Equal(t, time.Unix(100, 0).String(), dateTime.NewUnix(100).ToTime().String())
+	assert.Equal(t, time.UnixMilli(100000).String(), dateTime.NewUnixMilli(100000).ToTime().String())
+	dateTime.Since(dateTime.Now())
+	dateTime.Now().Duration().String()
 }
