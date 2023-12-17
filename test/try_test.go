@@ -1,6 +1,7 @@
 package test
 
 import (
+	"fmt"
 	"github.com/farseer-go/fs/exception"
 	"github.com/stretchr/testify/assert"
 	"os"
@@ -17,6 +18,15 @@ func TestTry(t *testing.T) {
 		})
 		assert.Panics(t, func() {
 			exception.ThrowWebExceptionf(502, "%d", 123)
+		})
+		assert.Panics(t, func() {
+			exception.ThrowWebExceptionBool(true, 403, "")
+		})
+		assert.Panics(t, func() {
+			exception.ThrowWebExceptionfBool(true, 403, "%s", "")
+		})
+		assert.Panics(t, func() {
+			exception.ThrowWebExceptionError(403, fmt.Errorf(""))
 		})
 	}).CatchWebException(func(exp exception.WebException) {
 		os.Exit(-1)

@@ -9,7 +9,7 @@ const (
 	Redis                     // Redis
 	Mq                        // Mq
 	Elasticsearch             // Elasticsearch
-	Etcd                      // Elasticsearch
+	Etcd                      // Etcd
 	Hand                      // Hand
 	KeyLocation               // KeyLocation
 )

@@ -9,6 +9,13 @@ import (
 	"testing"
 )
 
+func TestConfigureFSEnv(t *testing.T) {
+	_ = os.Setenv("fsenv", "test")
+	fs.Initialize[modules.FarseerKernelModule]("unit test")
+	val := configure.GetString("Test.Name")
+	assert.Equal(t, "test", val)
+}
+
 func TestGetArray(t *testing.T) {
 	fs.Initialize[modules.FarseerKernelModule]("unit test")
 	assert.Equal(t, "", configure.GetString("a.b.c"))

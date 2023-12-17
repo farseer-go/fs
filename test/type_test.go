@@ -87,4 +87,23 @@ func TestType(t *testing.T) {
 
 	assert.False(t, types.IsDtoModelIgnoreInterface([]reflect.Type{reflect.TypeOf(sqlserver{}), reflect.TypeOf(sqlserver{})}))
 	assert.True(t, types.IsDtoModelIgnoreInterface([]reflect.Type{reflect.TypeOf(sqlserver{})}))
+
+	assert.Panics(t, func() {
+		types.ListNew(nil)
+	})
+	assert.Panics(t, func() {
+		types.ListAdd(reflect.ValueOf(""), nil)
+	})
+	assert.Panics(t, func() {
+		types.GetListItemArrayType(nil)
+	})
+	assert.Panics(t, func() {
+		types.GetListItemType(nil)
+	})
+	assert.Panics(t, func() {
+		types.ListToArray(reflect.ValueOf(""))
+	})
+	assert.Panics(t, func() {
+		types.GetPageList(nil)
+	})
 }

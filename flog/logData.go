@@ -23,7 +23,7 @@ func newLogData(logLevel eumLogLevel.Enum, content string, component string) *lo
 	return &logData{Content: content, CreateAt: dateTime.Now(), LogLevel: logLevel, Component: component, newLine: true}
 }
 
-// 清除颜色
-func (receiver *logData) clearColor() {
-	receiver.Content = mustCompile.ReplaceAllString(receiver.Content, "")
-}
+//// 清除颜色
+//func (receiver *logData) clearColor() {
+//	receiver.Content = mustCompile.ReplaceAllString(receiver.Content, "")
+//}

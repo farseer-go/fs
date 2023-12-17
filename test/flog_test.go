@@ -21,6 +21,7 @@ func TestFlog(t *testing.T) {
 	_ = flog.Error("")
 	_ = flog.Errorf("")
 	flog.ErrorIfExists(fmt.Errorf("test error"))
+	flog.ErrorIfExists(nil)
 	flog.Critical("")
 	flog.Criticalf("")
 	flog.Print("")
@@ -28,6 +29,16 @@ func TestFlog(t *testing.T) {
 	flog.Println("")
 	flog.ComponentInfo("task", "")
 	flog.ComponentInfof("task", "")
+
+	assert.Equal(t, "aaa"+flog.Red("b")+"aaa", flog.ReplaceRed("aaabaaa", "b"))
+	assert.Equal(t, "aaa"+flog.Blue("b")+"aaa", flog.ReplaceBlue("aaabaaa", "b"))
+	assert.Equal(t, "aaa"+flog.Green("b")+"aaa", flog.ReplaceGreen("aaabaaa", "b"))
+	assert.Equal(t, "aaa"+flog.Yellow("b")+"aaa", flog.ReplaceYellow("aaabaaa", "b"))
+
+	assert.Equal(t, "aaa"+flog.Red("b")+flog.Red("c")+"aaa", flog.ReplaceReds("aaabcaaa", "b", "c"))
+	assert.Equal(t, "aaa"+flog.Blue("b")+flog.Blue("c")+"aaa", flog.ReplaceBlues("aaabcaaa", "b", "c"))
+	assert.Equal(t, "aaa"+flog.Green("b")+flog.Green("c")+"aaa", flog.ReplaceGreens("aaabcaaa", "b", "c"))
+	assert.Equal(t, "aaa"+flog.Yellow("b")+flog.Yellow("c")+"aaa", flog.ReplaceYellows("aaabcaaa", "b", "c"))
 
 	flog.Red("")
 	flog.Blue("")
