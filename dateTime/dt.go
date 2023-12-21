@@ -27,14 +27,14 @@ func New(time time.Time) DateTime {
 	}
 }
 
-// New 初始化
+// NewUnix 初始化
 func NewUnix(sec int64) DateTime {
 	return DateTime{
 		time: time.Unix(sec, 0),
 	}
 }
 
-// New 初始化
+// NewUnixMilli 初始化
 func NewUnixMilli(msec int64) DateTime {
 	return DateTime{
 		time: time.UnixMilli(msec),
@@ -165,6 +165,11 @@ func (receiver DateTime) ToTime() time.Time { return receiver.time }
 // After 是否比dt时间大（晚）
 func (receiver DateTime) After(dt DateTime) bool {
 	return receiver.time.After(dt.time)
+}
+
+// Before 是否比dt时间小（早）
+func (receiver DateTime) Before(dt DateTime) bool {
+	return receiver.time.Before(dt.time)
 }
 
 // MarshalJSON to output non base64 encoded []byte

@@ -57,6 +57,7 @@ func TestDateTime_ToString(t *testing.T) {
 	dateTime.Since(dateTime.Now())
 	dateTime.Now().Duration().String()
 	assert.Equal(t, true, dateTime.Now().After(dt))
+	assert.Equal(t, false, dateTime.Now().Before(dt))
 	dateTime.Now().Value()
 	now := dateTime.Now()
 	now.Scan("2021-09-06 21:14:25")
