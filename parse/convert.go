@@ -34,11 +34,12 @@ func Convert[T any](source any, defVal T) T {
 	if isNumber(sourceKind) {
 		// 数字转数字
 		if isNumber(returnKind) {
-			result := anyToNumber(source, sourceKind, defVal, returnKind)
 			// 这是一个枚举类型
-			if strings.Contains(defValType.String(), ".") && returnKind == reflect.Int {
-				return toEnum[T](defValType, result.(int))
+			if strings.Contains(defValType.String(), ".") {
+				return toEnum[T](defValType, source)
 			}
+
+			result := anyToNumber(source, sourceKind, defVal, returnKind)
 			return result.(T)
 		}
 
@@ -54,31 +55,6 @@ func Convert[T any](source any, defVal T) T {
 		}
 	}
 
-	// bool转...
-	if isBool(sourceKind) {
-		boolSource := source.(bool)
-		var result any
-
-		// 转数字
-		if isNumber(returnKind) {
-			result = 0
-			if boolSource {
-				result = 1
-			}
-			return result.(T)
-		}
-
-		if isString(returnKind) {
-			if boolSource {
-				result = "true"
-			} else {
-				result = "false"
-			}
-			return result.(T)
-		}
-		return defVal
-	}
-
 	// 字符串转...
 	if isString(sourceKind) {
 		strSource := source.(string)
@@ -90,11 +66,12 @@ func Convert[T any](source any, defVal T) T {
 
 		// 数字
 		if isNumber(returnKind) {
-			result := stringToNumber(strSource, defVal, returnKind)
 			// 这是一个枚举类型
-			if strings.Contains(defValType.String(), ".") && returnKind == reflect.Int {
-				return toEnum[T](defValType, result.(int))
+			if strings.Contains(defValType.String(), ".") {
+				return toEnum[T](defValType, strSource)
 			}
+
+			result := stringToNumber(strSource, defVal, returnKind)
 			return result.(T)
 		}
 
@@ -148,6 +125,31 @@ func Convert[T any](source any, defVal T) T {
 		}
 	}
 
+	// bool转...
+	if isBool(sourceKind) {
+		boolSource := source.(bool)
+		var result any
+
+		// 转数字
+		if isNumber(returnKind) {
+			result = 0
+			if boolSource {
+				result = 1
+			}
+			return result.(T)
+		}
+
+		if isString(returnKind) {
+			if boolSource {
+				result = "true"
+			} else {
+				result = "false"
+			}
+			return result.(T)
+		}
+		return defVal
+	}
+
 	// time.Time转...
 	if types.IsTime(sourceType) {
 		// 转time.Time
@@ -178,9 +180,19 @@ func Convert[T any](source any, defVal T) T {
 	return defVal
 }
 
-func toEnum[T any](tType reflect.Type, result int) T {
+// 转枚举
+func toEnum[T any](tType reflect.Type, result any) T {
 	returnTypeNew := reflect.New(tType).Elem()
-	returnTypeNew.SetInt(int64(result))
+	switch tType.Kind() {
+	case reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Int:
+		returnTypeNew.SetInt(ToInt64(result))
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		returnTypeNew.SetUint(ToUInt64(result))
+	case reflect.Float32, reflect.Float64:
+		returnTypeNew.SetFloat(ToFloat64(result))
+	default:
+		panic("不支持的类型转枚举")
+	}
 	return returnTypeNew.Interface().(T)
 }
 

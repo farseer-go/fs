@@ -10,16 +10,7 @@ import (
 )
 
 func TestConvert(t *testing.T) {
-	t.Run("enum转uint8", func(t *testing.T) {
-		type Enum uint8
-		const (
-			All Enum = 66 // 全部
-		)
-		assert.Equal(t, 66, parse.ToInt(All))
-	})
-
 	assert.Equal(t, 123, parse.ConvertValue("123", reflect.TypeOf(1)).Interface().(int))
-
 	assert.Equal(t, 1, parse.Convert(1, 0))
 	assert.Equal(t, int64(1), parse.Convert(1, int64(0)))
 	assert.Equal(t, "1", parse.Convert(1, ""))
@@ -178,4 +169,40 @@ func TestConvert(t *testing.T) {
 	//	lst2 := parse.Convert("1,2,3", collections.NewList[int]())
 	//	assert.Equal(t, lst.ToArray(), lst2.ToArray())
 	//})
+
+	t.Run("enum转uint8", func(t *testing.T) {
+		type Enum uint8
+		const (
+			All Enum = 66 // 全部
+		)
+		assert.Equal(t, 66, parse.ToInt(All))
+		assert.Equal(t, int8(66), parse.ToInt8(All))
+		assert.Equal(t, int16(66), parse.ToInt16(All))
+		assert.Equal(t, int32(66), parse.ToInt32(All))
+		assert.Equal(t, int64(66), parse.ToInt64(All))
+	})
+
+	t.Run("数字转enum", func(t *testing.T) {
+		type EnumUint8 uint8
+		const (
+			All   EnumUint8 = 66 // 全部
+			Other EnumUint8 = 33 // 全部
+		)
+		assert.Equal(t, All, parse.Convert(int8(66), Other))
+		assert.Equal(t, All, parse.Convert(uint8(66), Other))
+		assert.Equal(t, All, parse.Convert(int64(66), Other))
+		assert.Equal(t, All, parse.Convert(int32(66), Other))
+		assert.Equal(t, All, parse.Convert(66, Other))
+
+		type EnumInt8 int8
+		const (
+			All2   EnumInt8 = 66 // 全部
+			Other2 EnumInt8 = 33 // 全部
+		)
+		assert.Equal(t, All2, parse.Convert(int8(66), Other2))
+		assert.Equal(t, All2, parse.Convert(uint8(66), Other2))
+		assert.Equal(t, All2, parse.Convert(int64(66), Other2))
+		assert.Equal(t, All2, parse.Convert(int32(66), Other2))
+		assert.Equal(t, All2, parse.Convert(66, Other2))
+	})
 }
