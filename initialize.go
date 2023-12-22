@@ -20,32 +20,18 @@ import (
 	"time"
 )
 
-// StartupAt 应用启动时间
-var StartupAt dateTime.DateTime
-
-// AppName 应用名称
-var AppName string
-
-// HostName 主机名称
-var HostName string
-
-// AppId 应用ID
-var AppId int64
-
-// AppIp 应用IP
-var AppIp string
-
-// ProcessId 进程Id
-var ProcessId int
-
-// Context 最顶层的上下文
-var Context context.Context
-
-// 依赖的模块
-var dependModules []modules.FarseerModule
-
-// 回调函数列表
-var callbackFnList []callbackFn
+var (
+	StartupAt      dateTime.DateTime       // 应用启动时间
+	AppName        string                  // 应用名称
+	HostName       string                  // 主机名称
+	AppId          int64                   // 应用ID
+	AppIp          string                  // 应用IP
+	ProcessId      int                     // 进程Id
+	Context        context.Context         // 最顶层的上下文
+	dependModules  []modules.FarseerModule // 依赖的模块
+	callbackFnList []callbackFn            // 回调函数列表
+	isInit         bool                    // 是否初始化完
+)
 
 type callbackFn struct {
 	f    func()
@@ -116,6 +102,7 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 		}
 		flog.LogBuffer <- fmt.Sprint("---------------------------------------")
 	}
+	isInit = true
 }
 
 // 组件日志
@@ -140,5 +127,10 @@ func Exit(code int) {
 
 // AddInitCallback 添加框架启动完后执行的函数
 func AddInitCallback(name string, fn func()) {
-	callbackFnList = append(callbackFnList, callbackFn{name: name, f: fn})
+	// 未初始化完时，加入到列表中
+	if !isInit {
+		callbackFnList = append(callbackFnList, callbackFn{name: name, f: fn})
+	} else { // 初始化完后，则立即执行
+		fn()
+	}
 }
