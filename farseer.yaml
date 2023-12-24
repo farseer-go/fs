@@ -25,6 +25,11 @@ FSchedule:
       - "http://127.0.0.1:8887"
 ElasticSearch:
   es: "Server=http://192.168.1.8:9200,Username=es,Password=123456,ReplicasCount=1,ShardsCount=1,RefreshInterval=5,IndexFormat=yyyy_MM"
+LinkTrace:
+  Enable: false
+  PrintLog: true
+  ES: "Server=http://192.168.1.8:9200,Username=es,Password=123456,ReplicasCount=1,ShardsCount=1,RefreshInterval=5,IndexFormat=yyyy_MM"
+  CH: "DataType=clickhouse,PoolMaxSize=50,PoolMinSize=1,ConnectionString=clickhouse://root:steden@192.168.1.8:9000/linkTrace?dial_timeout=10s&read_timeout=20s"
 WebApi:
   Url: ":888"
   Session:
