@@ -20,11 +20,11 @@ type BaseTraceDetail struct {
 	Level          int              // 当前层级（入口为0层）
 	MethodName     string           // 调用方法
 	CallType       eumCallType.Enum // 调用类型
-	Timeline       time.Duration    // 从入口开始统计
-	UnTraceTs      time.Duration    // 上一次结束到现在开始之间未Trace的时间
-	StartTs        int64            // 调用开始时间戳
-	EndTs          int64            // 调用停止时间戳
-	UseTs          time.Duration    // 总共使用时间毫秒
+	Timeline       time.Duration    // 从入口开始统计（微秒）
+	UnTraceTs      time.Duration    // 上一次结束到现在开始之间未Trace的时间（微秒）
+	StartTs        int64            // 调用开始时间戳（微秒）
+	EndTs          int64            // 调用停止时间戳（微秒）
+	UseTs          time.Duration    // 总共使用时间微秒
 	ignore         bool             // 忽略这次的链路追踪
 	Exception      ExceptionStack   // 异常信息
 }
@@ -35,6 +35,10 @@ type ExceptionStack struct {
 	CallFuncName     string // 调用者函数名称
 	IsException      bool   // 是否执行异常
 	ExceptionMessage string // 异常信息
+}
+
+func (receiver ExceptionStack) IsNil() bool {
+	return receiver.CallFile == "" && receiver.CallLine == 0 && receiver.CallFuncName == "" && receiver.IsException == false && receiver.ExceptionMessage == ""
 }
 
 func (receiver *BaseTraceDetail) SetSql(DbName string, tableName string, sql string, rowsAffected int64) {
