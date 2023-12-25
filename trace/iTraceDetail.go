@@ -4,7 +4,7 @@ type ITraceDetail interface {
 	ToString() string
 	GetTraceDetail() *BaseTraceDetail
 	End(err error)
-	SetSql(DbName string, tableName string, sql string, rowsAffected int64)
+	SetSql(connectionString string, DbName string, tableName string, sql string, rowsAffected int64)
 	// Ignore 忽略这次的链路追踪
 	Ignore()
 	// IsIgnore 是否忽略

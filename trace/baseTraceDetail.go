@@ -41,7 +41,7 @@ func (receiver ExceptionStack) IsNil() bool {
 	return receiver.CallFile == "" && receiver.CallLine == 0 && receiver.CallFuncName == "" && receiver.IsException == false && receiver.ExceptionMessage == ""
 }
 
-func (receiver *BaseTraceDetail) SetSql(DbName string, tableName string, sql string, rowsAffected int64) {
+func (receiver *BaseTraceDetail) SetSql(connectionString string, dbName string, tableName string, sql string, rowsAffected int64) {
 }
 
 // End 链路明细执行完后，统计用时

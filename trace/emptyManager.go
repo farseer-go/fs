@@ -69,5 +69,5 @@ func (receiver *emptyTraceDetail) ToString() string                 { return "" 
 func (receiver *emptyTraceDetail) GetTraceDetail() *BaseTraceDetail { return &BaseTraceDetail{} }
 func (receiver *emptyTraceDetail) End(err error)                    {}
 func (receiver *emptyTraceDetail) Ignore()                          {}
-func (receiver *emptyTraceDetail) SetSql(DbName string, tableName string, sql string, rowsAffected int64) {
+func (receiver *emptyTraceDetail) SetSql(connectionString string, DbName string, tableName string, sql string, rowsAffected int64) {
 }
