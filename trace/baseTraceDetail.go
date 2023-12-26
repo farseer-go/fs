@@ -30,15 +30,15 @@ type BaseTraceDetail struct {
 }
 
 type ExceptionStack struct {
-	CallFile         string // 调用者文件路径
-	CallLine         int    // 调用者行号
-	CallFuncName     string // 调用者函数名称
-	IsException      bool   // 是否执行异常
-	ExceptionMessage string // 异常信息
+	ExceptionCallFile     string // 调用者文件路径
+	ExceptionCallLine     int    // 调用者行号
+	ExceptionCallFuncName string // 调用者函数名称
+	ExceptionIsException  bool   // 是否执行异常
+	ExceptionMessage      string // 异常信息
 }
 
 func (receiver ExceptionStack) IsNil() bool {
-	return receiver.CallFile == "" && receiver.CallLine == 0 && receiver.CallFuncName == "" && receiver.IsException == false && receiver.ExceptionMessage == ""
+	return receiver.ExceptionCallFile == "" && receiver.ExceptionCallLine == 0 && receiver.ExceptionCallFuncName == "" && receiver.ExceptionIsException == false && receiver.ExceptionMessage == ""
 }
 
 func (receiver *BaseTraceDetail) SetSql(connectionString string, dbName string, tableName string, sql string, rowsAffected int64) {
@@ -50,10 +50,10 @@ func (receiver *BaseTraceDetail) End(err error) {
 	receiver.UseTs = time.Duration(receiver.EndTs-receiver.StartTs) * time.Microsecond
 
 	if err != nil {
-		receiver.Exception.IsException = true
+		receiver.Exception.ExceptionIsException = true
 		receiver.Exception.ExceptionMessage = err.Error()
 		// 调用者
-		receiver.Exception.CallFile, receiver.Exception.CallFuncName, receiver.Exception.CallLine = GetCallerInfo()
+		receiver.Exception.ExceptionCallFile, receiver.Exception.ExceptionCallFuncName, receiver.Exception.ExceptionCallLine = GetCallerInfo()
 	}
 
 	// 移除层级
