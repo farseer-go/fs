@@ -26,7 +26,7 @@ func TestTrace(t *testing.T) {
 	assert.Equal(t, "", eumCallType.Enum(9).ToString())
 
 	baseTraceDetail := trace.BaseTraceDetail{}
-	baseTraceDetail.SetSql("", "", "", 0)
+	baseTraceDetail.SetSql("", "", "", "", 0)
 	baseTraceDetail.Ignore()
 	assert.Equal(t, true, baseTraceDetail.IsIgnore())
 	baseTraceDetail.GetLevel()
