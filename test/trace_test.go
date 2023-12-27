@@ -58,7 +58,7 @@ func TestTrace(t *testing.T) {
 	iManager.TraceHand("").Ignore()
 	iManager.TraceHand("").IsIgnore()
 	iManager.TraceHand("").GetLevel()
-	iManager.TraceHand("").SetSql("", "", "", 0)
+	iManager.TraceHand("").SetSql("", "", "", "", 0)
 
 	iManager.EntryQueueConsumer("").End()
 	iManager.EntryQueueConsumer("").Ignore()
