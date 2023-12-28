@@ -22,6 +22,9 @@ func (m *EmptyManager) EntryTask(taskName string) ITraceContext {
 func (m *EmptyManager) EntryFSchedule(taskGroupName string, taskGroupId int64, taskId int64) ITraceContext {
 	return &emptyTraceContext{}
 }
+func (*EmptyManager) EntryTaskGroup(taskName string, taskGroupName string, taskGroupId int64, taskId int64) ITraceContext {
+	return &emptyTraceContext{}
+}
 
 func (m *EmptyManager) EntryWatchKey(key string) ITraceContext { return &emptyTraceContext{} }
 func (m *EmptyManager) TraceMq(method string, server string, exchange string) ITraceDetail {
