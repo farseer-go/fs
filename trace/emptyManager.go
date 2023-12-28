@@ -71,3 +71,5 @@ func (receiver *emptyTraceDetail) End(err error)                    {}
 func (receiver *emptyTraceDetail) Ignore()                          {}
 func (receiver *emptyTraceDetail) SetSql(connectionString string, DbName string, tableName string, sql string, rowsAffected int64) {
 }
+func (receiver *emptyTraceDetail) SetHttpRequest(url string, head map[string]any, requestBody string, responseBody string, statusCode int) {
+}

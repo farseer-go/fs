@@ -43,6 +43,8 @@ func (receiver ExceptionStack) IsNil() bool {
 
 func (receiver *BaseTraceDetail) SetSql(connectionString string, dbName string, tableName string, sql string, rowsAffected int64) {
 }
+func (receiver *BaseTraceDetail) SetHttpRequest(url string, head map[string]any, requestBody string, responseBody string, statusCode int) {
+}
 
 // End 链路明细执行完后，统计用时
 func (receiver *BaseTraceDetail) End(err error) {

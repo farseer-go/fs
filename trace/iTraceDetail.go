@@ -11,4 +11,6 @@ type ITraceDetail interface {
 	IsIgnore() bool
 	// GetLevel 获取层级
 	GetLevel() int
+	// SetHttpRequest 设置Http请求出入参
+	SetHttpRequest(url string, head map[string]any, requestBody string, responseBody string, statusCode int)
 }
