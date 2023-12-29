@@ -41,6 +41,13 @@ func NewUnixMilli(msec int64) DateTime {
 	}
 }
 
+// NewUnixMicro 初始化
+func NewUnixMicro(usec int64) DateTime {
+	return DateTime{
+		time: time.UnixMicro(usec),
+	}
+}
+
 // Since time.Now().Sub(dt).
 func Since(dt DateTime) time.Duration {
 	return time.Since(dt.ToTime())
