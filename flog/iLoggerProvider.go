@@ -12,5 +12,5 @@ type ILoggerPersistent interface {
 	// IsEnabled 根据日志等级确定是否需要记录
 	IsEnabled(logLevel eumLogLevel.Enum) bool
 	// Log 日志记录
-	Log(LogLevel eumLogLevel.Enum, log *logData, exception error)
+	Log(LogLevel eumLogLevel.Enum, log *LogData, exception error)
 }

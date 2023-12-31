@@ -57,7 +57,7 @@ func (r *fileLoggerPersistent) IsEnabled(logLevel eumLogLevel.Enum) bool {
 	return logLevel >= r.logLevel
 }
 
-func (r *fileLoggerPersistent) Log(LogLevel eumLogLevel.Enum, log *logData, exception error) {
+func (r *fileLoggerPersistent) Log(LogLevel eumLogLevel.Enum, log *LogData, exception error) {
 	var logContent string
 	if log.newLine {
 		logContent = r.formatter.Formatter(log) + "\r\n"

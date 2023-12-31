@@ -8,15 +8,15 @@ import (
 
 // IFormatter 日志格式
 type IFormatter interface {
-	Formatter(log *logData) string
+	Formatter(log *LogData) string
 }
 
 // JsonFormatter json格式输出
 type JsonFormatter struct {
 }
 
-func (r JsonFormatter) Formatter(log *logData) string {
-	marshal, _ := json.Marshal(logData{
+func (r JsonFormatter) Formatter(log *LogData) string {
+	marshal, _ := json.Marshal(LogData{
 		CreateAt:  log.CreateAt,
 		LogLevel:  log.LogLevel,
 		Component: log.Component,
@@ -31,7 +31,7 @@ type TextFormatter struct {
 	config levelFormat
 }
 
-func (r TextFormatter) Formatter(log *logData) string {
+func (r TextFormatter) Formatter(log *LogData) string {
 	var logLevelString string
 	if log.LogLevel != eumLogLevel.NoneLevel {
 		logLevelString = Colors[log.LogLevel]("[" + log.LogLevel.ToString() + "]")

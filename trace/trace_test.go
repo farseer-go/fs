@@ -16,7 +16,7 @@ func TestTrace(t *testing.T) {
 	emptyManager.TraceMq("", "", "")
 	emptyManager.EntryFSchedule("", 0, 0)
 	emptyManager.EntryMqConsumer("", "", "")
-	emptyManager.EntryQueueConsumer("")
+	emptyManager.EntryQueueConsumer("", "")
 	emptyManager.EntryTask("")
 	emptyManager.EntryWatchKey("")
 	emptyManager.EntryWebApi("", "", "", "", nil, "", "")

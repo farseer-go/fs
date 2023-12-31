@@ -12,7 +12,7 @@ type CompositionLogger struct {
 }
 
 // 调用所有日志记录器的实现
-func (r *CompositionLogger) log(log *logData) {
+func (r *CompositionLogger) log(log *LogData) {
 	for i := 0; i < len(r.loggerPersistentList); i++ {
 		if r.loggerPersistentList[i].IsEnabled(log.LogLevel) {
 			r.loggerPersistentList[i].Log(log.LogLevel, log, nil)

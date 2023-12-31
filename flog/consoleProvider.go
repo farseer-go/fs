@@ -22,7 +22,7 @@ func (r *consoleLoggerPersistent) IsEnabled(logLevel eumLogLevel.Enum) bool {
 	return logLevel >= r.logLevel
 }
 
-func (r *consoleLoggerPersistent) Log(LogLevel eumLogLevel.Enum, log *logData, exception error) {
+func (r *consoleLoggerPersistent) Log(LogLevel eumLogLevel.Enum, log *LogData, exception error) {
 	if log.newLine {
 		fmt.Println(r.formatter.Formatter(log))
 	} else {
