@@ -17,6 +17,11 @@ type LogData struct {
 	Component string // 组件名称
 	Content   string
 	newLine   bool // 是否需要换行
+	// 上传到FOPS时使用
+	TraceId int64  // 上下文ID
+	AppId   int64  // 应用ID
+	AppName string // 应用名称
+	AppIp   string // 应用IP
 }
 
 func newLogData(logLevel eumLogLevel.Enum, content string, component string) *LogData {

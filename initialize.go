@@ -21,12 +21,6 @@ import (
 )
 
 var (
-	StartupAt      dateTime.DateTime       // 应用启动时间
-	AppName        string                  // 应用名称
-	HostName       string                  // 主机名称
-	AppId          int64                   // 应用ID
-	AppIp          string                  // 应用IP
-	ProcessId      int                     // 进程Id
 	Context        context.Context         // 最顶层的上下文
 	dependModules  []modules.FarseerModule // 依赖的模块
 	callbackFnList []callbackFn            // 回调函数列表
@@ -42,22 +36,22 @@ type callbackFn struct {
 func Initialize[TModule modules.FarseerModule](appName string) {
 	sw := stopwatch.StartNew()
 	Context = context.Background()
-	AppName = appName
-	ProcessId = os.Getppid()
-	HostName, _ = os.Hostname()
-	StartupAt = dateTime.Now()
+	core.AppName = appName
+	core.ProcessId = os.Getppid()
+	core.HostName, _ = os.Hostname()
+	core.StartupAt = dateTime.Now()
 	rand.Seed(time.Now().UnixNano())
 
-	snowflake.Init(parse.HashCode64(HostName), rand.Int63n(32))
-	AppId = snowflake.GenerateId()
-	AppIp = net.GetIp()
+	snowflake.Init(parse.HashCode64(core.HostName), rand.Int63n(32))
+	core.AppId = snowflake.GenerateId()
+	core.AppIp = net.GetIp()
 
-	flog.LogBuffer <- fmt.Sprint("AppName： ", flog.Colors[2](AppName))
-	flog.LogBuffer <- fmt.Sprint("AppID：   ", flog.Colors[2](AppId))
-	flog.LogBuffer <- fmt.Sprint("AppIP：   ", flog.Colors[2](AppIp))
-	flog.LogBuffer <- fmt.Sprint("HostName：", flog.Colors[2](HostName))
-	flog.LogBuffer <- fmt.Sprint("HostTime：", flog.Colors[2](StartupAt.ToString("yyyy-MM-dd hh:mm:ss")))
-	flog.LogBuffer <- fmt.Sprint("PID：     ", flog.Colors[2](ProcessId))
+	flog.LogBuffer <- fmt.Sprint("AppName： ", flog.Colors[2](core.AppName))
+	flog.LogBuffer <- fmt.Sprint("AppID：   ", flog.Colors[2](core.AppId))
+	flog.LogBuffer <- fmt.Sprint("AppIP：   ", flog.Colors[2](core.AppIp))
+	flog.LogBuffer <- fmt.Sprint("HostName：", flog.Colors[2](core.HostName))
+	flog.LogBuffer <- fmt.Sprint("HostTime：", flog.Colors[2](core.StartupAt.ToString("yyyy-MM-dd hh:mm:ss")))
+	flog.LogBuffer <- fmt.Sprint("PID：     ", flog.Colors[2](core.ProcessId))
 	showComponentLog()
 	flog.LogBuffer <- fmt.Sprint("---------------------------------------")
 

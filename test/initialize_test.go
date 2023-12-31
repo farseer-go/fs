@@ -2,6 +2,7 @@ package test
 
 import (
 	"github.com/farseer-go/fs"
+	"github.com/farseer-go/fs/core"
 	"github.com/farseer-go/fs/modules"
 	"github.com/stretchr/testify/assert"
 	"os"
@@ -44,11 +45,11 @@ func TestInitialize(t *testing.T) {
 	assert.Equal(t, 3, lst[2])
 	assert.Equal(t, 4, lst[3])
 
-	assert.Equal(t, 3, strings.Count(fs.AppIp, "."))
-	assert.Equal(t, 18, len(strconv.FormatInt(fs.AppId, 10)))
-	assert.Equal(t, "unit test", fs.AppName)
-	assert.Equal(t, os.Getppid(), fs.ProcessId)
+	assert.Equal(t, 3, strings.Count(core.AppIp, "."))
+	assert.Equal(t, 18, len(strconv.FormatInt(core.AppId, 10)))
+	assert.Equal(t, "unit test", core.AppName)
+	assert.Equal(t, os.Getppid(), core.ProcessId)
 
 	hostName, _ := os.Hostname()
-	assert.Equal(t, hostName, fs.HostName)
+	assert.Equal(t, hostName, core.HostName)
 }
