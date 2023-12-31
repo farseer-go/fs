@@ -3,8 +3,9 @@ package flog
 type Config struct {
 	Component componentConfig
 	Default   levelFormat
-	Console   levelFormat
-	File      fileConfig
+	Console   levelFormat // 输出到控制台
+	File      fileConfig  // 写到文件
+	Fops      levelFormat // 上传到FOPS
 }
 
 // 组件日志

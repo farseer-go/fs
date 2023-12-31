@@ -62,8 +62,8 @@ Log:
     FileCountLimit: 20                # 文件数量限制
     RefreshInterval: 1                # 写入到文件的时间间隔，秒单位，最少为1
     Disable: true
-  Database:
-  ElasticSearch:
+  Fops:
+    Disable: false
   Component:
     task: true                # 打印task组件的日志
     cacheManage: true         # 打印cacheManage组件的日志

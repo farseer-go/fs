@@ -43,6 +43,11 @@ func InitLog() core.ILog {
 		factory.AddProviderFormatter(&FileProvider{config: logConfig.File}, formatter, logLevel)
 	}
 
+	// 上传到FOPS
+	if !logConfig.Fops.Disable && configure.GetString("Fops.Server") != "" {
+		formatter, logLevel := loadLevelFormat(logConfig.Console, defaultLevel, defaultFormat, logConfig.Default)
+		factory.AddProviderFormatter(&FopsProvider{}, formatter, logLevel)
+	}
 	log = factory.CreateLogger("")
 	return log
 }
