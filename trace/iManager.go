@@ -22,7 +22,7 @@ type IManager interface {
 	// EntryMqConsumer 创建MQ消费入口
 	EntryMqConsumer(server string, queueName string, routingKey string) ITraceContext
 	// EntryQueueConsumer 创建Queue消费入口
-	EntryQueueConsumer(subscribeName string) ITraceContext
+	EntryQueueConsumer(queueName, subscribeName string) ITraceContext
 	// TraceRedis Redis埋点
 	TraceRedis(method string, key string, field string) ITraceDetail
 	// TraceHttp http埋点

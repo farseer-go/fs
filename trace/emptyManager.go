@@ -11,7 +11,7 @@ func (*EmptyManager) EntryMqConsumer(server string, queueName string, routingKey
 	return &emptyTraceContext{}
 }
 
-func (*EmptyManager) EntryQueueConsumer(subscribeName string) ITraceContext {
+func (*EmptyManager) EntryQueueConsumer(queueName, subscribeName string) ITraceContext {
 	return &emptyTraceContext{}
 }
 
