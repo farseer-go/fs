@@ -36,9 +36,6 @@ func (r *fopsLoggerPersistent) IsEnabled(logLevel eumLogLevel.Enum) bool {
 func (r *fopsLoggerPersistent) Log(LogLevel eumLogLevel.Enum, log *LogData, exception error) {
 	if LogLevel != eumLogLevel.NoneLevel {
 		log.Content = mustCompile.ReplaceAllString(log.Content, "")
-		log.AppId = core.AppId
-		log.AppIp = core.AppIp
-		log.AppName = core.AppName
 		r.queue <- log
 	}
 }

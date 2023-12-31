@@ -1,8 +1,10 @@
 package flog
 
 import (
+	"github.com/farseer-go/fs/core"
 	"github.com/farseer-go/fs/core/eumLogLevel"
 	"github.com/farseer-go/fs/dateTime"
+	"github.com/farseer-go/fs/trace"
 	"regexp"
 )
 
@@ -25,7 +27,11 @@ type LogData struct {
 }
 
 func newLogData(logLevel eumLogLevel.Enum, content string, component string) *LogData {
-	return &LogData{Content: content, CreateAt: dateTime.Now(), LogLevel: logLevel, Component: component, newLine: true}
+	var traceId int64
+	if t := trace.CurTraceContext.Get(); t != nil {
+		traceId = t.GetTraceId()
+	}
+	return &LogData{Content: content, CreateAt: dateTime.Now(), LogLevel: logLevel, Component: component, newLine: true, TraceId: traceId, AppId: core.AppId, AppName: core.AppName, AppIp: core.AppIp}
 }
 
 //// 清除颜色
