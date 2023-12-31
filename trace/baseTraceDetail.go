@@ -55,8 +55,10 @@ func (receiver *BaseTraceDetail) End(err error) {
 	receiver.UseTs = time.Duration(receiver.EndTs-receiver.StartTs) * time.Microsecond
 
 	if err != nil {
-		receiver.Exception.ExceptionIsException = true
-		receiver.Exception.ExceptionMessage = err.Error()
+		receiver.Exception = &ExceptionStack{
+			ExceptionIsException: true,
+			ExceptionMessage:     err.Error(),
+		}
 		// 调用者
 		receiver.Exception.ExceptionCallFile, receiver.Exception.ExceptionCallFuncName, receiver.Exception.ExceptionCallLine = GetCallerInfo()
 	}
