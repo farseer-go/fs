@@ -63,6 +63,9 @@ func (*emptyTraceContext) AddDetail(detail ITraceDetail)                        
 func (*emptyTraceContext) GetList() []any {
 	return []any{}
 }
+func (*emptyTraceContext) GetAppInfo() (int64, string, int64, string, string) {
+	return 0, "", 0, "", ""
+}
 
 type emptyTraceDetail struct{}
 

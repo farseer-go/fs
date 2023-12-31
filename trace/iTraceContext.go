@@ -17,4 +17,6 @@ type ITraceContext interface {
 	Error(err error)
 	// Ignore 忽略这次的链路追踪
 	Ignore()
+	// GetAppInfo 获取应用信息
+	GetAppInfo() (int64, string, int64, string, string)
 }

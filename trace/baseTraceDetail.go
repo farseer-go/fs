@@ -16,6 +16,11 @@ var ScopeLevel = asyncLocal.New[[]BaseTraceDetail]()
 
 // BaseTraceDetail 埋点明细（基类）
 type BaseTraceDetail struct {
+	TraceId        int64             // 上下文ID
+	AppId          int64             // 应用ID
+	AppName        string            // 应用名称
+	AppIp          string            // 应用IP
+	ParentAppName  string            // 上游应用
 	DetailId       int64             // 明细ID
 	ParentDetailId int64             // 父级明细ID
 	Level          int               // 当前层级（入口为0层）
