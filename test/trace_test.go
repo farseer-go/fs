@@ -21,7 +21,6 @@ func TestTrace(t *testing.T) {
 	assert.Equal(t, "Mq", eumCallType.Mq.ToString())
 	assert.Equal(t, "Elasticsearch", eumCallType.Elasticsearch.ToString())
 	assert.Equal(t, "Hand", eumCallType.Hand.ToString())
-	assert.Equal(t, "KeyLocation", eumCallType.KeyLocation.ToString())
 	assert.Equal(t, "Etcd", eumCallType.Etcd.ToString())
 	assert.Equal(t, "", eumCallType.Enum(9).ToString())
 
@@ -37,7 +36,7 @@ func TestTrace(t *testing.T) {
 	iManager.EntryWebApi("", "", "", "", nil, "", "")
 	iManager.EntryFSchedule("", 0, 0)
 	iManager.EntryMqConsumer("", "", "")
-	iManager.EntryQueueConsumer("")
+	iManager.EntryQueueConsumer("", "")
 	iManager.EntryTask("")
 	iManager.EntryWatchKey("")
 	iManager.TraceMq("", "", "iManager")
@@ -48,7 +47,6 @@ func TestTrace(t *testing.T) {
 	iManager.TraceEtcd("", "", 0)
 	iManager.TraceHand("")
 	iManager.TraceHttp("", "")
-	iManager.TraceKeyLocation("")
 	iManager.TraceMqSend("", "", "", "")
 	iManager.TraceRedis("", "", "")
 
@@ -60,14 +58,14 @@ func TestTrace(t *testing.T) {
 	iManager.TraceHand("").GetLevel()
 	iManager.TraceHand("").SetSql("", "", "", "", 0)
 
-	iManager.EntryQueueConsumer("").End()
-	iManager.EntryQueueConsumer("").Ignore()
-	iManager.EntryQueueConsumer("").GetList()
-	iManager.EntryQueueConsumer("").GetTraceId()
-	iManager.EntryQueueConsumer("").AddDetail(nil)
-	iManager.EntryQueueConsumer("").Error(nil)
-	iManager.EntryQueueConsumer("").GetStartTs()
-	iManager.EntryQueueConsumer("").SetBody("", 0, "")
+	iManager.EntryQueueConsumer("", "").End()
+	iManager.EntryQueueConsumer("", "").Ignore()
+	iManager.EntryQueueConsumer("", "").GetList()
+	iManager.EntryQueueConsumer("", "").GetTraceId()
+	iManager.EntryQueueConsumer("", "").AddDetail(nil)
+	iManager.EntryQueueConsumer("", "").Error(nil)
+	iManager.EntryQueueConsumer("", "").GetStartTs()
+	iManager.EntryQueueConsumer("", "").SetBody("", 0, "")
 }
 
 func testErr(baseTraceDetail trace.BaseTraceDetail) {
