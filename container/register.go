@@ -47,6 +47,12 @@ func IsRegister[TInterface any](iocName ...string) bool {
 	return defContainer.isRegister(interfaceType, name)
 }
 
+// IsRegisterType 判断类型是否注册过
+func IsRegisterType(interfaceType reflect.Type, iocName ...string) bool {
+	name := getIocName(iocName...)
+	return defContainer.isRegister(interfaceType, name)
+}
+
 func getIocName(iocName ...string) string {
 	if len(iocName) > 0 {
 		return iocName[0]
