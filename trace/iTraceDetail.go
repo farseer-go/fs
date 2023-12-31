@@ -13,6 +13,4 @@ type ITraceDetail interface {
 	GetLevel() int
 	// SetHttpRequest 设置Http请求出入参
 	SetHttpRequest(url string, head map[string]any, requestBody string, responseBody string, statusCode int)
-	// Desc 获取描述
-	Desc() (caption string, desc string)
 }

@@ -3,6 +3,7 @@ package trace
 import (
 	"fmt"
 	"github.com/farseer-go/fs/asyncLocal"
+	"github.com/farseer-go/fs/dateTime"
 	"github.com/farseer-go/fs/path"
 	"github.com/farseer-go/fs/trace/eumCallType"
 	"runtime"
@@ -15,18 +16,20 @@ var ScopeLevel = asyncLocal.New[[]BaseTraceDetail]()
 
 // BaseTraceDetail 埋点明细（基类）
 type BaseTraceDetail struct {
-	DetailId       int64            // 明细ID
-	ParentDetailId int64            // 父级明细ID
-	Level          int              // 当前层级（入口为0层）
-	MethodName     string           // 调用方法
-	CallType       eumCallType.Enum // 调用类型
-	Timeline       time.Duration    // 从入口开始统计（微秒）
-	UnTraceTs      time.Duration    // 上一次结束到现在开始之间未Trace的时间（微秒）
-	StartTs        int64            // 调用开始时间戳（微秒）
-	EndTs          int64            // 调用停止时间戳（微秒）
-	UseTs          time.Duration    // 总共使用时间微秒
-	ignore         bool             // 忽略这次的链路追踪
-	Exception      ExceptionStack   // 异常信息
+	DetailId       int64             // 明细ID
+	ParentDetailId int64             // 父级明细ID
+	Level          int               // 当前层级（入口为0层）
+	MethodName     string            // 调用方法
+	CallType       eumCallType.Enum  // 调用类型
+	Timeline       time.Duration     // 从入口开始统计（微秒）
+	UnTraceTs      time.Duration     // 上一次结束到现在开始之间未Trace的时间（微秒）
+	StartTs        int64             // 调用开始时间戳（微秒）
+	EndTs          int64             // 调用停止时间戳（微秒）
+	UseTs          time.Duration     // 总共使用时间微秒
+	UseDesc        string            // 总共使用时间（描述）
+	ignore         bool              // 忽略这次的链路追踪
+	Exception      *ExceptionStack   // 异常信息
+	CreateAt       dateTime.DateTime // 请求时间
 }
 
 type ExceptionStack struct {

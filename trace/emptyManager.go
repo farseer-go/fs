@@ -60,8 +60,8 @@ func (*emptyTraceContext) GetStartTs() int64                                    
 func (*emptyTraceContext) End()                                                            {}
 func (*emptyTraceContext) Ignore()                                                         {}
 func (*emptyTraceContext) AddDetail(detail ITraceDetail)                                   {}
-func (*emptyTraceContext) GetList() []ITraceDetail {
-	return []ITraceDetail{}
+func (*emptyTraceContext) GetList() []any {
+	return []any{}
 }
 
 type emptyTraceDetail struct{}
@@ -75,7 +75,4 @@ func (*emptyTraceDetail) Ignore()                          {}
 func (*emptyTraceDetail) SetSql(connectionString string, DbName string, tableName string, sql string, rowsAffected int64) {
 }
 func (*emptyTraceDetail) SetHttpRequest(url string, head map[string]any, requestBody string, responseBody string, statusCode int) {
-}
-func (*emptyTraceDetail) Desc() (caption string, desc string) {
-	return "", ""
 }

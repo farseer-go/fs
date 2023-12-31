@@ -10,7 +10,7 @@ type ITraceContext interface {
 	// GetStartTs 获取链路开启时间
 	GetStartTs() int64
 	// GetList 获取链路明细
-	GetList() []ITraceDetail
+	GetList() []any
 	// AddDetail 添加链路明细
 	AddDetail(detail ITraceDetail)
 	// Error 异常信息
