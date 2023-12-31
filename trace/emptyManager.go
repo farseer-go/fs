@@ -3,31 +3,31 @@ package trace
 type EmptyManager struct {
 }
 
-func (m *EmptyManager) EntryWebApi(domain string, path string, method string, contentType string, header map[string]string, requestBody string, requestIp string) ITraceContext {
+func (*EmptyManager) EntryWebApi(domain string, path string, method string, contentType string, header map[string]string, requestBody string, requestIp string) ITraceContext {
 	return &emptyTraceContext{}
 }
 
-func (m *EmptyManager) EntryMqConsumer(server string, queueName string, routingKey string) ITraceContext {
+func (*EmptyManager) EntryMqConsumer(server string, queueName string, routingKey string) ITraceContext {
 	return &emptyTraceContext{}
 }
 
-func (m *EmptyManager) EntryQueueConsumer(subscribeName string) ITraceContext {
+func (*EmptyManager) EntryQueueConsumer(subscribeName string) ITraceContext {
 	return &emptyTraceContext{}
 }
 
-func (m *EmptyManager) EntryTask(taskName string) ITraceContext {
+func (*EmptyManager) EntryTask(taskName string) ITraceContext {
 	return &emptyTraceContext{}
 }
 
-func (m *EmptyManager) EntryFSchedule(taskGroupName string, taskGroupId int64, taskId int64) ITraceContext {
+func (*EmptyManager) EntryFSchedule(taskGroupName string, taskGroupId int64, taskId int64) ITraceContext {
 	return &emptyTraceContext{}
 }
 func (*EmptyManager) EntryTaskGroup(taskName string, taskGroupName string, taskGroupId int64, taskId int64) ITraceContext {
 	return &emptyTraceContext{}
 }
 
-func (m *EmptyManager) EntryWatchKey(key string) ITraceContext { return &emptyTraceContext{} }
-func (m *EmptyManager) TraceMq(method string, server string, exchange string) ITraceDetail {
+func (*EmptyManager) EntryWatchKey(key string) ITraceContext { return &emptyTraceContext{} }
+func (*EmptyManager) TraceMq(method string, server string, exchange string) ITraceDetail {
 	return &emptyTraceDetail{}
 }
 func (*EmptyManager) GetCurTrace() ITraceContext  { return nil }
@@ -53,26 +53,29 @@ func (*EmptyManager) TraceHttp(method string, url string) ITraceDetail { return 
 
 type emptyTraceContext struct{}
 
-func (receiver *emptyTraceContext) Error(err error)                                                 {}
-func (receiver *emptyTraceContext) SetBody(requestBody string, statusCode int, responseBody string) {}
-func (receiver *emptyTraceContext) GetTraceId() int64                                               { return 0 }
-func (receiver *emptyTraceContext) GetStartTs() int64                                               { return 0 }
-func (receiver *emptyTraceContext) End()                                                            {}
-func (receiver *emptyTraceContext) Ignore()                                                         {}
-func (receiver *emptyTraceContext) AddDetail(detail ITraceDetail)                                   {}
-func (receiver *emptyTraceContext) GetList() []ITraceDetail {
+func (*emptyTraceContext) Error(err error)                                                 {}
+func (*emptyTraceContext) SetBody(requestBody string, statusCode int, responseBody string) {}
+func (*emptyTraceContext) GetTraceId() int64                                               { return 0 }
+func (*emptyTraceContext) GetStartTs() int64                                               { return 0 }
+func (*emptyTraceContext) End()                                                            {}
+func (*emptyTraceContext) Ignore()                                                         {}
+func (*emptyTraceContext) AddDetail(detail ITraceDetail)                                   {}
+func (*emptyTraceContext) GetList() []ITraceDetail {
 	return []ITraceDetail{}
 }
 
 type emptyTraceDetail struct{}
 
-func (receiver *emptyTraceDetail) GetLevel() int                    { return 0 }
-func (receiver *emptyTraceDetail) IsIgnore() bool                   { return true }
-func (receiver *emptyTraceDetail) ToString() string                 { return "" }
-func (receiver *emptyTraceDetail) GetTraceDetail() *BaseTraceDetail { return &BaseTraceDetail{} }
-func (receiver *emptyTraceDetail) End(err error)                    {}
-func (receiver *emptyTraceDetail) Ignore()                          {}
-func (receiver *emptyTraceDetail) SetSql(connectionString string, DbName string, tableName string, sql string, rowsAffected int64) {
+func (*emptyTraceDetail) GetLevel() int                    { return 0 }
+func (*emptyTraceDetail) IsIgnore() bool                   { return true }
+func (*emptyTraceDetail) ToString() string                 { return "" }
+func (*emptyTraceDetail) GetTraceDetail() *BaseTraceDetail { return &BaseTraceDetail{} }
+func (*emptyTraceDetail) End(err error)                    {}
+func (*emptyTraceDetail) Ignore()                          {}
+func (*emptyTraceDetail) SetSql(connectionString string, DbName string, tableName string, sql string, rowsAffected int64) {
 }
-func (receiver *emptyTraceDetail) SetHttpRequest(url string, head map[string]any, requestBody string, responseBody string, statusCode int) {
+func (*emptyTraceDetail) SetHttpRequest(url string, head map[string]any, requestBody string, responseBody string, statusCode int) {
+}
+func (*emptyTraceDetail) Desc() (caption string, desc string) {
+	return "", ""
 }

@@ -15,8 +15,6 @@ type IManager interface {
 	TraceEtcd(method string, key string, leaseID int64) ITraceDetail
 	// TraceHand 手动埋点
 	TraceHand(name string) ITraceDetail
-	// TraceKeyLocation 关键位置埋点
-	TraceKeyLocation(name string) ITraceDetail
 	// TraceMqSend send埋点
 	TraceMqSend(method string, server string, exchange string, routingKey string) ITraceDetail
 	// TraceMq open、create埋点
@@ -31,7 +29,7 @@ type IManager interface {
 	TraceHttp(method string, url string) ITraceDetail
 	// EntryTask 创建本地任务入口
 	EntryTask(taskName string) ITraceContext
-	// EntryTask 创建本地任务入口（调度中心专用）
+	// EntryTaskGroup 创建本地任务入口（调度中心专用）
 	EntryTaskGroup(taskName string, taskGroupName string, taskGroupId int64, taskId int64) ITraceContext
 	// EntryFSchedule 创建调度中心入口
 	EntryFSchedule(taskGroupName string, taskGroupId int64, taskId int64) ITraceContext

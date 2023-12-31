@@ -11,7 +11,6 @@ const (
 	Elasticsearch             // Elasticsearch
 	Etcd                      // Etcd
 	Hand                      // Hand
-	KeyLocation               // KeyLocation
 )
 
 func (receiver Enum) ToString() string {
@@ -30,8 +29,6 @@ func (receiver Enum) ToString() string {
 		return "Elasticsearch"
 	case Hand:
 		return "Hand"
-	case KeyLocation:
-		return "KeyLocation"
 	case Etcd:
 		return "Etcd"
 	}

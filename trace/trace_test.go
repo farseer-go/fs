@@ -34,12 +34,11 @@ func TestTrace(t *testing.T) {
 	eumCallType.Elasticsearch.ToString()
 	eumCallType.Etcd.ToString()
 	eumCallType.Hand.ToString()
-	eumCallType.KeyLocation.ToString()
 
 	detail := BaseTraceDetail{}
 	detail.End(fmt.Errorf(""))
 	detail.Ignore()
 	detail.GetLevel()
 	detail.IsIgnore()
-	detail.SetSql("", "", "", 0)
+	detail.SetSql("", "", "", "", 0)
 }
