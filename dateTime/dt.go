@@ -216,6 +216,9 @@ func (receiver *DateTime) Scan(val any) error {
 		ba = v
 	case string:
 		ba = []byte(v)
+	case time.Time:
+		receiver.time = v
+		return nil
 	default:
 		return errors.New(fmt.Sprint("Failed to unmarshal JSONB value:", val))
 	}
