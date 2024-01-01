@@ -49,7 +49,7 @@ func IsCollections(ty reflect.Type) bool {
 func IsStruct(ty reflect.Type) bool {
 	realType := GetRealType2(ty)
 	if realType.Kind() == reflect.Struct {
-		if IsCollections(realType) || realType.String() == "time.Time" {
+		if IsCollections(realType) || realType.String() == "time.Time" || realType.String() == "dateTime.DateTime" || realType.String() == "decimal.Decimal" {
 			return false
 		}
 		return true
@@ -130,4 +130,14 @@ func IsTime(ty reflect.Type) bool {
 // IsDateTime 是否为DateTime类型
 func IsDateTime(ty reflect.Type) bool {
 	return ty.String() == "dateTime.DateTime"
+}
+
+// IsNil 判断值是否为nil
+func IsNil(val reflect.Value) bool {
+	switch val.Kind() {
+	case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Pointer, reflect.Slice:
+		return val.IsNil()
+	default:
+		return false
+	}
 }
