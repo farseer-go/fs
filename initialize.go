@@ -8,6 +8,7 @@ import (
 	"github.com/farseer-go/fs/core"
 	"github.com/farseer-go/fs/dateTime"
 	"github.com/farseer-go/fs/flog"
+	"github.com/farseer-go/fs/fops"
 	"github.com/farseer-go/fs/modules"
 	"github.com/farseer-go/fs/net"
 	"github.com/farseer-go/fs/parse"
@@ -97,11 +98,9 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 		flog.LogBuffer <- fmt.Sprint("---------------------------------------")
 	}
 
-	// 先通过配置节点读
-	fopsServer := configure.GetString("Fops.Server")
-	if fopsServer != "" {
-		flog.LogBuffer <- fmt.Sprint("FOPS地址：" + flog.Blue(configure.GetFopsServer()))
-	}
+	// 定时向FOPS中心注册应用信息
+	fops.RegisterApp()
+
 	isInit = true
 }
 

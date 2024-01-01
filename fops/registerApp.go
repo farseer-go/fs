@@ -1,0 +1,65 @@
+package fops
+
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"github.com/farseer-go/fs/configure"
+	"github.com/farseer-go/fs/container"
+	"github.com/farseer-go/fs/core"
+	"github.com/farseer-go/fs/dateTime"
+	"github.com/farseer-go/fs/flog"
+	"github.com/farseer-go/fs/parse"
+	"github.com/farseer-go/fs/trace"
+	"net/http"
+	"time"
+)
+
+// RegisterApp 定时向FOPS中心注册应用信息
+func RegisterApp() {
+	// 先通过配置节点读
+	fopsServer := configure.GetString("Fops.Server")
+	if fopsServer != "" {
+		fopsServer = configure.GetFopsServer()
+		fmt.Printf("FOPS地址：" + flog.Blue(fopsServer))
+
+		// 定时向FOPS中心注册应用信息
+		go register()
+	}
+}
+
+type RegisterAppRequest struct {
+	StartupAt dateTime.DateTime // 应用启动时间
+	AppName   string            // 应用名称
+	HostName  string            // 主机名称
+	AppId     int64             // 应用ID
+	AppIp     string            // 应用IP
+	ProcessId int               // 进程Id
+}
+
+// 每隔3秒，上传当前应用信息
+func register() {
+	for range time.NewTicker(3 * time.Second).C {
+		bodyByte, _ := json.Marshal(RegisterAppRequest{StartupAt: core.StartupAt, AppName: core.AppName, HostName: core.HostName, AppId: core.AppId, AppIp: core.AppIp, ProcessId: core.ProcessId})
+		url := configure.GetFopsServer() + "apps/register"
+		newRequest, _ := http.NewRequest("POST", url, bytes.NewReader(bodyByte))
+		newRequest.Header.Set("Content-Type", "application/json")
+		// 链路追踪
+		if traceContext := container.Resolve[trace.IManager]().GetCurTrace(); traceContext != nil {
+			newRequest.Header.Set("Trace-Id", parse.ToString(traceContext.GetTraceId()))
+			newRequest.Header.Set("Trace-App-Name", core.AppName)
+		}
+		client := &http.Client{}
+		rsp, err := client.Do(newRequest)
+		if err != nil {
+			flog.Warningf("注册应用信息到%s失败：%s", url, err.Error())
+			continue
+		}
+
+		apiRsp := core.NewApiResponseByReader[any](rsp.Body)
+		if apiRsp.StatusCode != 200 {
+			flog.Warningf("注册应用信息到%s失败（%v）%s", url, rsp.StatusCode, apiRsp.StatusMessage)
+			continue
+		}
+	}
+}

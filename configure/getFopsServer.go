@@ -1,6 +1,8 @@
 package configure
 
-import "strings"
+import (
+	"strings"
+)
 
 // Fops服务地址
 var fopsServer string
