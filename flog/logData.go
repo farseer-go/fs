@@ -25,7 +25,7 @@ type LogData struct {
 	AppId   int64  // 应用ID
 	AppName string // 应用名称
 	AppIp   string // 应用IP
-	Id      int64  // 主键ID
+	LogId   int64  // 主键ID
 }
 
 func newLogData(logLevel eumLogLevel.Enum, content string, component string) *LogData {
@@ -33,7 +33,7 @@ func newLogData(logLevel eumLogLevel.Enum, content string, component string) *Lo
 	if t := trace.CurTraceContext.Get(); t != nil {
 		traceId = t.GetTraceId()
 	}
-	return &LogData{Content: content, CreateAt: dateTime.Now(), LogLevel: logLevel, Component: component, newLine: true, TraceId: traceId, AppId: core.AppId, AppName: core.AppName, AppIp: core.AppIp, Id: snowflake.GenerateId()}
+	return &LogData{Content: content, CreateAt: dateTime.Now(), LogLevel: logLevel, Component: component, newLine: true, TraceId: traceId, AppId: core.AppId, AppName: core.AppName, AppIp: core.AppIp, LogId: snowflake.GenerateId()}
 }
 
 //// 清除颜色
