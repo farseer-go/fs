@@ -79,7 +79,7 @@ func (r *fopsLoggerPersistent) upload(lstLog []*LogData) error {
 	client := &http.Client{}
 	rsp, err := client.Do(newRequest)
 	if err != nil {
-		return err
+		return fmt.Errorf("上传日志到%s失败：%s", url, err.Error())
 	}
 
 	apiRsp := core.NewApiResponseByReader[any](rsp.Body)
