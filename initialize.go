@@ -96,6 +96,12 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 		}
 		flog.LogBuffer <- fmt.Sprint("---------------------------------------")
 	}
+
+	// 先通过配置节点读
+	fopsServer := configure.GetString("Fops.Server")
+	if fopsServer != "" {
+		flog.LogBuffer <- fmt.Sprint("FOPS地址：" + flog.Blue(configure.GetFopsServer()))
+	}
 	isInit = true
 }
 

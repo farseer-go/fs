@@ -2,8 +2,16 @@ package configure
 
 import "strings"
 
+// Fops服务地址
+var fopsServer string
+
+// GetFopsServer 获取FOPS地址
 func GetFopsServer() string {
-	fopsServer := strings.ToLower(GetString("Fops.Server"))
+	if fopsServer != "" {
+		return fopsServer
+	}
+
+	fopsServer = strings.ToLower(GetString("Fops.Server"))
 	if !strings.HasPrefix(fopsServer, "http") {
 		panic("[farseer.yaml]Fops.Server配置不正确，示例：https://fops.fsgit.com")
 	}
