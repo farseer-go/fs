@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/farseer-go/fs/asyncLocal"
 	"github.com/farseer-go/fs/dateTime"
+	"github.com/farseer-go/fs/parse"
 	"github.com/farseer-go/fs/path"
 	"github.com/farseer-go/fs/trace/eumCallType"
 	"runtime"
@@ -16,6 +17,7 @@ var ScopeLevel = asyncLocal.New[[]BaseTraceDetail]()
 
 // BaseTraceDetail 埋点明细（基类）
 type BaseTraceDetail struct {
+	TraceIdN       string            // 上下文ID
 	TraceId        int64             // 上下文ID
 	AppId          int64             // 应用ID
 	AppName        string            // 应用名称
@@ -83,6 +85,9 @@ func (receiver *BaseTraceDetail) IsIgnore() bool {
 }
 func (receiver *BaseTraceDetail) GetLevel() int {
 	return receiver.Level
+}
+func (receiver *BaseTraceDetail) SetTraceIdN() {
+	receiver.TraceIdN = parse.ToString(receiver.TraceId)
 }
 
 var ComNames = []string{"/farseer-go/async/", "/farseer-go/cache/", "/farseer-go/cacheMemory/", "/farseer-go/collections/", "/farseer-go/data/", "/farseer-go/elasticSearch/", "/farseer-go/etcd/", "/farseer-go/eventBus/", "/farseer-go/fs/", "/farseer-go/linkTrace/", "/farseer-go/mapper/", "/farseer-go/queue/", "/farseer-go/rabbit/", "/farseer-go/redis/", "/farseer-go/redisStream/", "/farseer-go/tasks/", "/farseer-go/utils/", "/farseer-go/webapi/", "/src/reflect/", "/usr/local/go/src/", "gorm.io/"}
