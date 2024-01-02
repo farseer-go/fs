@@ -30,12 +30,12 @@ func UploadTrace(lstTraceContext any) error {
 	client := &http.Client{}
 	rsp, err := client.Do(newRequest)
 	if err != nil {
-		return fmt.Errorf("上传链路记录到%s失败：%s", url, err.Error())
+		return fmt.Errorf("上传链路记录到FOPS失败：%s", err.Error())
 	}
 
 	apiRsp := core.NewApiResponseByReader[any](rsp.Body)
 	if apiRsp.StatusCode != 200 {
-		return fmt.Errorf("上传链路记录到%s失败（%v）：%s", url, rsp.StatusCode, apiRsp.StatusMessage)
+		return fmt.Errorf("上传链路记录到FOPS失败（%v）：%s", rsp.StatusCode, apiRsp.StatusMessage)
 	}
 
 	return err

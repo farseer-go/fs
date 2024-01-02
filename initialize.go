@@ -80,12 +80,17 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 				isSuccess = false
 			}
 		}
-		flog.LogBuffer <- fmt.Sprint("---------------------------------------")
-
 		if !isSuccess {
 			//os.Exit(-1)
 			panic("健康检查失败")
 		}
+	}
+
+	// 定时向FOPS中心注册应用信息
+	fops.RegisterApp()
+	// 日志内容美化
+	if len(healthChecks) > 0 || configure.GetString("Fops.Server") != "" {
+		flog.LogBuffer <- fmt.Sprint("---------------------------------------")
 	}
 
 	// 加载callbackFnList，启动后才执行的模块
@@ -97,9 +102,6 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 		}
 		flog.LogBuffer <- fmt.Sprint("---------------------------------------")
 	}
-
-	// 定时向FOPS中心注册应用信息
-	fops.RegisterApp()
 
 	isInit = true
 }

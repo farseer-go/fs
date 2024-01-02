@@ -3,7 +3,6 @@ package fops
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"github.com/farseer-go/fs/configure"
 	"github.com/farseer-go/fs/container"
 	"github.com/farseer-go/fs/core"
@@ -21,20 +20,21 @@ func RegisterApp() {
 	fopsServer := configure.GetString("Fops.Server")
 	if fopsServer != "" {
 		fopsServer = configure.GetFopsServer()
-		fmt.Printf("FOPS地址：" + flog.Blue(fopsServer))
-
+		flog.LogBuffer <- flog.Green("【✓】") + "FOPS Center：" + flog.Blue(fopsServer)
 		// 定时向FOPS中心注册应用信息
 		go register()
 	}
 }
 
 type RegisterAppRequest struct {
-	StartupAt dateTime.DateTime // 应用启动时间
-	AppName   string            // 应用名称
-	HostName  string            // 主机名称
-	AppId     int64             // 应用ID
-	AppIp     string            // 应用IP
-	ProcessId int               // 进程Id
+	AppName     string            // 应用名称
+	AppId       int64             // 应用ID
+	AppIp       string            // 应用IP
+	HostName    string            // 主机名称
+	ProcessId   int               // 进程Id
+	StartupAt   dateTime.DateTime // 应用启动时间
+	CpuUsage    float64           // CPU百分比
+	MemoryUsage float64           // 内存百分比
 }
 
 // 每隔3秒，上传当前应用信息
@@ -52,13 +52,13 @@ func register() {
 		client := &http.Client{}
 		rsp, err := client.Do(newRequest)
 		if err != nil {
-			flog.Warningf("注册应用信息到%s失败：%s", url, err.Error())
+			flog.Warningf("注册应用信息到FOPS失败：%s", err.Error())
 			continue
 		}
 
 		apiRsp := core.NewApiResponseByReader[any](rsp.Body)
 		if apiRsp.StatusCode != 200 {
-			flog.Warningf("注册应用信息到%s失败（%v）%s", url, rsp.StatusCode, apiRsp.StatusMessage)
+			flog.Warningf("注册应用信息到FOPS失败（%v）%s", rsp.StatusCode, apiRsp.StatusMessage)
 			continue
 		}
 	}
