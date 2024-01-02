@@ -4,6 +4,7 @@ import (
 	"github.com/farseer-go/fs/core"
 	"github.com/farseer-go/fs/core/eumLogLevel"
 	"github.com/farseer-go/fs/dateTime"
+	"github.com/farseer-go/fs/parse"
 	"github.com/farseer-go/fs/snowflake"
 	"github.com/farseer-go/fs/trace"
 	"regexp"
@@ -21,11 +22,21 @@ type LogData struct {
 	Content   string
 	newLine   bool // 是否需要换行
 	// 上传到FOPS时使用
-	TraceId int64  // 上下文ID
-	AppId   int64  // 应用ID
-	AppName string // 应用名称
-	AppIp   string // 应用IP
-	LogId   int64  // 主键ID
+	TraceId  int64  // 上下文ID
+	TraceIdN string // 上下文ID
+	AppId    int64  // 应用ID
+	AppIdN   string // 应用ID
+	AppName  string // 应用名称
+	AppIp    string // 应用IP
+	LogId    int64  // 主键ID
+	LogIdN   string // 主键ID
+}
+
+// SetTraceIdN Int64转String（前端需要）
+func (receiver *LogData) SetTraceIdN() {
+	receiver.LogIdN = parse.ToString(receiver.LogId)
+	receiver.TraceIdN = parse.ToString(receiver.TraceId)
+	receiver.AppIdN = parse.ToString(receiver.AppId)
 }
 
 func newLogData(logLevel eumLogLevel.Enum, content string, component string) *LogData {

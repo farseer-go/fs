@@ -20,6 +20,7 @@ type BaseTraceDetail struct {
 	TraceIdN       string            // 上下文ID
 	TraceId        int64             // 上下文ID
 	AppId          int64             // 应用ID
+	AppIdN         string            // 应用ID
 	AppName        string            // 应用名称
 	AppIp          string            // 应用IP
 	ParentAppName  string            // 上游应用
@@ -88,6 +89,7 @@ func (receiver *BaseTraceDetail) GetLevel() int {
 }
 func (receiver *BaseTraceDetail) SetTraceIdN() {
 	receiver.TraceIdN = parse.ToString(receiver.TraceId)
+	receiver.AppIdN = parse.ToString(receiver.AppId)
 }
 
 var ComNames = []string{"/farseer-go/async/", "/farseer-go/cache/", "/farseer-go/cacheMemory/", "/farseer-go/collections/", "/farseer-go/data/", "/farseer-go/elasticSearch/", "/farseer-go/etcd/", "/farseer-go/eventBus/", "/farseer-go/fs/", "/farseer-go/linkTrace/", "/farseer-go/mapper/", "/farseer-go/queue/", "/farseer-go/rabbit/", "/farseer-go/redis/", "/farseer-go/redisStream/", "/farseer-go/tasks/", "/farseer-go/utils/", "/farseer-go/webapi/", "/src/reflect/", "/usr/local/go/src/", "gorm.io/"}
