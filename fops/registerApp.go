@@ -16,6 +16,9 @@ import (
 
 // RegisterApp 定时向FOPS中心注册应用信息
 func RegisterApp() {
+	if core.AppName == "fops" {
+		return
+	}
 	// 先通过配置节点读
 	fopsServer := configure.GetString("Fops.Server")
 	if fopsServer != "" {
@@ -39,7 +42,7 @@ type RegisterAppRequest struct {
 
 // 每隔3秒，上传当前应用信息
 func register() {
-	for range time.NewTicker(3 * time.Second).C {
+	for range time.NewTicker(20 * time.Second).C {
 		bodyByte, _ := json.Marshal(RegisterAppRequest{StartupAt: core.StartupAt, AppName: core.AppName, HostName: core.HostName, AppId: core.AppId, AppIp: core.AppIp, ProcessId: core.ProcessId})
 		url := configure.GetFopsServer() + "apps/register"
 		newRequest, _ := http.NewRequest("POST", url, bytes.NewReader(bodyByte))
