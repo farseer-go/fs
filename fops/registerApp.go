@@ -16,9 +16,6 @@ import (
 
 // RegisterApp 定时向FOPS中心注册应用信息
 func RegisterApp() {
-	if core.AppName == "fops" {
-		return
-	}
 	// 先通过配置节点读
 	fopsServer := configure.GetString("Fops.Server")
 	if fopsServer != "" {
