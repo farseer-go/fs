@@ -37,8 +37,8 @@ func GetEnum(name string) Enum {
 	return NoneLevel
 }
 
-func (r Enum) ToString() string {
-	switch r {
+func (receiver Enum) ToString() string {
+	switch receiver {
 	case Trace:
 		return "Trace"
 	case Debug:
@@ -51,20 +51,21 @@ func (r Enum) ToString() string {
 		return "Error"
 	case Critical:
 		return "Critical"
+	default:
+		return "None"
 	}
-	return "None"
 }
 
 // MarshalJSON to output non base64 encoded []byte
 // 此处不能用指针，否则json序列化时不执行
-func (d Enum) MarshalJSON() ([]byte, error) {
-	return json.Marshal(d.ToString())
+func (receiver Enum) MarshalJSON() ([]byte, error) {
+	return json.Marshal(receiver.ToString())
 }
 
 // UnmarshalJSON to deserialize []byte
-func (d *Enum) UnmarshalJSON(b []byte) error {
+func (receiver *Enum) UnmarshalJSON(b []byte) error {
 	var numStr string
 	err := json.Unmarshal(b, &numStr)
-	*d = GetEnum(numStr)
+	*receiver = GetEnum(numStr)
 	return err
 }
