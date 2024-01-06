@@ -36,10 +36,10 @@ func anyToNumber(source any, sourceKind reflect.Kind, defVal any, returnKind ref
 			return numberToNumber(reflect.ValueOf(source).Uint(), defVal, returnKind)
 		case reflect.Float32, reflect.Float64:
 			return numberToNumber(reflect.ValueOf(source).Float(), defVal, returnKind)
+		default:
+			return source
 		}
 	}
-	return source
-
 }
 
 func numberToNumber[T int | int8 | int16 | int32 | int64 | uint | uint8 | uint16 | uint32 | uint64 | float32 | float64](source T, defVal any, returnKind reflect.Kind) any {
@@ -68,6 +68,8 @@ func numberToNumber[T int | int8 | int16 | int32 | int64 | uint | uint8 | uint16
 		defVal = float32(source)
 	case reflect.Float64:
 		defVal = float64(source)
+	default:
+		return defVal
 	}
 	return defVal
 }

@@ -42,6 +42,8 @@ func equalTo1(source any, sourceKind reflect.Kind) bool {
 		result = source.(float32) == oneFloat32
 	case reflect.Float64:
 		result = source.(float64) == oneFloat64
+	default:
+		return result
 	}
 	return result
 }

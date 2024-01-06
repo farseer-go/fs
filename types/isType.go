@@ -60,12 +60,15 @@ func IsStruct(ty reflect.Type) bool {
 // IsGoBasicType 是否为Go内置基础类型
 func IsGoBasicType(ty reflect.Type) bool {
 	realType := GetRealType2(ty)
-	if realType != nil {
-		switch realType.Kind() {
-		case reflect.Bool, reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64,
-			reflect.Float32, reflect.Float64, reflect.Complex64, reflect.Complex128, reflect.String:
-			return true
-		}
+	if realType == nil {
+		return false
+	}
+
+	switch realType.Kind() {
+	case reflect.Bool, reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64,
+		reflect.Float32, reflect.Float64, reflect.Complex64, reflect.Complex128, reflect.String:
+		return true
+	default:
 		switch realType.String() {
 		case "time.Time":
 			return true

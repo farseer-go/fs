@@ -31,6 +31,8 @@ func numberToString(source any, defValue any, sourceKind reflect.Kind) any {
 		defValue = strconv.FormatFloat(float64(source.(float32)), 'g', 6, 64)
 	case reflect.Float64:
 		defValue = strconv.FormatFloat(source.(float64), 'g', 6, 64)
+	default:
+		return defValue
 	}
 	return defValue
 }

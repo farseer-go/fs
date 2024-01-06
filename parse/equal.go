@@ -34,6 +34,7 @@ func IsEqual[TValue any](val1, val2 TValue) bool {
 		return any(val1).(float64) == any(val2).(float64)
 	case reflect.Float32:
 		return any(val1).(float32) == any(val2).(float32)
+	default:
+		return false
 	}
-	return false
 }
