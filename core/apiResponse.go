@@ -19,7 +19,7 @@ type ApiResponse[TData any] struct {
 	// 耗时
 	ElapsedMilliseconds int64
 	// 链路追踪ID
-	TraceId int64
+	TraceId string
 	// 不同接口返回的值
 	Data TData
 }

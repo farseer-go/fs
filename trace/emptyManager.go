@@ -55,7 +55,7 @@ type emptyTraceContext struct{}
 
 func (*emptyTraceContext) Error(err error)                                                 {}
 func (*emptyTraceContext) SetBody(requestBody string, statusCode int, responseBody string) {}
-func (*emptyTraceContext) GetTraceId() int64                                               { return 0 }
+func (*emptyTraceContext) GetTraceId() string                                              { return "" }
 func (*emptyTraceContext) GetStartTs() int64                                               { return 0 }
 func (*emptyTraceContext) End()                                                            {}
 func (*emptyTraceContext) Ignore()                                                         {}
@@ -63,8 +63,8 @@ func (*emptyTraceContext) AddDetail(detail ITraceDetail)                        
 func (*emptyTraceContext) GetList() []any {
 	return []any{}
 }
-func (*emptyTraceContext) GetAppInfo() (int64, string, int64, string, string) {
-	return 0, "", 0, "", ""
+func (*emptyTraceContext) GetAppInfo() (string, string, string, string, string) {
+	return "", "", "", "", ""
 }
 
 type emptyTraceDetail struct{}

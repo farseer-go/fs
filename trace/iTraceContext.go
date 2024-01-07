@@ -6,7 +6,7 @@ type ITraceContext interface {
 	// SetBody 设置webapi的响应报文
 	SetBody(requestBody string, statusCode int, responseBody string)
 	// GetTraceId 获取traceId
-	GetTraceId() int64
+	GetTraceId() string
 	// GetStartTs 获取链路开启时间
 	GetStartTs() int64
 	// GetList 获取链路明细
@@ -18,5 +18,5 @@ type ITraceContext interface {
 	// Ignore 忽略这次的链路追踪
 	Ignore()
 	// GetAppInfo 获取应用信息
-	GetAppInfo() (int64, string, int64, string, string)
+	GetAppInfo() (string, string, string, string, string)
 }
