@@ -30,6 +30,19 @@ func Convert[T any](source any, defVal T) T {
 		return source.(T)
 	}
 
+	// 切片转切片
+	if sourceKind == reflect.Slice && returnKind == reflect.Slice {
+		arr := reflect.MakeSlice(defValType, 0, 0)
+		arrItemType := defValType.Elem()
+		arrSource := reflect.ValueOf(source)
+		for i := 0; i < arrSource.Len(); i++ {
+			item := arrSource.Index(i)
+			destVal := ConvertValue(item.Interface(), arrItemType)
+			arr = reflect.Append(arr, destVal)
+		}
+		return arr.Interface().(T)
+	}
+
 	// 数字转...
 	if isNumber(sourceKind) {
 		// 数字转数字

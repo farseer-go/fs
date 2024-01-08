@@ -95,6 +95,8 @@ func TestConvert(t *testing.T) {
 	assert.Equal(t, "true", parse.Convert(true, ""))
 	assert.Equal(t, "false", parse.Convert(false, ""))
 
+	assert.Equal(t, []float64{1, 2, 3}, parse.Convert([]int{1, 2, 3}, []float64{}))
+
 	t.Run("time.Time转time.Time", func(t *testing.T) {
 		time1 := time.Now()
 		time2 := parse.Convert(time1, time.UnixMilli(0))
@@ -164,11 +166,6 @@ func TestConvert(t *testing.T) {
 		assert.Equal(t, 9, dt.Month())
 		assert.Equal(t, 15, dt.Day())
 	})
-	//t.Run("string转List", func(t *testing.T) {
-	//	lst := collections.NewList(1, 2, 3)
-	//	lst2 := parse.Convert("1,2,3", collections.NewList[int]())
-	//	assert.Equal(t, lst.ToArray(), lst2.ToArray())
-	//})
 
 	t.Run("enum转uint8", func(t *testing.T) {
 		type Enum uint8
