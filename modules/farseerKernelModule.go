@@ -35,6 +35,7 @@ func (module FarseerKernelModule) PreInitialize() {
 
 	// 初始化时间轮
 	timingWheel.NewDefault(100*time.Millisecond, 60)
+	
 	// 注册空的链路实现
 	container.Register(func() trace.IManager { return &trace.EmptyManager{} })
 }

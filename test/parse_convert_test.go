@@ -202,4 +202,13 @@ func TestConvert(t *testing.T) {
 		assert.Equal(t, All2, parse.Convert(int32(66), Other2))
 		assert.Equal(t, All2, parse.Convert(66, Other2))
 	})
+
+	t.Run("字符串转enum", func(t *testing.T) {
+		type EnumUint8 uint8
+		const (
+			All   EnumUint8 = 66 // 全部
+			Other EnumUint8 = 33 // 全部
+		)
+		assert.Equal(t, Other, parse.Convert("33", All))
+	})
 }

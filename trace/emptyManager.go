@@ -41,8 +41,7 @@ func (*EmptyManager) TraceElasticsearch(method string, IndexName string, Aliases
 func (*EmptyManager) TraceEtcd(method string, key string, leaseID int64) ITraceDetail {
 	return &emptyTraceDetail{}
 }
-func (*EmptyManager) TraceHand(name string) ITraceDetail        { return &emptyTraceDetail{} }
-func (*EmptyManager) TraceKeyLocation(name string) ITraceDetail { return &emptyTraceDetail{} }
+func (*EmptyManager) TraceHand(name string) ITraceDetail { return &emptyTraceDetail{} }
 func (*EmptyManager) TraceMqSend(method string, server string, exchange string, routingKey string) ITraceDetail {
 	return &emptyTraceDetail{}
 }

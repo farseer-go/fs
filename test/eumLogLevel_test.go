@@ -1,6 +1,7 @@
 package test
 
 import (
+	"encoding/json"
 	"github.com/farseer-go/fs/core/eumLogLevel"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -30,4 +31,9 @@ func TestEumLogLevel(t *testing.T) {
 	assert.Equal(t, eumLogLevel.Warning, eumLogLevel.GetEnum("Warning"))
 	assert.Equal(t, eumLogLevel.Warning, eumLogLevel.GetEnum("Warn"))
 
+	var e = eumLogLevel.Debug
+	b, _ := json.Marshal(e)
+	e = eumLogLevel.Information
+	_ = e.UnmarshalJSON(b)
+	assert.True(t, e == eumLogLevel.Debug)
 }

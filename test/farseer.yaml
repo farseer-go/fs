@@ -16,6 +16,8 @@ TestGetSubNodes:
       - "TestName=Ex4,RoutingKey=,TestType=fanout,UseConfirmModel=false,AutoCreateTest=true"
 WebApi:
   Url: ":888"
+Fops:
+  Server: "https://fops.fsgit.com"
 Log:
   Default:
     LogLevel: "info"
