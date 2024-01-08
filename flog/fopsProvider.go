@@ -8,6 +8,9 @@ import (
 	"github.com/farseer-go/fs/core"
 	"github.com/farseer-go/fs/core/eumLogLevel"
 	"github.com/farseer-go/fs/dateTime"
+	"github.com/farseer-go/fs/parse"
+	"github.com/farseer-go/fs/snowflake"
+	"github.com/farseer-go/fs/trace"
 	"net/http"
 	"time"
 )
@@ -35,7 +38,15 @@ func (r *fopsLoggerPersistent) IsEnabled(logLevel eumLogLevel.Enum) bool {
 
 func (r *fopsLoggerPersistent) Log(LogLevel eumLogLevel.Enum, log *LogData, exception error) {
 	if LogLevel != eumLogLevel.NoneLevel {
+		// 上传到FOPS时需要
+		if t := trace.CurTraceContext.Get(); t != nil {
+			log.TraceId = t.GetTraceId()
+		}
 		log.Content = mustCompile.ReplaceAllString(log.Content, "")
+		log.AppId = parse.ToString(core.AppId)
+		log.AppName = core.AppName
+		log.AppIp = core.AppIp
+		log.LogId = parse.ToString(snowflake.GenerateId())
 		r.queue <- log
 	}
 }
