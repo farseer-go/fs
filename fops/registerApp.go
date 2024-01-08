@@ -11,19 +11,24 @@ import (
 	"github.com/farseer-go/fs/parse"
 	"github.com/farseer-go/fs/trace"
 	"net/http"
+	"sync"
 	"time"
 )
 
+var onceRegisterApp sync.Once
+
 // RegisterApp 定时向FOPS中心注册应用信息
 func RegisterApp() {
-	// 先通过配置节点读
-	fopsServer := configure.GetString("Fops.Server")
-	if fopsServer != "" {
-		fopsServer = configure.GetFopsServer()
-		flog.LogBuffer <- flog.Green("【✓】") + "FOPS Center：" + flog.Blue(fopsServer)
-		// 定时向FOPS中心注册应用信息
-		go register()
-	}
+	onceRegisterApp.Do(func() {
+		// 先通过配置节点读
+		fopsServer := configure.GetString("Fops.Server")
+		if fopsServer != "" {
+			fopsServer = configure.GetFopsServer()
+			flog.LogBuffer <- flog.Green("【✓】") + "FOPS Center：" + flog.Blue(fopsServer)
+			// 定时向FOPS中心注册应用信息
+			go register()
+		}
+	})
 }
 
 type RegisterAppRequest struct {
@@ -39,8 +44,9 @@ type RegisterAppRequest struct {
 
 // 每隔3秒，上传当前应用信息
 func register() {
+	registerAppRequest := RegisterAppRequest{StartupAt: core.StartupAt, AppName: core.AppName, HostName: core.HostName, AppId: core.AppId, AppIp: core.AppIp, ProcessId: core.ProcessId}
 	for {
-		bodyByte, _ := json.Marshal(RegisterAppRequest{StartupAt: core.StartupAt, AppName: core.AppName, HostName: core.HostName, AppId: core.AppId, AppIp: core.AppIp, ProcessId: core.ProcessId})
+		bodyByte, _ := json.Marshal(registerAppRequest)
 		url := configure.GetFopsServer() + "apps/register"
 		newRequest, _ := http.NewRequest("POST", url, bytes.NewReader(bodyByte))
 		newRequest.Header.Set("Content-Type", "application/json")

@@ -18,6 +18,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -33,19 +34,22 @@ type callbackFn struct {
 	name string
 }
 
+var onceInit sync.Once
+
 // Initialize 初始化框架
 func Initialize[TModule modules.FarseerModule](appName string) {
 	sw := stopwatch.StartNew()
 	Context = context.Background()
-	core.AppName = appName
-	core.ProcessId = os.Getppid()
-	core.HostName, _ = os.Hostname()
-	core.StartupAt = dateTime.Now()
-	rand.Seed(time.Now().UnixNano())
-
-	snowflake.Init(parse.HashCode64(core.HostName), rand.Int63n(32))
-	core.AppId = snowflake.GenerateId()
-	core.AppIp = net.GetIp()
+	onceInit.Do(func() {
+		rand.Seed(time.Now().UnixNano())
+		core.AppName = appName
+		core.ProcessId = os.Getppid()
+		core.HostName, _ = os.Hostname()
+		core.StartupAt = dateTime.Now()
+		snowflake.Init(parse.HashCode64(core.HostName), rand.Int63n(32))
+		core.AppId = snowflake.GenerateId()
+		core.AppIp = net.GetIp()
+	})
 
 	flog.LogBuffer <- fmt.Sprint("AppName： ", flog.Colors[2](core.AppName))
 	flog.LogBuffer <- fmt.Sprint("AppID：   ", flog.Colors[2](core.AppId))
