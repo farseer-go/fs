@@ -17,7 +17,7 @@ func TestConfigureFSEnv(t *testing.T) {
 }
 
 func TestGetArray(t *testing.T) {
-	fs.Initialize[modules.FarseerKernelModule]("unit test")
+	//fs.Initialize[modules.FarseerKernelModule]("unit test")
 	assert.Equal(t, "", configure.GetString("a.b.c"))
 	configure.SetDefault("a.b.c", "123")
 	assert.Equal(t, "123", configure.GetString("a.b.c"))
@@ -30,7 +30,7 @@ func TestGetArray(t *testing.T) {
 }
 
 func TestConfigureGet(t *testing.T) {
-	fs.Initialize[modules.FarseerKernelModule]("unit test")
+	//fs.Initialize[modules.FarseerKernelModule]("unit test")
 	arr := configure.GetStrings("Database.default")
 	assert.Equal(t, "DataType=mysql", arr[0])
 	assert.Equal(t, "PoolMaxSize=50", arr[1])
