@@ -34,8 +34,8 @@ func TestTrace(t *testing.T) {
 	// EmptyManager
 	iManager := container.Resolve[trace.IManager]()
 	iManager.EntryWebApi("", "", "", "", nil, "", "")
-	iManager.EntryFSchedule("", 0, 0)
-	iManager.EntryTaskGroup("", "", 0, 0)
+	iManager.EntryFSchedule("", 0, nil)
+	iManager.EntryTaskGroup("", "", 0)
 	iManager.EntryMqConsumer("", "", "")
 	iManager.EntryQueueConsumer("", "")
 	iManager.EntryTask("")

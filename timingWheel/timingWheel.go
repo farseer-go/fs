@@ -2,7 +2,7 @@ package timingWheel
 
 import (
 	"context"
-	"github.com/farseer-go/fs/snowflake"
+	"github.com/farseer-go/fs/sonyflake"
 	"math"
 	"strconv"
 	"strings"
@@ -77,7 +77,7 @@ func (receiver *timingWheel) Add(d time.Duration, opts ...OpOption) *Timer {
 	}
 
 	t := &Timer{
-		Id:                snowflake.GenerateId(),
+		Id:                sonyflake.GenerateId(),
 		C:                 make(chan time.Time, 1),
 		duration:          d,
 		remainingDuration: 0,

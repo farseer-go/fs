@@ -13,6 +13,7 @@ import (
 	"github.com/farseer-go/fs/net"
 	"github.com/farseer-go/fs/parse"
 	"github.com/farseer-go/fs/snowflake"
+	"github.com/farseer-go/fs/sonyflake"
 	"github.com/farseer-go/fs/stopwatch"
 	"math/rand"
 	"os"
@@ -47,7 +48,7 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 		core.HostName, _ = os.Hostname()
 		core.StartupAt = dateTime.Now()
 		snowflake.Init(parse.HashCode64(core.HostName), rand.Int63n(32))
-		core.AppId = snowflake.GenerateId()
+		core.AppId = sonyflake.GenerateId()
 		core.AppIp = net.GetIp()
 	})
 

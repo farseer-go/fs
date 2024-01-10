@@ -9,7 +9,7 @@ import (
 	"github.com/farseer-go/fs/core/eumLogLevel"
 	"github.com/farseer-go/fs/dateTime"
 	"github.com/farseer-go/fs/parse"
-	"github.com/farseer-go/fs/snowflake"
+	"github.com/farseer-go/fs/sonyflake"
 	"github.com/farseer-go/fs/trace"
 	"net/http"
 	"time"
@@ -46,7 +46,7 @@ func (r *fopsLoggerPersistent) Log(LogLevel eumLogLevel.Enum, log *LogData, exce
 		log.AppId = parse.ToString(core.AppId)
 		log.AppName = core.AppName
 		log.AppIp = core.AppIp
-		log.LogId = parse.ToString(snowflake.GenerateId())
+		log.LogId = parse.ToString(sonyflake.GenerateId())
 		r.queue <- log
 	}
 }
