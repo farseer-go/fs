@@ -19,7 +19,7 @@ func (*EmptyManager) EntryTask(taskName string) ITraceContext {
 	return &emptyTraceContext{}
 }
 
-func (*EmptyManager) EntryFSchedule(taskGroupName string, taskId int64) ITraceContext {
+func (*EmptyManager) EntryFSchedule(taskGroupName string, taskId int64, data map[string]string) ITraceContext {
 	return &emptyTraceContext{}
 }
 func (*EmptyManager) EntryTaskGroup(taskName string, taskGroupName string, taskId int64) ITraceContext {
