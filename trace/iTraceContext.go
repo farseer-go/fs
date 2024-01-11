@@ -19,4 +19,6 @@ type ITraceContext interface {
 	Ignore()
 	// GetAppInfo 获取应用信息
 	GetAppInfo() (string, string, string, string, string)
+	// GetTraceLevel 得到当前链路层
+	GetTraceLevel() int
 }

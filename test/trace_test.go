@@ -65,6 +65,7 @@ func TestTrace(t *testing.T) {
 	iManager.EntryQueueConsumer("", "").GetList()
 	iManager.EntryQueueConsumer("", "").GetAppInfo()
 	iManager.EntryQueueConsumer("", "").GetTraceId()
+	iManager.EntryQueueConsumer("", "").GetTraceLevel()
 	iManager.EntryQueueConsumer("", "").AddDetail(nil)
 	iManager.EntryQueueConsumer("", "").Error(nil)
 	iManager.EntryQueueConsumer("", "").GetStartTs()
