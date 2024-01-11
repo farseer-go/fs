@@ -1,6 +1,7 @@
 package parse
 
 import (
+	"encoding/json"
 	"github.com/farseer-go/fs/dateTime"
 	"github.com/farseer-go/fs/types"
 	"reflect"
@@ -70,7 +71,14 @@ func Convert[T any](source any, defVal T) T {
 
 	// 字符串转...
 	if isString(sourceKind) {
-		strSource := source.(string)
+		var strSource string
+		if sourceType.String() == "json.Number" {
+			jsonNumber := source.(json.Number)
+			strSource = string(jsonNumber)
+		} else {
+			strSource = source.(string)
+		}
+
 		// bool
 		if isBool(returnKind) {
 			var result any = strings.EqualFold(strSource, "true")
