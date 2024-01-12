@@ -44,6 +44,9 @@ type RegisterAppRequest struct {
 
 // 每隔3秒，上传当前应用信息
 func register() {
+	if core.AppName == "fops" {
+		<-time.NewTicker(3 * time.Second).C
+	}
 	registerAppRequest := RegisterAppRequest{StartupAt: core.StartupAt, AppName: core.AppName, HostName: core.HostName, AppId: core.AppId, AppIp: core.AppIp, ProcessId: core.ProcessId}
 	for {
 		bodyByte, _ := json.Marshal(registerAppRequest)
