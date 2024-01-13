@@ -22,7 +22,7 @@ func ListAdd(lstValue reflect.Value, item any) {
 	}
 }
 
-// GetListItemArrayType 获取List的原始数组
+// GetListItemArrayType 获取List的原始数组类型
 func GetListItemArrayType(lstType reflect.Type) reflect.Type {
 	sourceField, _ := lstType.FieldByName("source")
 	return sourceField.Type.Elem()
@@ -34,7 +34,7 @@ func GetListItemType(lstType reflect.Type) reflect.Type {
 	return sourceField.Type.Elem().Elem()
 }
 
-func ListToArray(lstValue reflect.Value) []any {
+func GetListToArray(lstValue reflect.Value) []any {
 	arrValue := lstValue.MethodByName("ToArray").Call(nil)[0]
 	var items []any
 	for i := 0; i < arrValue.Len(); i++ {
@@ -42,6 +42,12 @@ func ListToArray(lstValue reflect.Value) []any {
 		items = append(items, item)
 	}
 	return items
+}
+
+// 获取Dictionary的map元素
+func GetDictionaryToMap(lstValue reflect.Value) any {
+	mapValue := lstValue.MethodByName("ToMap").Call(nil)[0]
+	return mapValue
 }
 
 // GetPageList 获取collections.PageList的元素
