@@ -43,20 +43,3 @@ func GetListToArray(lstValue reflect.Value) []any {
 	}
 	return items
 }
-
-// 获取Dictionary的map元素
-func GetDictionaryToMap(lstValue reflect.Value) any {
-	mapValue := lstValue.MethodByName("ToMap").Call(nil)[0]
-	return mapValue
-}
-
-// GetPageList 获取collections.PageList的元素
-func GetPageList(pageList any) (any, int64) {
-	pageListValueOf := reflect.ValueOf(pageList)
-	if _, success := IsPageList(pageListValueOf); !success {
-		panic("ToPageList的入参必须是collections.PageList类型")
-	}
-	listValueOf := pageListValueOf.FieldByName("List")
-	recordCountValueOf := pageListValueOf.FieldByName("RecordCount")
-	return listValueOf.Interface(), recordCountValueOf.Interface().(int64)
-}
