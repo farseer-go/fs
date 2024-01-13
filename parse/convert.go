@@ -11,6 +11,11 @@ import (
 
 // ConvertValue 通用的类型转换
 func ConvertValue(source any, defValType reflect.Type) reflect.Value {
+	// any类型，则直接返回
+	if defValType.Kind() == reflect.Interface {
+		return reflect.ValueOf(source)
+	}
+
 	defVal := reflect.New(defValType).Elem().Interface()
 	val := Convert(source, defVal)
 	return reflect.ValueOf(val)
@@ -21,7 +26,6 @@ func Convert[T any](source any, defVal T) T {
 	if source == nil {
 		return defVal
 	}
-
 	sourceType := reflect.TypeOf(source)
 	sourceKind := sourceType.Kind()
 	defValType := reflect.TypeOf(defVal)
