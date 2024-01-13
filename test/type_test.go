@@ -101,7 +101,7 @@ func TestType(t *testing.T) {
 		types.GetListItemType(nil)
 	})
 	assert.Panics(t, func() {
-		types.ListToArray(reflect.ValueOf(""))
+		types.GetListToArray(reflect.ValueOf(""))
 	})
 	assert.Panics(t, func() {
 		types.GetPageList(nil)
