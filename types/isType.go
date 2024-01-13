@@ -34,10 +34,20 @@ func IsDictionary(val reflect.Value) (reflect.Type, bool) {
 	return realType, strings.HasPrefix(realType.String(), "collections.Dictionary[")
 }
 
+// IsDictionaryByType 判断类型是否为Dictionary
+func IsDictionaryByType(realType reflect.Type) bool {
+	return strings.HasPrefix(realType.String(), "collections.Dictionary[")
+}
+
 // IsPageList 判断类型是否为PageList
 func IsPageList(val reflect.Value) (reflect.Type, bool) {
 	realType := GetRealType(val)
 	return realType, strings.HasPrefix(realType.String(), "collections.PageList[")
+}
+
+// IsPageListByType 判断类型是否为PageList
+func IsPageListByType(realType reflect.Type) bool {
+	return strings.HasPrefix(realType.String(), "collections.PageList[")
 }
 
 // IsCollections 是否为集合
@@ -70,7 +80,7 @@ func IsGoBasicType(ty reflect.Type) bool {
 		return true
 	default:
 		switch realType.String() {
-		case "time.Time":
+		case "time.Time", "decimal.Decimal", "dateTime.DateTime":
 			return true
 		}
 	}
