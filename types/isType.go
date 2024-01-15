@@ -151,6 +151,6 @@ func IsNil(val reflect.Value) bool {
 	case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Pointer, reflect.Slice:
 		return val.IsNil()
 	default:
-		return false
+		return false //return !val.IsValid()
 	}
 }
