@@ -186,6 +186,13 @@ func Convert[T any](source any, defVal T) T {
 			var dt any = dateTime.New(source.(time.Time))
 			return dt.(T)
 		}
+
+		// 转string
+		if isString(returnKind) {
+			t := source.(time.Time)
+			var str any = t.Format("2006-01-02 15:04:05")
+			return str.(T)
+		}
 	}
 
 	// DateTime转...
@@ -200,6 +207,13 @@ func Convert[T any](source any, defVal T) T {
 		// 转DateTime
 		if types.IsDateTime(defValType) {
 			return source.(T)
+		}
+
+		// 转string
+		if isString(returnKind) {
+			d := source.(dateTime.DateTime)
+			var str any = d.ToString("yyyy-MM-dd HH:mm:ss")
+			return str.(T)
 		}
 	}
 	return defVal
