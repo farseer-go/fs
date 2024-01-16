@@ -15,6 +15,8 @@ type IManager interface {
 	TraceEtcd(method string, key string, leaseID int64) ITraceDetail
 	// TraceHand 手动埋点
 	TraceHand(name string) ITraceDetail
+	// TraceEventPublish 事件发布
+	TraceEventPublish(eventName string) ITraceDetail
 	// TraceMqSend send埋点
 	TraceMqSend(method string, server string, exchange string, routingKey string) ITraceDetail
 	// TraceMq open、create埋点
@@ -23,6 +25,8 @@ type IManager interface {
 	EntryMqConsumer(server string, queueName string, routingKey string) ITraceContext
 	// EntryQueueConsumer 创建Queue消费入口
 	EntryQueueConsumer(queueName, subscribeName string) ITraceContext
+	// EntryEventConsumer 创建Event消费入口
+	EntryEventConsumer(eventName, subscribeName string) ITraceContext
 	// TraceRedis Redis埋点
 	TraceRedis(method string, key string, field string) ITraceDetail
 	// TraceHttp http埋点

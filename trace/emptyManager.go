@@ -10,11 +10,12 @@ func (*EmptyManager) EntryWebApi(domain string, path string, method string, cont
 func (*EmptyManager) EntryMqConsumer(server string, queueName string, routingKey string) ITraceContext {
 	return &emptyTraceContext{}
 }
-
 func (*EmptyManager) EntryQueueConsumer(queueName, subscribeName string) ITraceContext {
 	return &emptyTraceContext{}
 }
-
+func (*EmptyManager) EntryEventConsumer(eventName, subscribeName string) ITraceContext {
+	return &emptyTraceContext{}
+}
 func (*EmptyManager) EntryTask(taskName string) ITraceContext {
 	return &emptyTraceContext{}
 }
@@ -41,7 +42,8 @@ func (*EmptyManager) TraceElasticsearch(method string, IndexName string, Aliases
 func (*EmptyManager) TraceEtcd(method string, key string, leaseID int64) ITraceDetail {
 	return &emptyTraceDetail{}
 }
-func (*EmptyManager) TraceHand(name string) ITraceDetail { return &emptyTraceDetail{} }
+func (*EmptyManager) TraceHand(name string) ITraceDetail              { return &emptyTraceDetail{} }
+func (*EmptyManager) TraceEventPublish(eventName string) ITraceDetail { return &emptyTraceDetail{} }
 func (*EmptyManager) TraceMqSend(method string, server string, exchange string, routingKey string) ITraceDetail {
 	return &emptyTraceDetail{}
 }
