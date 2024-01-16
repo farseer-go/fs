@@ -26,7 +26,7 @@ type IManager interface {
 	// EntryQueueConsumer 创建Queue消费入口
 	EntryQueueConsumer(queueName, subscribeName string) ITraceContext
 	// EntryEventConsumer 创建Event消费入口
-	EntryEventConsumer(eventName, subscribeName string) ITraceContext
+	EntryEventConsumer(server, eventName, subscribeName string) ITraceContext
 	// TraceRedis Redis埋点
 	TraceRedis(method string, key string, field string) ITraceDetail
 	// TraceHttp http埋点

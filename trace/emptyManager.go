@@ -13,7 +13,7 @@ func (*EmptyManager) EntryMqConsumer(server string, queueName string, routingKey
 func (*EmptyManager) EntryQueueConsumer(queueName, subscribeName string) ITraceContext {
 	return &emptyTraceContext{}
 }
-func (*EmptyManager) EntryEventConsumer(eventName, subscribeName string) ITraceContext {
+func (*EmptyManager) EntryEventConsumer(server, eventName, subscribeName string) ITraceContext {
 	return &emptyTraceContext{}
 }
 func (*EmptyManager) EntryTask(taskName string) ITraceContext {
