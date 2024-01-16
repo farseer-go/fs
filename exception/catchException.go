@@ -19,8 +19,7 @@ func Try(fn func()) (catch *catchException) {
 			case RefuseException, WebException:
 			default:
 				// 如果使用了链路追踪，则记录异常
-				traceContext := trace.CurTraceContext.Get()
-				if traceContext != nil {
+				if traceContext := trace.CurTraceContext.Get(); traceContext != nil {
 					traceContext.Error(fmt.Errorf("%s", catch.exp))
 				}
 			}
