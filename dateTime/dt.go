@@ -13,6 +13,24 @@ type DateTime struct {
 	time time.Time
 }
 
+func Parse(layout, value string) (DateTime, error) {
+	layout = strings.ReplaceAll(layout, "yyyy", "2006")
+	layout = strings.ReplaceAll(layout, "yy", "06")
+	layout = strings.ReplaceAll(layout, "MM", "01")
+	layout = strings.ReplaceAll(layout, "dd", "02")
+	layout = strings.ReplaceAll(layout, "HH", "15")
+	layout = strings.ReplaceAll(layout, "mm", "04")
+	layout = strings.ReplaceAll(layout, "ss", "05")
+	layout = strings.ReplaceAll(layout, "ffffff", "000000")
+	layout = strings.ReplaceAll(layout, "fff", "000")
+
+	date, err := time.Parse(layout, value)
+	if err != nil {
+		return DateTime{}, err
+	}
+	return New(date), err
+}
+
 // Now 当前时间
 func Now() DateTime {
 	return DateTime{
