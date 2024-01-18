@@ -2,7 +2,6 @@ package trace
 
 import (
 	"fmt"
-	"github.com/farseer-go/fs/asyncLocal"
 	"github.com/farseer-go/fs/dateTime"
 	"github.com/farseer-go/fs/path"
 	"github.com/farseer-go/fs/trace/eumCallType"
@@ -10,9 +9,6 @@ import (
 	"strings"
 	"time"
 )
-
-// ScopeLevel 层级列表
-var ScopeLevel = asyncLocal.New[[]BaseTraceDetail]()
 
 // BaseTraceDetail 埋点明细（基类）
 type BaseTraceDetail struct {
