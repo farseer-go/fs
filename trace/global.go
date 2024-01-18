@@ -12,8 +12,10 @@ var CurTraceContext = asyncLocal.New[ITraceContext]()
 var detailComment = asyncLocal.New[string]()
 
 // SetComment 添加操作的注释
-func SetComment(cmt string) {
-	detailComment.Set(cmt)
+func SetComment(cmt ...string) {
+	if len(cmt) > 0 {
+		detailComment.Set(cmt[0])
+	}
 }
 
 // ClearComment 移除注释
