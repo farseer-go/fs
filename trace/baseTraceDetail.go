@@ -25,6 +25,7 @@ type BaseTraceDetail struct {
 	DetailId       string            // 明细ID
 	ParentDetailId string            // 父级明细ID
 	Level          int               // 当前层级（入口为0层）
+	Comment        string            // 调用注释
 	MethodName     string            // 调用方法
 	CallType       eumCallType.Enum  // 调用类型
 	Timeline       time.Duration     // 从入口开始统计（微秒）
