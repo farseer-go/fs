@@ -5,6 +5,20 @@ import (
 	"strings"
 )
 
+const (
+	ListTypeString              = "collections.List["
+	DictionaryTypeString        = "collections.Dictionary["
+	PageListTypeString          = "collections.PageList["
+	CollectionsTypeString       = "github.com/farseer-go/collections"
+	CollectionsPrefixTypeString = "collections."
+	DatetimeString              = "dateTime.DateTime"
+	TimeString                  = "time.Time"
+	DecimalString               = "decimal.Decimal"
+	DomainSetString             = "data.DomainSet["
+	TableSetString              = "data.TableSet["
+	IndexSetString              = "elasticSearch.IndexSet["
+)
+
 // IsSlice 是否为切片类型
 func IsSlice(val reflect.Value) (reflect.Type, bool) {
 	realType := GetRealType(val)
@@ -20,46 +34,46 @@ func IsMap(val reflect.Value) (reflect.Type, bool) {
 // IsList 判断类型是否为List
 func IsList(val reflect.Value) (reflect.Type, bool) {
 	realType := GetRealType(val)
-	return realType, strings.HasPrefix(realType.String(), "collections.List[")
+	return realType, strings.HasPrefix(realType.String(), ListTypeString)
 }
 
 // IsListByType 判断类型是否为List
 func IsListByType(realType reflect.Type) (reflect.Type, bool) {
-	return realType, strings.HasPrefix(realType.String(), "collections.List[")
+	return realType, strings.HasPrefix(realType.String(), ListTypeString)
 }
 
 // IsDictionary 判断类型是否为Dictionary
 func IsDictionary(val reflect.Value) (reflect.Type, bool) {
 	realType := GetRealType(val)
-	return realType, strings.HasPrefix(realType.String(), "collections.Dictionary[")
+	return realType, strings.HasPrefix(realType.String(), DictionaryTypeString)
 }
 
 // IsDictionaryByType 判断类型是否为Dictionary
 func IsDictionaryByType(realType reflect.Type) bool {
-	return strings.HasPrefix(realType.String(), "collections.Dictionary[")
+	return strings.HasPrefix(realType.String(), DictionaryTypeString)
 }
 
 // IsPageList 判断类型是否为PageList
 func IsPageList(val reflect.Value) (reflect.Type, bool) {
 	realType := GetRealType(val)
-	return realType, strings.HasPrefix(realType.String(), "collections.PageList[")
+	return realType, strings.HasPrefix(realType.String(), PageListTypeString)
 }
 
 // IsPageListByType 判断类型是否为PageList
 func IsPageListByType(realType reflect.Type) bool {
-	return strings.HasPrefix(realType.String(), "collections.PageList[")
+	return strings.HasPrefix(realType.String(), PageListTypeString)
 }
 
 // IsCollections 是否为集合
 func IsCollections(ty reflect.Type) bool {
-	return strings.HasPrefix(ty.String(), "collections.")
+	return strings.HasPrefix(ty.String(), CollectionsPrefixTypeString)
 }
 
 // IsStruct 是否为Struct
 func IsStruct(ty reflect.Type) bool {
 	realType := GetRealType2(ty)
 	if realType.Kind() == reflect.Struct {
-		if IsCollections(realType) || realType.String() == "time.Time" || realType.String() == "dateTime.DateTime" || realType.String() == "decimal.Decimal" {
+		if IsCollections(realType) || realType.String() == TimeString || realType.String() == DatetimeString || realType.String() == DecimalString {
 			return false
 		}
 		return true
@@ -80,7 +94,7 @@ func IsGoBasicType(ty reflect.Type) bool {
 		return true
 	default:
 		switch realType.String() {
-		case "time.Time", "decimal.Decimal", "dateTime.DateTime":
+		case TimeString, DecimalString, DatetimeString:
 			return true
 		}
 	}
@@ -90,19 +104,19 @@ func IsGoBasicType(ty reflect.Type) bool {
 // IsEsIndexSet 判断类型是否为ES的IndexSet类型
 func IsEsIndexSet(val reflect.Value) (reflect.Type, bool) {
 	realType := GetRealType(val)
-	return realType, strings.HasPrefix(realType.String(), "elasticSearch.IndexSet[")
+	return realType, strings.HasPrefix(realType.String(), IndexSetString)
 }
 
 // IsDataTableSet 判断类型是否为Data的TableSet类型
 func IsDataTableSet(val reflect.Value) (reflect.Type, bool) {
 	realType := GetRealType(val)
-	return realType, strings.HasPrefix(realType.String(), "data.TableSet[")
+	return realType, strings.HasPrefix(realType.String(), TableSetString)
 }
 
 // IsDataDomainSet 判断类型是否为Data的DomainSet类型
 func IsDataDomainSet(val reflect.Value) (reflect.Type, bool) {
 	realType := GetRealType(val)
-	return realType, strings.HasPrefix(realType.String(), "data.DomainSet[")
+	return realType, strings.HasPrefix(realType.String(), DomainSetString)
 }
 
 // IsDtoModelIgnoreInterface 当第一个模型为struct，其它类型为interface时，判断为DTO
@@ -137,12 +151,12 @@ func IsDtoModel(lst []reflect.Type) bool {
 
 // IsTime 是否为time.Time类型
 func IsTime(ty reflect.Type) bool {
-	return ty.String() == "time.Time"
+	return ty.String() == TimeString
 }
 
 // IsDateTime 是否为DateTime类型
 func IsDateTime(ty reflect.Type) bool {
-	return ty.String() == "dateTime.DateTime"
+	return ty.String() == DatetimeString
 }
 
 // IsNil 判断值是否为nil
