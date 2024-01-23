@@ -7,7 +7,7 @@ import (
 )
 
 // Container 容器操作
-var defContainer *container
+var defContainer = NewContainer()
 
 func InitContainer() {
 	defContainer = NewContainer()

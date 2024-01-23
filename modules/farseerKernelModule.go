@@ -20,10 +20,7 @@ func (module FarseerKernelModule) PreInitialize() {
 	// 1、初始化配置
 	configure.InitConfig()
 
-	// 2、初始化容器
-	container.InitContainer()
-
-	// 3、初始化日志
+	// 2、初始化日志
 	log := flog.InitLog()
 
 	// 4、配置日志
@@ -35,7 +32,7 @@ func (module FarseerKernelModule) PreInitialize() {
 
 	// 初始化时间轮
 	timingWheel.NewDefault(100*time.Millisecond, 60)
-	
+
 	// 注册空的链路实现
 	container.Register(func() trace.IManager { return &trace.EmptyManager{} })
 }
