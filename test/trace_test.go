@@ -2,9 +2,7 @@ package test
 
 import (
 	"fmt"
-	"github.com/farseer-go/fs"
 	"github.com/farseer-go/fs/container"
-	"github.com/farseer-go/fs/modules"
 	"github.com/farseer-go/fs/trace"
 	"github.com/farseer-go/fs/trace/eumCallType"
 	"github.com/stretchr/testify/assert"
@@ -12,7 +10,7 @@ import (
 )
 
 func TestTrace(t *testing.T) {
-	fs.Initialize[modules.FarseerKernelModule]("unit test")
+	//	fs.Initialize[modules.FarseerKernelModule]("unit test")
 
 	assert.Equal(t, "Grpc", eumCallType.Grpc.ToString())
 	assert.Equal(t, "Http", eumCallType.Http.ToString())

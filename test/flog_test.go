@@ -2,14 +2,12 @@ package test
 
 import (
 	"fmt"
-	"github.com/farseer-go/fs/configure"
 	"github.com/farseer-go/fs/flog"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestFlog(t *testing.T) {
-	configure.InitConfig()
 	flog.Trace("")
 	flog.Tracef("")
 	flog.Debug("")

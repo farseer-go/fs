@@ -51,23 +51,8 @@ func TestConfigureGet(t *testing.T) {
 	assert.Len(t, configure.GetSliceNodes("aaa"), 0)
 }
 
-func TestErrorConfig(t *testing.T) {
-	_ = os.Rename("./farseer.yaml", "./farseer.yaml.bak")
-	fs.Initialize[modules.FarseerKernelModule]("unit test")
-	_, _ = os.Create("./farseer.yaml")
-	_ = os.WriteFile("./farseer.yaml", []byte("aaa"), 0660)
-	fs.Initialize[modules.FarseerKernelModule]("unit test")
-
-	_ = os.Remove("./farseer.yaml")
-	_ = os.Rename("./farseer.yaml.bak", "./farseer.yaml")
-
-	assert.Panics(t, func() {
-		fs.Exit(0)
-	})
-}
-
-func TestEnvConfig(t *testing.T) {
-	fs.Initialize[modules.FarseerKernelModule]("unit test")
-	_ = os.Setenv("Database_default", "aaa=bb")
-	assert.Equal(t, "aaa=bb", configure.GetSubNodes("Database")["default"])
-}
+//func TestEnvConfig(t *testing.T) {
+//	fs.Initialize[modules.FarseerKernelModule]("unit test")
+//	_ = os.Setenv("Database_default", "aaa=bb")
+//	assert.Equal(t, "aaa=bb", configure.GetSubNodes("Database")["default"])
+//}

@@ -167,18 +167,6 @@ func TestConvert(t *testing.T) {
 		assert.Equal(t, 15, dt.Day())
 	})
 
-	t.Run("enum转uint8", func(t *testing.T) {
-		type Enum uint8
-		const (
-			All Enum = 66 // 全部
-		)
-		assert.Equal(t, 66, parse.ToInt(All))
-		assert.Equal(t, int8(66), parse.ToInt8(All))
-		assert.Equal(t, int16(66), parse.ToInt16(All))
-		assert.Equal(t, int32(66), parse.ToInt32(All))
-		assert.Equal(t, int64(66), parse.ToInt64(All))
-	})
-
 	t.Run("数字转enum", func(t *testing.T) {
 		type EnumUint8 uint8
 		const (
@@ -211,4 +199,16 @@ func TestConvert(t *testing.T) {
 		)
 		assert.Equal(t, Other, parse.Convert("33", All))
 	})
+}
+
+func TestEnum_uint8(t *testing.T) {
+	type Enum uint8
+	const (
+		All Enum = 66 // 全部
+	)
+	assert.Equal(t, 66, parse.ToInt(All))
+	assert.Equal(t, int8(66), parse.ToInt8(All))
+	assert.Equal(t, int16(66), parse.ToInt16(All))
+	assert.Equal(t, int32(66), parse.ToInt32(All))
+	assert.Equal(t, int64(66), parse.ToInt64(All))
 }

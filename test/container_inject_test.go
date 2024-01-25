@@ -1,9 +1,7 @@
 package test
 
 import (
-	"github.com/farseer-go/fs"
 	"github.com/farseer-go/fs/container"
-	"github.com/farseer-go/fs/modules"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -22,8 +20,8 @@ func (m myDb) GetAllDbType() string {
 
 // 测试注入
 func TestInject(t *testing.T) {
-	fs.Initialize[modules.FarseerKernelModule]("unit test")
-	
+	//fs.Initialize[modules.FarseerKernelModule]("unit test")
+
 	// 注册单例
 	container.RegisterTransient(func() IDatabase { return &mysql{} })
 	// 注册单例

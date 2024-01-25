@@ -1,8 +1,6 @@
 package test
 
 import (
-	"github.com/farseer-go/fs"
-	"github.com/farseer-go/fs/modules"
 	"github.com/farseer-go/fs/timingWheel"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -10,7 +8,7 @@ import (
 )
 
 func TestTimingWheel(t *testing.T) {
-	fs.Initialize[modules.FarseerKernelModule]("unit test")
+	//	fs.Initialize[modules.FarseerKernelModule]("unit test")
 	/*
 			0： 100 * 60 = 6000 ms						0.12s
 			1： 100 * 60 * 60 = 1440 ms					1.44s
