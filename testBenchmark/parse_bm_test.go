@@ -7,8 +7,8 @@ import (
 	"time"
 )
 
-// BenchmarkConvertAll-12                  	  446144	      2876 ns/op	     656 B/op	      30 allocs/op
-// BenchmarkConvertAll-12                  	  735838	      1669 ns/op	     344 B/op	      14 allocs/op
+// BenchmarkConvertAll-12         446144	      2876 ns/op	     656 B/op	      30 allocs/op
+// BenchmarkConvertAll-12    	  767450	      1527 ns/op	     424 B/op	      18 allocs/op
 func BenchmarkConvertAll(b *testing.B) {
 	b.ReportAllocs()
 	timeNow := time.Now()

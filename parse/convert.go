@@ -50,12 +50,14 @@ func Convert[T any](source any, defVal T) T {
 			return toEnum[T](defValMeta.ReflectType, source)
 		// 转字符串
 		case "string":
-			var str = NumberToString(source, sourceMeta.Kind)
-			return *(*T)(unsafe.Pointer(&str))
+			var result any = NumberToString(source, sourceMeta.Kind)
+			return result.(T)
+			//return *(*T)(unsafe.Pointer(&str))
 		// 转bool
 		case "bool":
-			result := EqualTo1(source, sourceMeta.Kind)
-			return *(*T)(unsafe.Pointer(&result))
+			var result any = EqualTo1(source, sourceMeta.Kind)
+			//return *(*T)(unsafe.Pointer(&result))
+			return result.(T)
 		}
 	}
 
@@ -104,21 +106,21 @@ func Convert[T any](source any, defVal T) T {
 			switch len(strSource) {
 			case 19:
 				if parse, err := time.ParseInLocation(layouts[0], strSource, time.Local); err == nil {
-					return *(*T)(unsafe.Pointer(&parse))
+					return toTime[T](defValMeta, parse)
 				}
 			case 10:
 				if parse, err := time.ParseInLocation(layouts[1], strSource, time.Local); err == nil {
-					return *(*T)(unsafe.Pointer(&parse))
+					return toTime[T](defValMeta, parse)
 				}
 			case 25:
 				if parse, err := time.ParseInLocation(layouts[2], strSource, time.Local); err == nil {
-					return *(*T)(unsafe.Pointer(&parse))
+					return toTime[T](defValMeta, parse)
 				}
 			}
 
 			for _, layout := range layouts {
 				if parse, err := time.ParseInLocation(layout, strSource, time.Local); err == nil {
-					return *(*T)(unsafe.Pointer(&parse))
+					return toTime[T](defValMeta, parse)
 				}
 			}
 		// list类型
@@ -129,7 +131,8 @@ func Convert[T any](source any, defVal T) T {
 				types.ListAdd(lstReflectValue, ConvertValue(arr[i], defValMeta.ItemMeta.ReflectType).Interface())
 			}
 			val := lstReflectValue.Elem().Interface()
-			return *(*T)(unsafe.Pointer(&val))
+			//return *(*T)(unsafe.Pointer(&val))
+			return val.(T)
 		}
 	}
 
@@ -182,8 +185,9 @@ func Convert[T any](source any, defVal T) T {
 			return source.(T)
 		// 转string
 		case "string":
-			var str = source.(dateTime.DateTime).ToString("yyyy-MM-dd HH:mm:ss")
-			return *(*T)(unsafe.Pointer(&str))
+			var result any = source.(dateTime.DateTime).ToString("yyyy-MM-dd HH:mm:ss")
+			//return *(*T)(unsafe.Pointer(&str))
+			return result.(T)
 		}
 	}
 
@@ -200,6 +204,16 @@ func Convert[T any](source any, defVal T) T {
 	}
 
 	return defVal
+}
+
+func toTime[T any](defValMeta fastReflect.ValueMeta, parse time.Time) T {
+	switch defValMeta.TypeIdentity {
+	case "time":
+		return any(parse).(T)
+	case "dateTime":
+		return any(dateTime.New(parse)).(T)
+	}
+	return *(*T)(unsafe.Pointer(&parse))
 }
 
 // 转枚举
