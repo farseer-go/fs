@@ -15,7 +15,8 @@ func ParseString[TConfig any](configString string) TConfig {
 }
 
 func parseString(configRefVal reflect.Value, configString string) reflect.Value {
-	if configRefVal.Type().Kind() != reflect.Struct {
+	configRefType := configRefVal.Type()
+	if configRefType.Kind() != reflect.Struct {
 		panic("A generic type can only be a struct")
 	}
 
@@ -32,12 +33,12 @@ func parseString(configRefVal reflect.Value, configString string) reflect.Value 
 	}
 
 	// 第二步：反射TConfig结构
-	for i := 0; i < configRefVal.Type().NumField(); i++ {
+	for i := 0; i < configRefVal.NumField(); i++ {
 		if configRefVal.Field(i).CanSet() {
-			fieldName := strings.ToLower(configRefVal.Type().Field(i).Name)
+			fieldName := strings.ToLower(configRefType.Field(i).Name)
 			s, exists := configMap[fieldName]
 			if exists {
-				value := parse.ConvertValue(s, configRefVal.Type().Field(i).Type)
+				value := parse.ConvertValue(s, configRefType.Field(i).Type)
 				configRefVal.Field(i).Set(value)
 			}
 		}
