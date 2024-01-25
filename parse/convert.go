@@ -3,11 +3,15 @@ package parse
 import (
 	"encoding/json"
 	"github.com/farseer-go/fs/dateTime"
+	"github.com/farseer-go/fs/fastReflect"
 	"github.com/farseer-go/fs/types"
 	"reflect"
 	"strings"
 	"time"
+	"unsafe"
 )
+
+var layouts = []string{"2006-01-02 15:04:05", "2006-01-02", "2006-01-02T15:04:05Z07:00"}
 
 // ConvertValue 通用的类型转换
 func ConvertValue(source any, defValType reflect.Type) reflect.Value {
@@ -26,196 +30,175 @@ func Convert[T any](source any, defVal T) T {
 	if source == nil {
 		return defVal
 	}
-	sourceType := reflect.TypeOf(source)
-	sourceKind := sourceType.Kind()
-	defValType := reflect.TypeOf(defVal)
-	returnKind := defValType.Kind()
+	sourceMeta := fastReflect.ValueOf(source)
+	defValMeta := fastReflect.ValueOf(defVal)
 
-	if sourceKind != reflect.Struct && sourceType.String() == defValType.String() {
+	// time不支持直接转换，因为是结构体
+	if sourceMeta.HashCode == defValMeta.HashCode { // sourceMeta.Kind != reflect.Struct &&
 		return source.(T)
 	}
 
-	// 切片转切片
-	if sourceKind == reflect.Slice && returnKind == reflect.Slice {
-		arr := reflect.MakeSlice(defValType, 0, 0)
-		arrItemType := defValType.Elem()
-		arrSource := reflect.ValueOf(source)
-		for i := 0; i < arrSource.Len(); i++ {
-			item := arrSource.Index(i)
-			destVal := ConvertValue(item.Interface(), arrItemType)
-			arr = reflect.Append(arr, destVal)
-		}
-		return arr.Interface().(T)
-	}
-
 	// 数字转...
-	if isNumber(sourceKind) {
-		// 数字转数字
-		if isNumber(returnKind) {
-			// 这是一个枚举类型
-			if strings.Contains(defValType.String(), ".") {
-				return toEnum[T](defValType, source)
-			}
-
-			result := anyToNumber(source, sourceKind, defVal, returnKind)
+	if sourceMeta.IsNumber {
+		switch defValMeta.TypeIdentity {
+		// 转数字
+		case "number":
+			result := anyToNumber(source, sourceMeta.Kind, defVal, defValMeta.Kind)
 			return result.(T)
-		}
-
-		// 数字转bool
-		if isBool(returnKind) {
-			var result any = equalTo1(source, sourceKind)
-			return result.(T)
-		}
-
-		// 数字转字符串
-		if isString(returnKind) {
-			return numberToString(source, defVal, sourceKind).(T)
+		// 枚举类型
+		case "enum":
+			return toEnum[T](defValMeta.ReflectType, source)
+		// 转字符串
+		case "string":
+			var str = NumberToString(source, sourceMeta.Kind)
+			return *(*T)(unsafe.Pointer(&str))
+		// 转bool
+		case "bool":
+			result := EqualTo1(source, sourceMeta.Kind)
+			return *(*T)(unsafe.Pointer(&result))
 		}
 	}
 
 	// 字符串转...
-	if isString(sourceKind) {
+	if sourceMeta.IsString {
 		var strSource string
-		if sourceType.String() == "json.Number" {
+		if sourceMeta.ReflectTypeString == "json.Number" {
 			jsonNumber := source.(json.Number)
 			strSource = string(jsonNumber)
 		} else {
 			strSource = source.(string)
 		}
 
-		// bool
-		if isBool(returnKind) {
-			var result any = strings.EqualFold(strSource, "true")
+		switch defValMeta.TypeIdentity {
+		// 转枚举类型
+		case "enum":
+			return toEnum[T](defValMeta.ReflectType, strSource)
+		// 转数字
+		case "number":
+			result := StringToNumber(strSource, defVal, defValMeta.Kind)
 			return result.(T)
-		}
-
-		// 数字
-		if isNumber(returnKind) {
-			// 这是一个枚举类型
-			if strings.Contains(defValType.String(), ".") {
-				return toEnum[T](defValType, strSource)
-			}
-
-			result := stringToNumber(strSource, defVal, returnKind)
-			return result.(T)
-		}
-
-		// 数组
-		if isArray(returnKind) {
+		// 转数组
+		case "sliceOrArray":
 			arr := strings.Split(strSource, ",")
-			itemType := defValType.Elem()
 			// 字符串数组，则直接转
-			if itemType.Kind() == reflect.String {
-				return any(arr).(T)
+			if defValMeta.ItemMeta.ReflectType.Kind() == reflect.String {
+				return *(*T)(unsafe.Pointer(&arr))
 			}
-
-			// 非字符串数组，则要动态
-			slice := reflect.MakeSlice(defValType, 0, len(arr))
+			// 创建数组（耗时65ns）
+			slice := reflect.MakeSlice(defValMeta.ReflectType, len(arr), len(arr))
+			slicePtr := slice.Pointer()
 			for i := 0; i < len(arr); i++ {
-				slice = reflect.Append(slice, ConvertValue(arr[i], itemType))
+				// 找到当前索引位置的内存地址。起始位置 + 每个元素占用的字节大小 ，得到第N个索引的内存起始位置
+				itemPtr := unsafe.Pointer(slicePtr + uintptr(i)*defValMeta.ItemMeta.Size)
+				// 3条数据的情况下，耗时228ns
+				newItemVal := Convert(arr[i], defValMeta.ItemMeta.ZeroValue)
+				// 设置值
+				fastReflect.SetValue(itemPtr, newItemVal, defValMeta.ItemMeta)
 			}
 			return slice.Interface().(T)
-		}
+		case "bool":
+			var result any = strings.EqualFold(strSource, "true")
+			return result.(T)
+		// 转dateTime 转time.Time
+		case "time", "dateTime":
+			switch len(strSource) {
+			case 19:
+				if parse, err := time.ParseInLocation(layouts[0], strSource, time.Local); err == nil {
+					return *(*T)(unsafe.Pointer(&parse))
+				}
+			case 10:
+				if parse, err := time.ParseInLocation(layouts[1], strSource, time.Local); err == nil {
+					return *(*T)(unsafe.Pointer(&parse))
+				}
+			case 25:
+				if parse, err := time.ParseInLocation(layouts[2], strSource, time.Local); err == nil {
+					return *(*T)(unsafe.Pointer(&parse))
+				}
+			}
 
+			for _, layout := range layouts {
+				if parse, err := time.ParseInLocation(layout, strSource, time.Local); err == nil {
+					return *(*T)(unsafe.Pointer(&parse))
+				}
+			}
 		// list类型
-		if isList(defValType) {
-			lstReflectValue := types.ListNew(defValType)
-			lstItemType := types.GetListItemType(defValType)
+		case "list":
+			lstReflectValue := types.ListNew(defValMeta.ReflectType)
 			arr := strings.Split(strSource, ",")
 			for i := 0; i < len(arr); i++ {
-				types.ListAdd(lstReflectValue, ConvertValue(arr[i], lstItemType).Interface())
+				types.ListAdd(lstReflectValue, ConvertValue(arr[i], defValMeta.ItemMeta.ReflectType).Interface())
 			}
-			return lstReflectValue.Elem().Interface().(T)
-		}
-
-		// 转time.Time
-		layouts := []string{"2006-01-02 15:04:05", "2006-01-02", "2006-01-02T15:04:05Z07:00"}
-		if types.IsTime(defValType) {
-			for _, layout := range layouts {
-				parse, err := time.ParseInLocation(layout, source.(string), time.Local)
-				if err == nil {
-					return any(parse).(T)
-				}
-			}
-		}
-
-		// 转DateTime
-		if types.IsDateTime(defValType) {
-			for _, layout := range layouts {
-				parse, err := time.ParseInLocation(layout, source.(string), time.Local)
-				if err == nil {
-					return any(dateTime.New(parse)).(T)
-				}
-			}
+			val := lstReflectValue.Elem().Interface()
+			return *(*T)(unsafe.Pointer(&val))
 		}
 	}
 
 	// bool转...
-	if isBool(sourceKind) {
+	if sourceMeta.IsBool {
 		boolSource := source.(bool)
-		var result any
-
+		switch defValMeta.TypeIdentity {
 		// 转数字
-		if isNumber(returnKind) {
-			result = 0
+		case "number":
 			if boolSource {
-				result = 1
+				return any(1).(T)
 			}
-			return result.(T)
-		}
-
-		if isString(returnKind) {
+			return any(0).(T)
+		case "string":
 			if boolSource {
-				result = "true"
+				return any("true").(T)
 			} else {
-				result = "false"
+				return any("false").(T)
 			}
-			return result.(T)
 		}
 		return defVal
 	}
 
 	// time.Time转...
-	if types.IsTime(sourceType) {
+	if sourceMeta.IsTime {
+		switch defValMeta.TypeIdentity {
 		// 转time.Time
-		if types.IsTime(defValType) {
-			return source.(T)
-		}
+		case "time":
+			return *(*T)(sourceMeta.PointerValue)
 		// 转DateTime
-		if types.IsDateTime(defValType) {
-			var dt any = dateTime.New(source.(time.Time))
-			return dt.(T)
-		}
-
+		case "dateTime":
+			var dt = dateTime.New(source.(time.Time))
+			return *(*T)(unsafe.Pointer(&dt))
 		// 转string
-		if isString(returnKind) {
-			t := source.(time.Time)
-			var str any = t.Format("2006-01-02 15:04:05")
-			return str.(T)
+		case "string":
+			var str = source.(time.Time).Format("2006-01-02 15:04:05")
+			return *(*T)(unsafe.Pointer(&str))
 		}
 	}
 
 	// DateTime转...
-	if types.IsDateTime(sourceType) {
+	if sourceMeta.IsDateTime {
+		switch defValMeta.TypeIdentity {
 		// 转time.Time
-		if types.IsTime(defValType) {
-			d := source.(dateTime.DateTime)
-			var t any = d.ToTime()
-			return t.(T)
-		}
-
+		case "time":
+			var t = source.(dateTime.DateTime).ToTime()
+			return *(*T)(unsafe.Pointer(&t))
 		// 转DateTime
-		if types.IsDateTime(defValType) {
+		case "dateTime":
 			return source.(T)
-		}
-
 		// 转string
-		if isString(returnKind) {
-			d := source.(dateTime.DateTime)
-			var str any = d.ToString("yyyy-MM-dd HH:mm:ss")
-			return str.(T)
+		case "string":
+			var str = source.(dateTime.DateTime).ToString("yyyy-MM-dd HH:mm:ss")
+			return *(*T)(unsafe.Pointer(&str))
 		}
 	}
+
+	// 切片转切片
+	if sourceMeta.Type == fastReflect.Slice && defValMeta.Type == fastReflect.Slice {
+		arr := reflect.MakeSlice(defValMeta.ReflectType, 0, 0)
+		arrSource := reflect.ValueOf(source)
+		for i := 0; i < arrSource.Len(); i++ {
+			item := arrSource.Index(i)
+			destVal := ConvertValue(item.Interface(), defValMeta.ItemMeta.ReflectType)
+			arr = reflect.Append(arr, destVal)
+		}
+		return arr.Interface().(T)
+	}
+
 	return defVal
 }
 
