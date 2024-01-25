@@ -37,7 +37,8 @@ func parseString(configRefVal reflect.Value, configString string) reflect.Value 
 			fieldName := strings.ToLower(configRefVal.Type().Field(i).Name)
 			s, exists := configMap[fieldName]
 			if exists {
-				configRefVal.Field(i).Set(parse.ConvertValue(s, configRefVal.Type().Field(i).Type))
+				value := parse.ConvertValue(s, configRefVal.Type().Field(i).Type)
+				configRefVal.Field(i).Set(value)
 			}
 		}
 	}
