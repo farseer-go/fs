@@ -161,12 +161,12 @@ func Convert[T any](source any, defVal T) T {
 			return *(*T)(sourceMeta.PointerValue)
 		// 转DateTime
 		case "dateTime":
-			var dt = dateTime.New(source.(time.Time))
-			return *(*T)(unsafe.Pointer(&dt))
+			var dt any = dateTime.New(source.(time.Time))
+			return dt.(T)
 		// 转string
 		case "string":
-			var str = source.(time.Time).Format("2006-01-02 15:04:05")
-			return *(*T)(unsafe.Pointer(&str))
+			var str any = source.(time.Time).Format("2006-01-02 15:04:05")
+			return str.(T)
 		}
 	}
 
@@ -175,8 +175,8 @@ func Convert[T any](source any, defVal T) T {
 		switch defValMeta.TypeIdentity {
 		// 转time.Time
 		case "time":
-			var t = source.(dateTime.DateTime).ToTime()
-			return *(*T)(unsafe.Pointer(&t))
+			var t any = source.(dateTime.DateTime).ToTime()
+			return t.(T)
 		// 转DateTime
 		case "dateTime":
 			return source.(T)

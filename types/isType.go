@@ -149,16 +149,6 @@ func IsDtoModel(lst []reflect.Type) bool {
 	return !IsCollections(lst[0]) && !IsGoBasicType(lst[0]) && lst[0].Kind() == reflect.Struct
 }
 
-// IsTime 是否为time.Time类型
-func IsTime(ty reflect.Type) bool {
-	return ty.String() == TimeString
-}
-
-// IsDateTime 是否为DateTime类型
-func IsDateTime(ty reflect.Type) bool {
-	return ty.String() == DatetimeString
-}
-
 // IsNil 判断值是否为nil
 func IsNil(val reflect.Value) bool {
 	switch val.Kind() {
