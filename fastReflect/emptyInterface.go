@@ -2,10 +2,17 @@ package fastReflect
 
 import "unsafe"
 
-// 空接口，参考reflect.Value的emptyInterface设计
-type emptyInterface struct {
-	typ   *rtype
-	value unsafe.Pointer
+// SliceHeader 切片的底层结构
+type SliceHeader struct {
+	Data uintptr
+	Len  int
+	Cap  int
+}
+
+// EmptyInterface any底层结构，参考reflect.Value的emptyInterface设计
+type EmptyInterface struct {
+	Typ   *rtype
+	Value unsafe.Pointer
 }
 
 // tflag 用于表示 rtype 值后面的内存中有哪些额外的类型信息。

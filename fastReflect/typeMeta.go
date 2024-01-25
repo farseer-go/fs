@@ -21,23 +21,23 @@ type TypeMeta struct {
 	NumField           int                 // 结构体的字段数量
 	ItemMeta           *TypeMeta           // Item元素的Type
 	SliceType          reflect.Type        // ItemType转成切片类型
-
-	Kind           reflect.Kind
-	IsNumber       bool    // 是否为数字
-	IsEmum         bool    // 是否枚举
-	IsString       bool    // 是否为字符串
-	IsBool         bool    // 是否bool
-	IsTime         bool    // 是否time.Time
-	IsDateTime     bool    // 是否dateTime.DateTime
-	IsSliceOrArray bool    // 是否切片或数组类型
-	IsStruct       bool    // 是否结构体
-	HashCode       uint32  // 每个类型的HashCode都是唯一的
-	Size           uintptr // 内存占用大小
-	TypeIdentity   string  // 类型标识
+	ZeroValue          any                 // 零值时的值
+	Kind               reflect.Kind
+	IsNumber           bool    // 是否为数字
+	IsEmum             bool    // 是否枚举
+	IsString           bool    // 是否为字符串
+	IsBool             bool    // 是否bool
+	IsTime             bool    // 是否time.Time
+	IsDateTime         bool    // 是否dateTime.DateTime
+	IsSliceOrArray     bool    // 是否切片或数组类型
+	IsStruct           bool    // 是否结构体
+	HashCode           uint32  // 每个类型的HashCode都是唯一的
+	Size               uintptr // 内存占用大小
+	TypeIdentity       string  // 类型标识
 }
 
-func typeOf(inf *emptyInterface, reflectType reflect.Type) *TypeMeta {
-	kind := reflect.Kind(inf.typ.kind)
+func typeOf(inf *EmptyInterface, reflectType reflect.Type) *TypeMeta {
+	kind := reflect.Kind(inf.Typ.kind)
 
 	tm := &TypeMeta{
 		ReflectType: reflectType,
@@ -48,8 +48,10 @@ func typeOf(inf *emptyInterface, reflectType reflect.Type) *TypeMeta {
 		IsAnonymous: false,
 		IsExported:  false,
 		IsIgnore:    false,
-		HashCode:    inf.typ.hash,
-		Size:        inf.typ.size,
+		HashCode:    inf.Typ.hash,
+		Size:        inf.Typ.size,
+
+		ZeroValue: reflect.New(reflectType).Elem().Interface(),
 	}
 
 	// 解析类型
@@ -168,5 +170,7 @@ func (receiver *TypeMeta) parseType() {
 		receiver.TypeIdentity = "dateTime"
 	} else if receiver.IsSliceOrArray {
 		receiver.TypeIdentity = "sliceOrArray"
+	} else if receiver.Type == List {
+		receiver.TypeIdentity = "list"
 	}
 }

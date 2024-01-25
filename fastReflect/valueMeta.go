@@ -35,31 +35,30 @@ var cacheTyp = make(map[uint32]*TypeMeta)
 
 // ValueOf 传入任意变量类型的值，得出该值对应的类型
 func ValueOf(val any) ValueMeta {
-	inf := (*emptyInterface)(unsafe.Pointer(&val))
-
-	c, exists := cacheTyp[inf.typ.hash]
+	inf := (*EmptyInterface)(unsafe.Pointer(&val))
+	c, exists := cacheTyp[inf.Typ.hash]
 	if !exists {
 		reflectType := reflect.TypeOf(val)
 		c = typeOf(inf, reflectType)
-		cacheTyp[inf.typ.hash] = c
+		cacheTyp[inf.Typ.hash] = c
 	}
 
 	return ValueMeta{
 		TypeMeta:     c,
-		PointerValue: inf.value,
+		PointerValue: inf.Value,
 	}
 }
 
 func Test(val any) ValueMeta {
-	inf := (*emptyInterface)(unsafe.Pointer(&val))
-	c, exists := cacheTyp[inf.typ.hash]
+	inf := (*EmptyInterface)(unsafe.Pointer(&val))
+	c, exists := cacheTyp[inf.Typ.hash]
 	if !exists {
 		reflectType := reflect.TypeOf(val)
 		c = typeOf(inf, reflectType)
-		cacheTyp[inf.typ.hash] = c
+		cacheTyp[inf.Typ.hash] = c
 	}
 	return ValueMeta{
 		TypeMeta:     c,
-		PointerValue: inf.value,
+		PointerValue: inf.Value,
 	}
 }
