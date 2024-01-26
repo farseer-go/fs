@@ -88,3 +88,19 @@ func TestTry(t *testing.T) {
 		try.ThrowUnCatch()
 	})
 }
+
+func TestTryAny(t *testing.T) {
+	try := exception.Try(func() {
+		exception.ThrowRefuseException("aaa")
+	})
+	try.CatchException(func(exp any) {
+		assert.Equal(t, "aaa", exp.(exception.RefuseException).Message)
+	})
+
+	try = exception.Try(func() {
+		panic("bbb")
+	})
+	try.CatchException(func(exp any) {
+		assert.Equal(t, "bbb", exp)
+	})
+}
