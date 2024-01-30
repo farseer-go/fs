@@ -8,44 +8,44 @@ import (
 
 // TypeMeta 类型元数据
 type TypeMeta struct {
-	ReflectType       reflect.Type // 字段类型
-	ReflectTypeString string       // 类型
-	Type              FieldType    // 集合类型
-	IsAnonymous       bool         // 是否为内嵌类型
-	IsExported        bool         // 是否为可导出类型
-	IsIgnore          bool         // 是否为忽略字段
-	IsAddr            bool         // 原类型是否带指针
-	NumField          int          // 结构体的字段数量
-	ItemMeta          *TypeMeta    // Item元素的Type
-	SliceType         reflect.Type // ItemType转成切片类型
-	ZeroValue         any          // 零值时的值
-	Kind              reflect.Kind
-	IsNumber          bool    // 是否为数字
-	IsEmum            bool    // 是否枚举
-	IsString          bool    // 是否为字符串
-	IsBool            bool    // 是否bool
-	IsTime            bool    // 是否time.Time
-	IsDateTime        bool    // 是否dateTime.DateTime
-	IsSliceOrArray    bool    // 是否切片或数组类型
-	IsStruct          bool    // 是否结构体
-	HashCode          uint32  // 每个类型的HashCode都是唯一的
-	Size              uintptr // 内存占用大小
-	TypeIdentity      string  // 类型标识
+	Name              string                // 字段名称
+	ReflectType       reflect.Type          // 字段类型
+	ReflectTypeString string                // 类型
+	Type              FieldType             // 集合类型
+	IsAddr            bool                  // 原类型是否带指针
+	NumField          int                   // 结构体的字段数量
+	StructField       []reflect.StructField // 结构体的字段
+	ItemMeta          *TypeMeta             // Item元素的Type
+	SliceType         reflect.Type          // ItemType转成切片类型
+	ZeroValue         any                   // 零值时的值
+	Kind              reflect.Kind          // 类型
+	IsNumber          bool                  // 是否为数字
+	IsEmum            bool                  // 是否枚举
+	IsString          bool                  // 是否为字符串
+	IsBool            bool                  // 是否bool
+	IsTime            bool                  // 是否time.Time
+	IsDateTime        bool                  // 是否dateTime.DateTime
+	IsSliceOrArray    bool                  // 是否切片或数组类型
+	IsStruct          bool                  // 是否结构体
+	HashCode          uint32                // 每个类型的HashCode都是唯一的
+	Size              uintptr               // 内存占用大小
+	TypeIdentity      string                // 类型标识
 }
 
-func typeOf(inf *EmptyInterface, reflectType reflect.Type) *TypeMeta {
-	kind := reflect.Kind(inf.Typ.kind)
+func typeOf(reflectType reflect.Type, inf *EmptyInterface) *TypeMeta {
+	kind := reflectType.Kind()
 
 	tm := &TypeMeta{
 		ReflectType: reflectType,
 		IsAddr:      kind == reflect.Pointer,
 		Kind:        kind,
+	}
 
-		// 作为字段时才能获取
-		HashCode: inf.Typ.hash,
-		Size:     inf.Typ.size,
-
-		ZeroValue: reflect.New(reflectType).Elem().Interface(),
+	// 作为字段时才能获取
+	if inf != nil {
+		tm.HashCode = inf.Typ.hash
+		//tm.Size = inf.Typ.size
+		tm.Size = reflectType.Size()
 	}
 
 	// 解析类型
@@ -61,29 +61,48 @@ func (receiver *TypeMeta) parseType() {
 	}
 
 	// 取真实的类型
-	if receiver.Kind == reflect.Interface {
-		receiver.ReflectType = receiver.ReflectType.Elem()
-		receiver.Kind = receiver.ReflectType.Kind()
-	}
+	//if receiver.Kind == reflect.Interface {
+	//	receiver.ReflectType = receiver.ReflectType.Elem()
+	//	receiver.Kind = receiver.ReflectType.Kind()
+	//}
 
+	receiver.ZeroValue = reflect.New(receiver.ReflectType).Elem().Interface()
+	receiver.Name = receiver.ReflectType.Name()
 	receiver.ReflectTypeString = receiver.ReflectType.String()
 
 	switch receiver.Kind {
 	case reflect.Slice:
-		receiver.Type = Slice
-		itemType := receiver.ReflectType.Elem()
-		itemVal := reflect.New(itemType).Elem().Interface()
-		receiver.ItemMeta = ValueOf(itemVal).TypeMeta
-		receiver.SliceType = reflect.SliceOf(receiver.ItemMeta.ReflectType)
 		receiver.IsSliceOrArray = true
+		receiver.Type = Slice
+		receiver.SliceType = receiver.ReflectType
+
+		itemType := receiver.ReflectType.Elem()
+		if itemType.Kind() != reflect.Interface {
+			itemVal := reflect.New(itemType).Elem().Interface()
+			receiver.ItemMeta = PointerOf(itemVal).TypeMeta
+		} else {
+			receiver.ItemMeta = typeOf(itemType, nil)
+		}
 	case reflect.Array:
+		receiver.IsSliceOrArray = true
 		receiver.Type = Array
 		itemType := receiver.ReflectType.Elem()
-		itemVal := reflect.New(itemType).Elem().Interface()
-		receiver.ItemMeta = ValueOf(itemVal).TypeMeta
-		receiver.IsSliceOrArray = true
+		if itemType.Kind() != reflect.Interface {
+			itemVal := reflect.New(itemType).Elem().Interface()
+			receiver.ItemMeta = PointerOf(itemVal).TypeMeta
+		} else {
+			receiver.ItemMeta = typeOf(itemType, nil)
+		}
 	case reflect.Map:
 		receiver.Type = Map
+		// value type
+		itemType := receiver.ReflectType.Elem()
+		if itemType.Kind() != reflect.Interface {
+			itemVal := reflect.New(itemType).Elem().Interface()
+			receiver.ItemMeta = PointerOf(itemVal).TypeMeta
+		} else {
+			receiver.ItemMeta = typeOf(itemType, nil)
+		}
 	case reflect.Chan:
 		receiver.Type = Chan
 	case reflect.Func:
@@ -112,7 +131,7 @@ func (receiver *TypeMeta) parseType() {
 			receiver.Type = List
 			itemType := types.GetListItemType(receiver.ReflectType)
 			itemVal := reflect.New(itemType).Elem().Interface()
-			receiver.ItemMeta = ValueOf(itemVal).TypeMeta
+			receiver.ItemMeta = PointerOf(itemVal).TypeMeta
 			receiver.SliceType = reflect.SliceOf(receiver.ItemMeta.ReflectType)
 			break
 		}
@@ -135,7 +154,7 @@ func (receiver *TypeMeta) parseType() {
 			receiver.Type = CustomList
 			itemType := types.GetListItemType(receiver.ReflectType)
 			itemVal := reflect.New(itemType).Elem().Interface()
-			receiver.ItemMeta = ValueOf(itemVal).TypeMeta
+			receiver.ItemMeta = PointerOf(itemVal).TypeMeta
 			receiver.SliceType = reflect.SliceOf(receiver.ItemMeta.ReflectType)
 			break
 		}
@@ -143,8 +162,14 @@ func (receiver *TypeMeta) parseType() {
 		// 结构体
 		if types.IsStruct(receiver.ReflectType) {
 			receiver.Type = Struct
-			receiver.NumField = numField
 			receiver.IsStruct = true
+			receiver.NumField = numField
+			// 遍历结构体的字段
+			for i := 0; i < numField; i++ {
+				// 只加载允许导出的类型
+				structField := receiver.ReflectType.Field(i)
+				receiver.StructField = append(receiver.StructField, structField)
+			}
 			break
 		}
 		receiver.Type = Unknown
