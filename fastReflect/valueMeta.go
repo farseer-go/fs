@@ -33,7 +33,7 @@ type PointerMeta struct {
 
 // 字段为any类型，当为nil时无法获取，需手动设置类型
 var anyNil = &TypeMeta{
-	Name:              "interface {}",
+	//Name:              "interface {}",
 	ReflectType:       nil,
 	ReflectTypeString: "interface {}",
 	Type:              Interface,

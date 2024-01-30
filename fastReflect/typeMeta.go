@@ -8,7 +8,7 @@ import (
 
 // TypeMeta 类型元数据
 type TypeMeta struct {
-	Name              string                // 字段名称
+	//Name              string                // 字段名称
 	ReflectType       reflect.Type          // 字段类型
 	ReflectTypeString string                // 类型
 	Type              FieldType             // 集合类型
@@ -67,7 +67,7 @@ func (receiver *TypeMeta) parseType() {
 	//}
 
 	receiver.ZeroValue = reflect.New(receiver.ReflectType).Elem().Interface()
-	receiver.Name = receiver.ReflectType.Name()
+	//receiver.Name = receiver.ReflectType.Name()
 	receiver.ReflectTypeString = receiver.ReflectType.String()
 
 	switch receiver.Kind {
@@ -130,8 +130,12 @@ func (receiver *TypeMeta) parseType() {
 		if _, isTrue := types.IsListByType(receiver.ReflectType); isTrue {
 			receiver.Type = List
 			itemType := types.GetListItemType(receiver.ReflectType)
-			itemVal := reflect.New(itemType).Elem().Interface()
-			receiver.ItemMeta = PointerOf(itemVal).TypeMeta
+			if itemType.Kind() != reflect.Interface {
+				itemVal := reflect.New(itemType).Elem().Interface()
+				receiver.ItemMeta = PointerOf(itemVal).TypeMeta
+			} else {
+				receiver.ItemMeta = typeOf(itemType, nil)
+			}
 			receiver.SliceType = reflect.SliceOf(receiver.ItemMeta.ReflectType)
 			break
 		}

@@ -7,6 +7,7 @@ import (
 
 const (
 	ListTypeString              = "collections.List["
+	ListAnyTypeString           = "collections.ListAny"
 	DictionaryTypeString        = "collections.Dictionary["
 	PageListTypeString          = "collections.PageList["
 	CollectionsTypeString       = "github.com/farseer-go/collections"
@@ -34,12 +35,14 @@ func IsMap(val reflect.Value) (reflect.Type, bool) {
 // IsList 判断类型是否为List
 func IsList(val reflect.Value) (reflect.Type, bool) {
 	realType := GetRealType(val)
-	return realType, strings.HasPrefix(realType.String(), ListTypeString)
+	realTypeString := realType.String()
+	return realType, strings.HasPrefix(realTypeString, ListTypeString) || realTypeString == ListAnyTypeString
 }
 
 // IsListByType 判断类型是否为List
 func IsListByType(realType reflect.Type) (reflect.Type, bool) {
-	return realType, strings.HasPrefix(realType.String(), ListTypeString)
+	realTypeString := realType.String()
+	return realType, strings.HasPrefix(realTypeString, ListTypeString) || realTypeString == ListAnyTypeString
 }
 
 // IsDictionary 判断类型是否为Dictionary
