@@ -2,6 +2,7 @@ package testBenchmark
 
 import (
 	"github.com/farseer-go/fs/dateTime"
+	"github.com/farseer-go/fs/fastReflect"
 	"github.com/farseer-go/fs/parse"
 	"testing"
 	"time"
@@ -177,14 +178,12 @@ func BenchmarkConvert_string_dateTime(b *testing.B) {
 // BenchmarkConvert2-12                    	217430817	         5.386 ns/op	       0 B/op	       0 allocs/op
 func BenchmarkConvert2(b *testing.B) {
 	b.ReportAllocs()
+	var a any = dateTime.DateTime{}
+	fastReflect.PointerOf(a)
+	//aVal := reflect.ValueOf(a)
 	for i := 0; i < b.N; i++ {
-		var source any = "aaa"
-		s := source.(string)
-		if s == "aaa" {
-
-		}
-		//result := *(*fastReflect.emptyInterface)(unsafe.Pointer(&source))
-		//result.value
-		//println(result)
+		fastReflect.PointerOf(a)
 	}
+	return
+	//println(aVal.Interface())
 }
