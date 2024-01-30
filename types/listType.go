@@ -34,6 +34,7 @@ func GetListItemType(lstType reflect.Type) reflect.Type {
 	return sourceField.Type.Elem().Elem()
 }
 
+// GetListToArray 在集合中获取数据
 func GetListToArray(lstValue reflect.Value) []any {
 	arrValue := lstValue.MethodByName("ToArray").Call(nil)[0]
 	var items []any
@@ -42,4 +43,10 @@ func GetListToArray(lstValue reflect.Value) []any {
 		items = append(items, item)
 	}
 	return items
+}
+
+// GetListToArrayValue 在集合中获取数据
+func GetListToArrayValue(lstValue reflect.Value) reflect.Value {
+	arrValue := lstValue.MethodByName("ToArray").Call(nil)[0]
+	return arrValue
 }
