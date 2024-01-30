@@ -16,7 +16,7 @@ var layouts = []string{"2006-01-02 15:04:05", "2006-01-02", "2006-01-02T15:04:05
 // ConvertValue 通用的类型转换
 func ConvertValue(source any, defValType reflect.Type) reflect.Value {
 	// any类型，则直接返回
-	if defValType.Kind() == reflect.Interface {
+	if defValType == nil || defValType.Kind() == reflect.Interface {
 		return reflect.ValueOf(source)
 	}
 
@@ -30,8 +30,8 @@ func Convert[T any](source any, defVal T) T {
 	if source == nil {
 		return defVal
 	}
-	sourceMeta := fastReflect.ValueOf(source)
-	defValMeta := fastReflect.ValueOf(defVal)
+	sourceMeta := fastReflect.PointerOf(source)
+	defValMeta := fastReflect.PointerOf(defVal)
 
 	// time不支持直接转换，因为是结构体
 	if sourceMeta.HashCode == defValMeta.HashCode { // sourceMeta.Kind != reflect.Struct &&
@@ -206,7 +206,7 @@ func Convert[T any](source any, defVal T) T {
 	return defVal
 }
 
-func toTime[T any](defValMeta fastReflect.ValueMeta, parse time.Time) T {
+func toTime[T any](defValMeta fastReflect.PointerMeta, parse time.Time) T {
 	switch defValMeta.TypeIdentity {
 	case "time":
 		return any(parse).(T)
