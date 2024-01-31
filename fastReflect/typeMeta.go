@@ -15,7 +15,9 @@ type TypeMeta struct {
 	IsAddr            bool                  // 原类型是否带指针
 	NumField          int                   // 结构体的字段数量
 	StructField       []reflect.StructField // 结构体的字段
-	ItemMeta          *TypeMeta             // Item元素的Type
+	MapType           reflect.Type          // Dic的底层map类型
+	KeyMeta           *TypeMeta             // map key type
+	ItemMeta          *TypeMeta             // Item元素的Type or map value type
 	SliceType         reflect.Type          // ItemType转成切片类型
 	ZeroValue         any                   // 零值时的值
 	Kind              reflect.Kind          // 类型
@@ -95,14 +97,21 @@ func (receiver *TypeMeta) parseType() {
 		}
 	case reflect.Map:
 		receiver.Type = Map
+		receiver.MapType = receiver.ReflectType
+		// key type
+		keyType := receiver.MapType.Key()
+		keyVal := reflect.New(keyType).Elem().Interface()
+		receiver.KeyMeta = PointerOf(keyVal).TypeMeta
+
 		// value type
-		itemType := receiver.ReflectType.Elem()
+		itemType := receiver.MapType.Elem()
 		if itemType.Kind() != reflect.Interface {
 			itemVal := reflect.New(itemType).Elem().Interface()
 			receiver.ItemMeta = PointerOf(itemVal).TypeMeta
 		} else {
 			receiver.ItemMeta = typeOf(itemType, nil)
 		}
+		break
 	case reflect.Chan:
 		receiver.Type = Chan
 	case reflect.Func:
@@ -143,6 +152,21 @@ func (receiver *TypeMeta) parseType() {
 		// Dictionary类型
 		if isTrue := types.IsDictionaryByType(receiver.ReflectType); isTrue {
 			receiver.Type = Dic
+			// 得到底层的map类型
+			receiver.MapType = types.GetDictionaryMapType(receiver.ReflectType)
+			// key type
+			keyType := receiver.MapType.Key()
+			keyVal := reflect.New(keyType).Elem().Interface()
+			receiver.KeyMeta = PointerOf(keyVal).TypeMeta
+
+			// value type
+			itemType := receiver.MapType.Elem()
+			if itemType.Kind() != reflect.Interface {
+				itemVal := reflect.New(itemType).Elem().Interface()
+				receiver.ItemMeta = PointerOf(itemVal).TypeMeta
+			} else {
+				receiver.ItemMeta = typeOf(itemType, nil)
+			}
 			break
 		}
 
