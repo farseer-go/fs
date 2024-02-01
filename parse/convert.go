@@ -32,7 +32,6 @@ func Convert[T any](source any, defVal T) T {
 	}
 	sourceMeta := fastReflect.PointerOf(source)
 	defValMeta := fastReflect.PointerOf(defVal)
-
 	// time不支持直接转换，因为是结构体
 	if sourceMeta.HashCode == defValMeta.HashCode { // sourceMeta.Kind != reflect.Struct &&
 		return source.(T)

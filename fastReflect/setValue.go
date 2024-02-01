@@ -5,7 +5,7 @@ import (
 	"unsafe"
 )
 
-func SetValue(ptr unsafe.Pointer, val any, valType TypeMeta) {
+func SetValue(ptr unsafe.Pointer, val any, valType *TypeMeta) {
 	switch valType.Kind {
 	case reflect.Int:
 		*(*int)(ptr) = val.(int)

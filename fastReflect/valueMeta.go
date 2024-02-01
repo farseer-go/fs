@@ -26,13 +26,14 @@ const (
 
 // PointerMeta 元数据
 type PointerMeta struct {
-	TypeMeta
+	*TypeMeta
 	PointerValue unsafe.Pointer // 值指向的内存地址
 	HashCode     uint32
 }
 
 // 字段为any类型，当为nil时无法获取，需手动设置类型
 var anyValueMap []any
+var test = PointerOfValue(reflect.ValueOf("aaa"))
 var anyNil = TypeMeta{
 	ReflectType:       reflect.TypeOf(anyValueMap).Elem(),
 	ReflectTypeString: "interface {}",
@@ -55,17 +56,31 @@ var anyNil = TypeMeta{
 	Size:              16,
 	TypeIdentity:      "",
 }
-var cacheTyp = map[uint32]TypeMeta{252279353: anyNil}
+var cacheTyp = map[uint32]*TypeMeta{252279353: &anyNil}
+
+// PointerOfValue 传入任意变量类型的值，得出该值对应的类型
+// //go:linkname nanotime1 reflect.nanotime1
+func PointerOfValue(val reflect.Value) PointerMeta {
+	inf := (*EmptyInterface)(unsafe.Pointer(&val))
+	valueMeta := PointerMeta{PointerValue: inf.Value, HashCode: inf.Typ.hash}
+	//if inf.Typ != nil {
+	//	valueMeta.HashCode = inf.Typ.hash
+	//} else {
+	//	valueMeta.HashCode = 252279353
+	//}
+	var exists bool
+	if valueMeta.TypeMeta, exists = cacheTyp[valueMeta.HashCode]; !exists {
+		valueMeta.TypeMeta = typeOf(val.Type(), inf)
+		cacheTyp[valueMeta.HashCode] = valueMeta.TypeMeta
+		return valueMeta
+	}
+	return valueMeta
+}
 
 // PointerOf 传入任意变量类型的值，得出该值对应的类型
 func PointerOf(val any) PointerMeta {
 	inf := (*EmptyInterface)(unsafe.Pointer(&val))
-	valueMeta := PointerMeta{PointerValue: inf.Value}
-	if inf.Typ != nil {
-		valueMeta.HashCode = inf.Typ.hash
-	} else {
-		valueMeta.HashCode = 252279353
-	}
+	valueMeta := PointerMeta{PointerValue: inf.Value, HashCode: inf.Typ.hash}
 	var exists bool
 	if valueMeta.TypeMeta, exists = cacheTyp[valueMeta.HashCode]; !exists {
 		valueMeta.TypeMeta = typeOf(reflect.TypeOf(val), inf)

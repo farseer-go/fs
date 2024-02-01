@@ -36,7 +36,7 @@ type TypeMeta struct {
 	TypeIdentity   string       // 类型标识
 }
 
-func typeOf(reflectType reflect.Type, inf *EmptyInterface) TypeMeta {
+func typeOf(reflectType reflect.Type, inf *EmptyInterface) *TypeMeta {
 	kind := reflectType.Kind()
 
 	tm := TypeMeta{
@@ -53,7 +53,7 @@ func typeOf(reflectType reflect.Type, inf *EmptyInterface) TypeMeta {
 
 	// 解析类型
 	tm.parseType()
-	return tm
+	return &tm
 }
 
 func (receiver *TypeMeta) parseType() {
@@ -89,8 +89,8 @@ func (receiver *TypeMeta) parseType() {
 		receiver.MapType = receiver.ReflectType
 		// key type
 		keyType := receiver.MapType.Key()
-		keyVal := reflect.New(keyType).Elem().Interface()
-		receiver.keyHashCode = PointerOf(keyVal).HashCode
+		keyVal := reflect.New(keyType).Elem()
+		receiver.keyHashCode = PointerOfValue(keyVal).HashCode
 
 		// value type
 		receiver.setItemHashCode(receiver.MapType.Elem())
@@ -202,10 +202,10 @@ func (receiver *TypeMeta) setItemHashCode(itemType reflect.Type) {
 	}
 }
 
-func (receiver *TypeMeta) GetKeyMeta() TypeMeta {
+func (receiver *TypeMeta) GetKeyMeta() *TypeMeta {
 	return cacheTyp[receiver.keyHashCode]
 }
 
-func (receiver *TypeMeta) GetItemMeta() TypeMeta {
+func (receiver *TypeMeta) GetItemMeta() *TypeMeta {
 	return cacheTyp[receiver.itemHashCode]
 }
