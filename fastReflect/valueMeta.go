@@ -26,21 +26,20 @@ const (
 
 // PointerMeta 元数据
 type PointerMeta struct {
-	*TypeMeta
+	TypeMeta
 	PointerValue unsafe.Pointer // 值指向的内存地址
 	HashCode     uint32
 }
 
 // 字段为any类型，当为nil时无法获取，需手动设置类型
-var anyNil = &TypeMeta{
-	//Name:              "interface {}",
-	ReflectType:       nil,
+var anyValueMap []any
+var anyNil = TypeMeta{
+	ReflectType:       reflect.TypeOf(anyValueMap).Elem(),
 	ReflectTypeString: "interface {}",
 	Type:              Interface,
 	IsAddr:            false,
 	NumField:          0,
 	StructField:       nil,
-	ItemMeta:          nil,
 	SliceType:         nil,
 	ZeroValue:         nil,
 	Kind:              reflect.Interface,
@@ -56,7 +55,7 @@ var anyNil = &TypeMeta{
 	Size:              16,
 	TypeIdentity:      "",
 }
-var cacheTyp = map[uint32]*TypeMeta{252279353: anyNil}
+var cacheTyp = map[uint32]TypeMeta{252279353: anyNil}
 
 // PointerOf 传入任意变量类型的值，得出该值对应的类型
 func PointerOf(val any) PointerMeta {

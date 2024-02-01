@@ -83,7 +83,8 @@ func Convert[T any](source any, defVal T) T {
 		case "sliceOrArray":
 			arr := strings.Split(strSource, ",")
 			// 字符串数组，则直接转
-			if defValMeta.ItemMeta.ReflectType.Kind() == reflect.String {
+			itemMeta := defValMeta.GetItemMeta()
+			if itemMeta.ReflectType.Kind() == reflect.String {
 				return *(*T)(unsafe.Pointer(&arr))
 			}
 			// 创建数组（耗时65ns）
@@ -91,11 +92,11 @@ func Convert[T any](source any, defVal T) T {
 			slicePtr := slice.Pointer()
 			for i := 0; i < len(arr); i++ {
 				// 找到当前索引位置的内存地址。起始位置 + 每个元素占用的字节大小 ，得到第N个索引的内存起始位置
-				itemPtr := unsafe.Pointer(slicePtr + uintptr(i)*defValMeta.ItemMeta.Size)
+				itemPtr := unsafe.Pointer(slicePtr + uintptr(i)*itemMeta.Size)
 				// 3条数据的情况下，耗时228ns
-				newItemVal := Convert(arr[i], defValMeta.ItemMeta.ZeroValue)
+				newItemVal := Convert(arr[i], itemMeta.ZeroValue)
 				// 设置值
-				fastReflect.SetValue(itemPtr, newItemVal, defValMeta.ItemMeta)
+				fastReflect.SetValue(itemPtr, newItemVal, itemMeta)
 			}
 			return slice.Interface().(T)
 		case "bool":
@@ -127,8 +128,9 @@ func Convert[T any](source any, defVal T) T {
 		case "list":
 			lstReflectValue := types.ListNew(defValMeta.ReflectType)
 			arr := strings.Split(strSource, ",")
+			itemMeta := defValMeta.GetItemMeta()
 			for i := 0; i < len(arr); i++ {
-				types.ListAdd(lstReflectValue, ConvertValue(arr[i], defValMeta.ItemMeta.ReflectType).Interface())
+				types.ListAdd(lstReflectValue, ConvertValue(arr[i], itemMeta.ReflectType).Interface())
 			}
 			val := lstReflectValue.Elem().Interface()
 			//return *(*T)(unsafe.Pointer(&val))
@@ -195,9 +197,10 @@ func Convert[T any](source any, defVal T) T {
 	if sourceMeta.Type == fastReflect.Slice && defValMeta.Type == fastReflect.Slice {
 		arr := reflect.MakeSlice(defValMeta.ReflectType, 0, 0)
 		arrSource := reflect.ValueOf(source)
+		itemMeta := defValMeta.GetItemMeta()
 		for i := 0; i < arrSource.Len(); i++ {
 			item := arrSource.Index(i)
-			destVal := ConvertValue(item.Interface(), defValMeta.ItemMeta.ReflectType)
+			destVal := ConvertValue(item.Interface(), itemMeta.ReflectType)
 			arr = reflect.Append(arr, destVal)
 		}
 		return arr.Interface().(T)

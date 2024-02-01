@@ -8,7 +8,7 @@ import (
 
 // TypeMeta 类型元数据
 type TypeMeta struct {
-	//Name              string                // 字段名称
+	//Name              string              // 字段名称
 	ReflectType       reflect.Type          // 字段类型
 	ReflectTypeString string                // 类型
 	Type              FieldType             // 集合类型
@@ -16,28 +16,30 @@ type TypeMeta struct {
 	NumField          int                   // 结构体的字段数量
 	StructField       []reflect.StructField // 结构体的字段
 	MapType           reflect.Type          // Dic的底层map类型
-	KeyMeta           *TypeMeta             // map key type
-	ItemMeta          *TypeMeta             // Item元素的Type or map value type
-	SliceType         reflect.Type          // ItemType转成切片类型
-	ZeroValue         any                   // 零值时的值
-	Kind              reflect.Kind          // 类型
-	IsNumber          bool                  // 是否为数字
-	IsEmum            bool                  // 是否枚举
-	IsString          bool                  // 是否为字符串
-	IsBool            bool                  // 是否bool
-	IsTime            bool                  // 是否time.Time
-	IsDateTime        bool                  // 是否dateTime.DateTime
-	IsSliceOrArray    bool                  // 是否切片或数组类型
-	IsStruct          bool                  // 是否结构体
-	HashCode          uint32                // 每个类型的HashCode都是唯一的
-	Size              uintptr               // 内存占用大小
-	TypeIdentity      string                // 类型标识
+	keyHashCode       uint32                // map key type
+	itemHashCode      uint32                // Item元素的Type or map value type
+	//KeyMeta           *TypeMeta             // map key type
+	//ItemMeta          *TypeMeta             // Item元素的Type or map value type
+	SliceType      reflect.Type // ItemType转成切片类型
+	ZeroValue      any          // 零值时的值
+	Kind           reflect.Kind // 类型
+	IsNumber       bool         // 是否为数字
+	IsEmum         bool         // 是否枚举
+	IsString       bool         // 是否为字符串
+	IsBool         bool         // 是否bool
+	IsTime         bool         // 是否time.Time
+	IsDateTime     bool         // 是否dateTime.DateTime
+	IsSliceOrArray bool         // 是否切片或数组类型
+	IsStruct       bool         // 是否结构体
+	HashCode       uint32       // 每个类型的HashCode都是唯一的
+	Size           uintptr      // 内存占用大小
+	TypeIdentity   string       // 类型标识
 }
 
-func typeOf(reflectType reflect.Type, inf *EmptyInterface) *TypeMeta {
+func typeOf(reflectType reflect.Type, inf *EmptyInterface) TypeMeta {
 	kind := reflectType.Kind()
 
-	tm := &TypeMeta{
+	tm := TypeMeta{
 		ReflectType: reflectType,
 		IsAddr:      kind == reflect.Pointer,
 		Kind:        kind,
@@ -46,7 +48,6 @@ func typeOf(reflectType reflect.Type, inf *EmptyInterface) *TypeMeta {
 	// 作为字段时才能获取
 	if inf != nil {
 		tm.HashCode = inf.Typ.hash
-		//tm.Size = inf.Typ.size
 		tm.Size = reflectType.Size()
 	}
 
@@ -78,39 +79,21 @@ func (receiver *TypeMeta) parseType() {
 		receiver.Type = Slice
 		receiver.SliceType = receiver.ReflectType
 
-		itemType := receiver.ReflectType.Elem()
-		if itemType.Kind() != reflect.Interface {
-			itemVal := reflect.New(itemType).Elem().Interface()
-			receiver.ItemMeta = PointerOf(itemVal).TypeMeta
-		} else {
-			receiver.ItemMeta = typeOf(itemType, nil)
-		}
+		receiver.setItemHashCode(receiver.ReflectType.Elem())
 	case reflect.Array:
 		receiver.IsSliceOrArray = true
 		receiver.Type = Array
-		itemType := receiver.ReflectType.Elem()
-		if itemType.Kind() != reflect.Interface {
-			itemVal := reflect.New(itemType).Elem().Interface()
-			receiver.ItemMeta = PointerOf(itemVal).TypeMeta
-		} else {
-			receiver.ItemMeta = typeOf(itemType, nil)
-		}
+		receiver.setItemHashCode(receiver.ReflectType.Elem())
 	case reflect.Map:
 		receiver.Type = Map
 		receiver.MapType = receiver.ReflectType
 		// key type
 		keyType := receiver.MapType.Key()
 		keyVal := reflect.New(keyType).Elem().Interface()
-		receiver.KeyMeta = PointerOf(keyVal).TypeMeta
+		receiver.keyHashCode = PointerOf(keyVal).HashCode
 
 		// value type
-		itemType := receiver.MapType.Elem()
-		if itemType.Kind() != reflect.Interface {
-			itemVal := reflect.New(itemType).Elem().Interface()
-			receiver.ItemMeta = PointerOf(itemVal).TypeMeta
-		} else {
-			receiver.ItemMeta = typeOf(itemType, nil)
-		}
+		receiver.setItemHashCode(receiver.MapType.Elem())
 		break
 	case reflect.Chan:
 		receiver.Type = Chan
@@ -139,13 +122,8 @@ func (receiver *TypeMeta) parseType() {
 		if _, isTrue := types.IsListByType(receiver.ReflectType); isTrue {
 			receiver.Type = List
 			itemType := types.GetListItemType(receiver.ReflectType)
-			if itemType.Kind() != reflect.Interface {
-				itemVal := reflect.New(itemType).Elem().Interface()
-				receiver.ItemMeta = PointerOf(itemVal).TypeMeta
-			} else {
-				receiver.ItemMeta = typeOf(itemType, nil)
-			}
-			receiver.SliceType = reflect.SliceOf(receiver.ItemMeta.ReflectType)
+			receiver.setItemHashCode(itemType)
+			receiver.SliceType = reflect.SliceOf(receiver.GetItemMeta().ReflectType)
 			break
 		}
 
@@ -157,16 +135,10 @@ func (receiver *TypeMeta) parseType() {
 			// key type
 			keyType := receiver.MapType.Key()
 			keyVal := reflect.New(keyType).Elem().Interface()
-			receiver.KeyMeta = PointerOf(keyVal).TypeMeta
+			receiver.keyHashCode = PointerOf(keyVal).HashCode
 
 			// value type
-			itemType := receiver.MapType.Elem()
-			if itemType.Kind() != reflect.Interface {
-				itemVal := reflect.New(itemType).Elem().Interface()
-				receiver.ItemMeta = PointerOf(itemVal).TypeMeta
-			} else {
-				receiver.ItemMeta = typeOf(itemType, nil)
-			}
+			receiver.setItemHashCode(receiver.MapType.Elem())
 			break
 		}
 
@@ -181,9 +153,8 @@ func (receiver *TypeMeta) parseType() {
 		if numField > 0 && receiver.ReflectType.Field(0).PkgPath == CollectionsTypeString {
 			receiver.Type = CustomList
 			itemType := types.GetListItemType(receiver.ReflectType)
-			itemVal := reflect.New(itemType).Elem().Interface()
-			receiver.ItemMeta = PointerOf(itemVal).TypeMeta
-			receiver.SliceType = reflect.SliceOf(receiver.ItemMeta.ReflectType)
+			receiver.setItemHashCode(itemType)
+			receiver.SliceType = reflect.SliceOf(receiver.GetItemMeta().ReflectType)
 			break
 		}
 
@@ -220,4 +191,21 @@ func (receiver *TypeMeta) parseType() {
 	} else if receiver.Type == List {
 		receiver.TypeIdentity = "list"
 	}
+}
+
+func (receiver *TypeMeta) setItemHashCode(itemType reflect.Type) {
+	if itemType.Kind() != reflect.Interface {
+		itemVal := reflect.New(itemType).Elem().Interface()
+		receiver.itemHashCode = PointerOf(itemVal).HashCode
+	} else {
+		receiver.itemHashCode = anyNil.HashCode
+	}
+}
+
+func (receiver *TypeMeta) GetKeyMeta() TypeMeta {
+	return cacheTyp[receiver.keyHashCode]
+}
+
+func (receiver *TypeMeta) GetItemMeta() TypeMeta {
+	return cacheTyp[receiver.itemHashCode]
 }
