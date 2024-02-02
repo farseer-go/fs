@@ -18,22 +18,20 @@ type TypeMeta struct {
 	MapType           reflect.Type          // Dic的底层map类型
 	keyHashCode       uint32                // map key type
 	itemHashCode      uint32                // Item元素的Type or map value type
-	//KeyMeta           *TypeMeta             // map key type
-	//ItemMeta          *TypeMeta             // Item元素的Type or map value type
-	SliceType      reflect.Type // ItemType转成切片类型
-	ZeroValue      any          // 零值时的值
-	Kind           reflect.Kind // 类型
-	IsNumber       bool         // 是否为数字
-	IsEmum         bool         // 是否枚举
-	IsString       bool         // 是否为字符串
-	IsBool         bool         // 是否bool
-	IsTime         bool         // 是否time.Time
-	IsDateTime     bool         // 是否dateTime.DateTime
-	IsSliceOrArray bool         // 是否切片或数组类型
-	IsStruct       bool         // 是否结构体
-	HashCode       uint32       // 每个类型的HashCode都是唯一的
-	Size           uintptr      // 内存占用大小
-	TypeIdentity   string       // 类型标识
+	SliceType         reflect.Type          // ItemType转成切片类型
+	ZeroValue         any                   // 零值时的值
+	Kind              reflect.Kind          // 类型
+	IsNumber          bool                  // 是否为数字
+	IsEmum            bool                  // 是否枚举
+	IsString          bool                  // 是否为字符串
+	IsBool            bool                  // 是否bool
+	IsTime            bool                  // 是否time.Time
+	IsDateTime        bool                  // 是否dateTime.DateTime
+	IsSliceOrArray    bool                  // 是否切片或数组类型
+	IsStruct          bool                  // 是否结构体
+	HashCode          uint32                // 每个类型的HashCode都是唯一的
+	Size              uintptr               // 内存占用大小
+	TypeIdentity      string                // 类型标识
 }
 
 func typeOf(reflectType reflect.Type, inf *EmptyInterface) *TypeMeta {
