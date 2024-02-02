@@ -134,8 +134,8 @@ func (receiver *TypeMeta) parseType() {
 			receiver.MapType = types.GetDictionaryMapType(receiver.ReflectType)
 			// key type
 			keyType := receiver.MapType.Key()
-			keyVal := reflect.New(keyType).Elem().Interface()
-			receiver.keyHashCode = PointerOf(keyVal).HashCode
+			keyVal := reflect.New(keyType).Elem()
+			receiver.keyHashCode = PointerOfValue(keyVal).HashCode
 
 			// value type
 			receiver.setItemHashCode(receiver.MapType.Elem())
@@ -195,8 +195,8 @@ func (receiver *TypeMeta) parseType() {
 
 func (receiver *TypeMeta) setItemHashCode(itemType reflect.Type) {
 	if itemType.Kind() != reflect.Interface {
-		itemVal := reflect.New(itemType).Elem().Interface()
-		receiver.itemHashCode = PointerOf(itemVal).HashCode
+		itemVal := reflect.New(itemType).Elem()
+		receiver.itemHashCode = PointerOfValue(itemVal).HashCode
 	} else {
 		receiver.itemHashCode = anyNil.HashCode
 	}
