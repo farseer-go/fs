@@ -33,7 +33,6 @@ type PointerMeta struct {
 
 // 字段为any类型，当为nil时无法获取，需手动设置类型
 var anyValueMap []any
-var test = PointerOfValue(reflect.ValueOf("aaa"))
 var anyNil = TypeMeta{
 	ReflectType:       reflect.TypeOf(anyValueMap).Elem(),
 	ReflectTypeString: "interface {}",

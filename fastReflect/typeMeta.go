@@ -37,7 +37,7 @@ type TypeMeta struct {
 func typeOf(reflectType reflect.Type, inf *EmptyInterface) *TypeMeta {
 	kind := reflectType.Kind()
 
-	tm := TypeMeta{
+	tm := &TypeMeta{
 		ReflectType: reflectType,
 		IsAddr:      kind == reflect.Pointer,
 		Kind:        kind,
@@ -51,7 +51,7 @@ func typeOf(reflectType reflect.Type, inf *EmptyInterface) *TypeMeta {
 
 	// 解析类型
 	tm.parseType()
-	return &tm
+	return tm
 }
 
 func (receiver *TypeMeta) parseType() {
