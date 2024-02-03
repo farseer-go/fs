@@ -9,29 +9,31 @@ import (
 // TypeMeta 类型元数据
 type TypeMeta struct {
 	//Name              string              // 字段名称
-	ReflectType       reflect.Type          // 字段类型
-	ReflectTypeString string                // 类型
-	Type              FieldType             // 集合类型
-	IsAddr            bool                  // 原类型是否带指针
-	StructField       []reflect.StructField // 结构体的字段
-	ExportedField     []int                 // 结构体的字段，允许导出的字段索引
-	MapType           reflect.Type          // Dic的底层map类型
-	keyHashCode       uint32                // map key type
-	itemHashCode      uint32                // Item元素的Type or map value type
-	SliceType         reflect.Type          // ItemType转成切片类型
-	ZeroValue         any                   // 零值时的值
-	Kind              reflect.Kind          // 类型
-	IsNumber          bool                  // 是否为数字
-	IsEmum            bool                  // 是否枚举
-	IsString          bool                  // 是否为字符串
-	IsBool            bool                  // 是否bool
-	IsTime            bool                  // 是否time.Time
-	IsDateTime        bool                  // 是否dateTime.DateTime
-	IsSliceOrArray    bool                  // 是否切片或数组类型
-	IsStruct          bool                  // 是否结构体
-	HashCode          uint32                // 每个类型的HashCode都是唯一的
-	Size              uintptr               // 内存占用大小
-	TypeIdentity      string                // 类型标识
+	ReflectType          reflect.Type          // 字段类型
+	ReflectTypeString    string                // 类型
+	Type                 FieldType             // 集合类型
+	IsAddr               bool                  // 原类型是否带指针
+	StructField          []reflect.StructField // 结构体的字段
+	ExportedField        []int                 // 结构体的字段，允许导出的字段索引
+	MapType              reflect.Type          // Dic的底层map类型
+	keyHashCode          uint32                // map key type
+	itemHashCode         uint32                // Item元素的Type or map value type
+	SliceType            reflect.Type          // ItemType转成切片类型
+	ZeroValue            any                   // 零值时的值
+	ZeroReflectValue     reflect.Value         // 零值时的值
+	ZeroReflectValueElem reflect.Value         // 零值时的值
+	Kind                 reflect.Kind          // 类型
+	IsNumber             bool                  // 是否为数字
+	IsEmum               bool                  // 是否枚举
+	IsString             bool                  // 是否为字符串
+	IsBool               bool                  // 是否bool
+	IsTime               bool                  // 是否time.Time
+	IsDateTime           bool                  // 是否dateTime.DateTime
+	IsSliceOrArray       bool                  // 是否切片或数组类型
+	IsStruct             bool                  // 是否结构体
+	HashCode             uint32                // 每个类型的HashCode都是唯一的
+	Size                 uintptr               // 内存占用大小
+	TypeIdentity         string                // 类型标识
 }
 
 func typeOf(reflectType reflect.Type, inf *EmptyInterface) *TypeMeta {
@@ -67,7 +69,21 @@ func (receiver *TypeMeta) parseType() {
 	//	receiver.Kind = receiver.ReflectType.Kind()
 	//}
 
-	receiver.ZeroValue = reflect.New(receiver.ReflectType).Elem().Interface()
+	// 设置零值
+	switch receiver.Kind {
+	case reflect.Slice:
+		receiver.ZeroReflectValue = reflect.MakeSlice(receiver.ReflectType, 0, 0)
+		receiver.ZeroReflectValueElem = receiver.ZeroReflectValue
+	case reflect.Map:
+		receiver.ZeroReflectValue = reflect.MakeMap(receiver.ReflectType)
+		receiver.ZeroReflectValueElem = receiver.ZeroReflectValue
+	default:
+		receiver.ZeroReflectValue = reflect.New(receiver.ReflectType)
+		receiver.ZeroReflectValueElem = reflect.New(receiver.ReflectType).Elem()
+	}
+
+	receiver.ZeroValue = receiver.ZeroReflectValueElem.Interface()
+
 	//receiver.Name = receiver.ReflectType.Name()
 	receiver.ReflectTypeString = receiver.ReflectType.String()
 
