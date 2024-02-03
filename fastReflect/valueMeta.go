@@ -37,23 +37,9 @@ var anyNil = TypeMeta{
 	ReflectType:       reflect.TypeOf(anyValueMap).Elem(),
 	ReflectTypeString: "interface {}",
 	Type:              Interface,
-	IsAddr:            false,
-	NumField:          0,
-	StructField:       nil,
-	SliceType:         nil,
-	ZeroValue:         nil,
 	Kind:              reflect.Interface,
-	IsNumber:          false,
-	IsEmum:            false,
-	IsString:          false,
-	IsBool:            false,
-	IsTime:            false,
-	IsDateTime:        false,
-	IsSliceOrArray:    false,
-	IsStruct:          false,
 	HashCode:          252279353,
 	Size:              16,
-	TypeIdentity:      "",
 }
 var cacheTyp = map[uint32]*TypeMeta{252279353: &anyNil}
 

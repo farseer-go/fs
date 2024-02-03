@@ -13,8 +13,8 @@ type TypeMeta struct {
 	ReflectTypeString string                // 类型
 	Type              FieldType             // 集合类型
 	IsAddr            bool                  // 原类型是否带指针
-	NumField          int                   // 结构体的字段数量
 	StructField       []reflect.StructField // 结构体的字段
+	ExportedField     []int                 // 结构体的字段，允许导出的字段索引
 	MapType           reflect.Type          // Dic的底层map类型
 	keyHashCode       uint32                // map key type
 	itemHashCode      uint32                // Item元素的Type or map value type
@@ -160,12 +160,15 @@ func (receiver *TypeMeta) parseType() {
 		if types.IsStruct(receiver.ReflectType) {
 			receiver.Type = Struct
 			receiver.IsStruct = true
-			receiver.NumField = numField
 			// 遍历结构体的字段
 			for i := 0; i < numField; i++ {
 				// 只加载允许导出的类型
 				structField := receiver.ReflectType.Field(i)
 				receiver.StructField = append(receiver.StructField, structField)
+				// 加载允许导出的索引
+				if structField.IsExported() {
+					receiver.ExportedField = append(receiver.ExportedField, i)
+				}
 			}
 			break
 		}

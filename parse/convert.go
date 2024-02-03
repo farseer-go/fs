@@ -129,7 +129,7 @@ func Convert[T any](source any, defVal T) T {
 			arr := strings.Split(strSource, ",")
 			itemMeta := defValMeta.GetItemMeta()
 			for i := 0; i < len(arr); i++ {
-				types.ListAdd(lstReflectValue, ConvertValue(arr[i], itemMeta.ReflectType).Interface())
+				types.ListAddValue(lstReflectValue, ConvertValue(arr[i], itemMeta.ReflectType))
 			}
 			val := lstReflectValue.Elem().Interface()
 			//return *(*T)(unsafe.Pointer(&val))

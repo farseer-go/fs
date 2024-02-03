@@ -21,6 +21,11 @@ func ListNew(lstType reflect.Type) reflect.Value {
 
 // ListAdd 动态添加元素
 func ListAdd(lstValue reflect.Value, item any) {
+	ListAddValue(lstValue, reflect.ValueOf(item))
+}
+
+// ListAddValue 动态添加元素
+func ListAddValue(lstValue reflect.Value, itemValue reflect.Value) {
 	key := lstValue.String() + ".Add"
 
 	if _, isExists := Cache[key]; !isExists {
@@ -28,7 +33,6 @@ func ListAdd(lstValue reflect.Value, item any) {
 		Cache[key] = []int{method.Index}
 	}
 
-	itemValue := reflect.ValueOf(item)
 	if itemValue.Kind() == reflect.Ptr {
 		itemValue = itemValue.Elem()
 	}
