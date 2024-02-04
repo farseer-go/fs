@@ -102,9 +102,9 @@ func (receiver *TypeMeta) parseType() {
 		receiver.Type = Map
 		receiver.MapType = receiver.ReflectType
 		// key type
-		keyType := receiver.MapType.Key()
-		keyVal := reflect.New(keyType).Elem()
-		receiver.keyHashCode = PointerOfValue(keyVal).HashCode
+		//keyType := receiver.MapType.Key()
+		//keyVal := reflect.New(keyType).Elem()
+		//receiver.keyHashCode = PointerOfValue(keyVal).HashCode
 
 		// value type
 		receiver.setItemHashCode(receiver.MapType.Elem())
@@ -217,10 +217,6 @@ func (receiver *TypeMeta) setItemHashCode(itemType reflect.Type) {
 	} else {
 		receiver.itemHashCode = anyNil.HashCode
 	}
-}
-
-func (receiver *TypeMeta) GetKeyMeta() *TypeMeta {
-	return cacheTyp[receiver.keyHashCode]
 }
 
 func (receiver *TypeMeta) GetItemMeta() *TypeMeta {

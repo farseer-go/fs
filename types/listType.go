@@ -26,21 +26,27 @@ func ListAdd(lstValue reflect.Value, item any) {
 
 // ListAddValue 动态添加元素
 func ListAddValue(lstValue reflect.Value, itemValue reflect.Value) {
-	key := lstValue.String() + ".Add"
-
-	if _, isExists := Cache[key]; !isExists {
-		method, _ := lstValue.Type().MethodByName("Add")
-		Cache[key] = []int{method.Index}
-	}
+	method := GetAddMethod(lstValue)
 
 	if itemValue.Kind() == reflect.Ptr {
 		itemValue = itemValue.Elem()
 	}
 	if itemValue.Kind() == reflect.Slice {
-		lstValue.Method(Cache[key][0]).CallSlice([]reflect.Value{itemValue})
+		method.CallSlice([]reflect.Value{itemValue})
 	} else {
-		lstValue.Method(Cache[key][0]).Call([]reflect.Value{itemValue})
+		method.Call([]reflect.Value{itemValue})
 	}
+}
+
+// GetAddMethod 获取动态添加元素的Method
+func GetAddMethod(lstValue reflect.Value) reflect.Value {
+	// 初始化反射Method
+	key := lstValue.String() + ".Add"
+	if _, isExists := Cache[key]; !isExists {
+		method, _ := lstValue.Type().MethodByName("Add")
+		Cache[key] = []int{method.Index}
+	}
+	return lstValue.Method(Cache[key][0])
 }
 
 // GetListItemArrayType 获取List的原始数组类型

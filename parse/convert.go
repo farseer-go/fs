@@ -14,15 +14,15 @@ import (
 var layouts = []string{"2006-01-02 15:04:05", "2006-01-02", "2006-01-02T15:04:05Z07:00"}
 
 // ConvertValue 通用的类型转换
-func ConvertValue(source any, defValType reflect.Type) reflect.Value {
+func ConvertValue(source any, defValType reflect.Type) any {
 	// any类型，则直接返回
 	if defValType == nil || defValType.Kind() == reflect.Interface {
-		return reflect.ValueOf(source)
+		return source
 	}
 
 	defVal := reflect.New(defValType).Elem().Interface()
 	val := Convert(source, defVal)
-	return reflect.ValueOf(val)
+	return val
 }
 
 // Convert 通用的类型转换
@@ -129,7 +129,7 @@ func Convert[T any](source any, defVal T) T {
 			arr := strings.Split(strSource, ",")
 			itemMeta := defValMeta.GetItemMeta()
 			for i := 0; i < len(arr); i++ {
-				types.ListAddValue(lstReflectValue, ConvertValue(arr[i], itemMeta.ReflectType))
+				types.ListAddValue(lstReflectValue, reflect.ValueOf(ConvertValue(arr[i], itemMeta.ReflectType)))
 			}
 			val := lstReflectValue.Elem().Interface()
 			//return *(*T)(unsafe.Pointer(&val))
@@ -200,7 +200,7 @@ func Convert[T any](source any, defVal T) T {
 		for i := 0; i < arrSource.Len(); i++ {
 			item := arrSource.Index(i)
 			destVal := ConvertValue(item.Interface(), itemMeta.ReflectType)
-			arr = reflect.Append(arr, destVal)
+			arr = reflect.Append(arr, reflect.ValueOf(destVal))
 		}
 		return arr.Interface().(T)
 	}

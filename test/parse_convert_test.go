@@ -10,7 +10,7 @@ import (
 )
 
 func TestConvert(t *testing.T) {
-	assert.Equal(t, 123, parse.ConvertValue("123", reflect.TypeOf(1)).Interface().(int))
+	assert.Equal(t, 123, parse.ConvertValue("123", reflect.TypeOf(1)).(int))
 	assert.Equal(t, 1, parse.Convert(1, 0))
 	assert.Equal(t, int64(1), parse.Convert(1, int64(0)))
 	assert.Equal(t, "1", parse.Convert(1, ""))

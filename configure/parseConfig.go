@@ -39,7 +39,7 @@ func parseString(configRefVal reflect.Value, configString string) reflect.Value 
 			s, exists := configMap[fieldName]
 			if exists {
 				value := parse.ConvertValue(s, configRefType.Field(i).Type)
-				configRefVal.Field(i).Set(value)
+				configRefVal.Field(i).Set(reflect.ValueOf(value))
 			}
 		}
 	}
@@ -81,7 +81,7 @@ func ParseConfig[TConfig any](key string) TConfig {
 func parseConfig(configType reflect.Type, node any) reflect.Value {
 	// 字段是基础类型
 	if types.IsGoBasicType(configType) {
-		return parse.ConvertValue(node, configType)
+		return reflect.ValueOf(parse.ConvertValue(node, configType))
 	}
 
 	configFieldValue := reflect.New(configType).Elem()
