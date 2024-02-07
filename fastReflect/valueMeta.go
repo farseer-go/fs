@@ -2,10 +2,13 @@ package fastReflect
 
 import (
 	"reflect"
+	"sync"
 	"unsafe"
 )
 
 type FieldType int
+
+var lock sync.RWMutex
 
 const (
 	List        FieldType = iota // 集合类型
@@ -54,8 +57,14 @@ func PointerOfValue(val reflect.Value) PointerMeta {
 	//	valueMeta.HashCode = 252279353
 	//}
 	var exists bool
-	if valueMeta.TypeMeta, exists = cacheTyp[valueMeta.HashCode]; !exists {
+	lock.RLock()
+	valueMeta.TypeMeta, exists = cacheTyp[valueMeta.HashCode]
+	lock.RUnlock()
+
+	if !exists {
 		valueMeta.TypeMeta = typeOf(val.Type(), inf)
+		lock.Lock()
+		defer lock.Unlock()
 		cacheTyp[valueMeta.HashCode] = valueMeta.TypeMeta
 		return valueMeta
 	}
@@ -66,9 +75,17 @@ func PointerOfValue(val reflect.Value) PointerMeta {
 func PointerOf(val any) PointerMeta {
 	inf := (*EmptyInterface)(unsafe.Pointer(&val))
 	valueMeta := PointerMeta{PointerValue: inf.Value, HashCode: inf.Typ.hash}
+
 	var exists bool
-	if valueMeta.TypeMeta, exists = cacheTyp[valueMeta.HashCode]; !exists {
+	lock.RLock()
+	valueMeta.TypeMeta, exists = cacheTyp[valueMeta.HashCode]
+	lock.RUnlock()
+
+	if !exists {
 		valueMeta.TypeMeta = typeOf(reflect.TypeOf(val), inf)
+
+		lock.Lock()
+		defer lock.Unlock()
 		cacheTyp[valueMeta.HashCode] = valueMeta.TypeMeta
 		return valueMeta
 	}
