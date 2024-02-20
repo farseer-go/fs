@@ -34,6 +34,19 @@ func (r *yamlConfig) LoadConfigure() error {
 	return nil
 }
 
+// LoadContent 解析yml内容
+func (r *yamlConfig) LoadContent(data []byte) error {
+	var m map[string]any
+	err := yaml.Unmarshal(data, &m)
+	if err != nil {
+		return err
+	}
+
+	// 结构化转成扁平化
+	r.flattening("", m)
+	return nil
+}
+
 func (r *yamlConfig) Get(key string) (any, bool) {
 	v, exists := r.data[key]
 	if exists {
