@@ -119,7 +119,7 @@ func GetListToArrayValue(lstValue reflect.Value) reflect.Value {
 func setCache(key string, val []int) {
 	lock.Lock()
 	Cache[key] = val
-	lock.Lock()
+	lock.Unlock()
 }
 
 func getCache(key string) ([]int, bool) {
