@@ -1,21 +1,25 @@
 package types
 
-import "reflect"
+import (
+	"reflect"
+	"sync"
+)
 
 // string key=自定义标识
 // value int=field or method对应的索引
 var Cache = make(map[string][]int)
+var lock sync.RWMutex
 
 // ListNew 动态创建一个新的List
 func ListNew(lstType reflect.Type) reflect.Value {
 	key := lstType.String() + ".New"
-	if _, isExists := Cache[key]; !isExists {
+	if _, isExists := getCache(key); !isExists {
 		method, _ := reflect.New(lstType).Type().MethodByName("New")
-		Cache[key] = []int{method.Index}
+		setCache(key, []int{method.Index})
 	}
 
 	lstValue := reflect.New(lstType)
-	lstValue.Method(Cache[key][0]).Call(nil)
+	lstValue.Method(getCacheVal(key)[0]).Call(nil)
 	return lstValue
 }
 
@@ -42,40 +46,40 @@ func ListAddValue(lstValue reflect.Value, itemValue reflect.Value) {
 func GetAddMethod(lstValue reflect.Value) reflect.Value {
 	// 初始化反射Method
 	key := lstValue.String() + ".Add"
-	if _, isExists := Cache[key]; !isExists {
+	if _, isExists := getCache(key); !isExists {
 		method, _ := lstValue.Type().MethodByName("Add")
-		Cache[key] = []int{method.Index}
+		setCache(key, []int{method.Index})
 	}
-	return lstValue.Method(Cache[key][0])
+	return lstValue.Method(getCacheVal(key)[0])
 }
 
 // GetListItemArrayType 获取List的原始数组类型
 func GetListItemArrayType(lstType reflect.Type) reflect.Type {
 	key := lstType.String() + ".source"
-	if _, isExists := Cache[key]; !isExists {
+	if _, isExists := getCache(key); !isExists {
 		method, _ := lstType.FieldByName("source")
-		Cache[key] = method.Index
+		setCache(key, method.Index)
 	}
-	if len(Cache[key]) == 1 {
-		return lstType.Field(Cache[key][0]).Type.Elem()
+	if len(getCacheVal(key)) == 1 {
+		return lstType.Field(getCacheVal(key)[0]).Type.Elem()
 	}
-	return lstType.FieldByIndex(Cache[key]).Type.Elem()
+	return lstType.FieldByIndex(getCacheVal(key)).Type.Elem()
 }
 
 // GetListItemType 获取List的元素Type
 func GetListItemType(lstType reflect.Type) reflect.Type {
 	key := lstType.String() + ".source"
 
-	if _, isExists := Cache[key]; !isExists {
+	if _, isExists := getCache(key); !isExists {
 		method, _ := lstType.FieldByName("source")
-		Cache[key] = method.Index
+		setCache(key, method.Index)
 	}
 
 	var field reflect.Type
-	if len(Cache[key]) == 1 {
-		field = lstType.Field(Cache[key][0]).Type
+	if len(getCacheVal(key)) == 1 {
+		field = lstType.Field(getCacheVal(key)[0]).Type
 	} else {
-		field = lstType.FieldByIndex(Cache[key]).Type
+		field = lstType.FieldByIndex(getCacheVal(key)).Type
 	}
 
 	return field.Elem().Elem()
@@ -85,12 +89,12 @@ func GetListItemType(lstType reflect.Type) reflect.Type {
 func GetListToArray(lstValue reflect.Value) []any {
 	key := lstValue.String() + ".ToArray"
 
-	if _, isExists := Cache[key]; !isExists {
+	if _, isExists := getCache(key); !isExists {
 		method, _ := lstValue.Type().MethodByName("ToArray")
-		Cache[key] = []int{method.Index}
+		setCache(key, []int{method.Index})
 	}
 
-	arrValue := lstValue.Method(Cache[key][0]).Call(nil)[0]
+	arrValue := lstValue.Method(getCacheVal(key)[0]).Call(nil)[0]
 
 	var items []any
 	for i := 0; i < arrValue.Len(); i++ {
@@ -103,11 +107,31 @@ func GetListToArray(lstValue reflect.Value) []any {
 // GetListToArrayValue 在集合中获取数据
 func GetListToArrayValue(lstValue reflect.Value) reflect.Value {
 	key := lstValue.String() + ".ToArray"
-	if _, isExists := Cache[key]; !isExists {
+	if _, isExists := getCache(key); !isExists {
 		method, _ := lstValue.Type().MethodByName("ToArray")
-		Cache[key] = []int{method.Index}
+		setCache(key, []int{method.Index})
 	}
 
-	arrValue := lstValue.Method(Cache[key][0]).Call(nil)[0]
+	arrValue := lstValue.Method(getCacheVal(key)[0]).Call(nil)[0]
 	return arrValue
+}
+
+func setCache(key string, val []int) {
+	lock.Lock()
+	Cache[key] = val
+	lock.Lock()
+}
+
+func getCache(key string) ([]int, bool) {
+	lock.RLock()
+	val, isExists := Cache[key]
+	lock.RUnlock()
+	return val, isExists
+}
+
+func getCacheVal(key string) []int {
+	lock.RLock()
+	val, _ := Cache[key]
+	lock.RUnlock()
+	return val
 }
