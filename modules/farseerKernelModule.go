@@ -3,6 +3,7 @@ package modules
 import (
 	"github.com/farseer-go/fs/configure"
 	"github.com/farseer-go/fs/container"
+	"github.com/farseer-go/fs/core"
 	"github.com/farseer-go/fs/flog"
 	"github.com/farseer-go/fs/timingWheel"
 	"github.com/farseer-go/fs/trace"
@@ -24,7 +25,9 @@ func (module FarseerKernelModule) PreInitialize() {
 	log := flog.InitLog()
 
 	// 4、配置日志
-	container.RegisterInstance(log)
+	if !container.IsRegister[core.ILog]() {
+		container.RegisterInstance(log)
+	}
 
 	// 清空日志缓冲区
 	flog.ClearLogBuffer(log)
@@ -34,5 +37,7 @@ func (module FarseerKernelModule) PreInitialize() {
 	timingWheel.NewDefault(100*time.Millisecond, 60)
 
 	// 注册空的链路实现
-	container.Register(func() trace.IManager { return &trace.EmptyManager{} })
+	if !container.IsRegister[trace.IManager]() {
+		container.Register(func() trace.IManager { return &trace.EmptyManager{} })
+	}
 }
