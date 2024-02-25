@@ -11,9 +11,9 @@ func DictionaryNew(lstType reflect.Type) reflect.Value {
 
 // DictionaryAddMap 动态添加元素
 func DictionaryAddMap(lstValue reflect.Value, item any) {
-	if _, isExists := Cache["dic.AddMap"]; !isExists {
+	if _, isExists := getCache("dic.AddMap"); !isExists {
 		method, _ := lstValue.Type().MethodByName("AddMap")
-		Cache["dic.AddMap"] = []int{method.Index}
+		setCache("dic.AddMap", []int{method.Index})
 	}
 
 	itemValue := reflect.ValueOf(item)
@@ -21,33 +21,33 @@ func DictionaryAddMap(lstValue reflect.Value, item any) {
 		itemValue = itemValue.Elem()
 	}
 	if itemValue.Kind() == reflect.Slice {
-		lstValue.Method(Cache["dic.AddMap"][0]).CallSlice([]reflect.Value{itemValue})
+		lstValue.Method(getCacheVal("dic.AddMap")[0]).CallSlice([]reflect.Value{itemValue})
 	} else {
-		lstValue.Method(Cache["dic.AddMap"][0]).Call([]reflect.Value{itemValue})
+		lstValue.Method(getCacheVal("dic.AddMap")[0]).Call([]reflect.Value{itemValue})
 	}
 }
 
 // GetDictionaryToMap 获取Dictionary的map元素
 func GetDictionaryToMap(lstValue reflect.Value) reflect.Value {
-	if _, isExists := Cache["dic.ToMap"]; !isExists {
+	if _, isExists := getCache("dic.ToMap"); !isExists {
 		method, _ := lstValue.Type().MethodByName("ToMap")
-		Cache["dic.ToMap"] = []int{method.Index}
+		setCache("dic.ToMap", []int{method.Index})
 	}
-	return lstValue.Method(Cache["dic.ToMap"][0]).Call(nil)[0]
+	return lstValue.Method(getCacheVal("dic.ToMap")[0]).Call(nil)[0]
 }
 
 // GetDictionaryMapType 获取List的原始数组类型
 func GetDictionaryMapType(lstType reflect.Type) reflect.Type {
 	innerMapType := lstType.Field(0).Type
 
-	if _, isExists := Cache["dic.source"]; !isExists {
+	if _, isExists := getCache("dic.source"); !isExists {
 		for i := 0; i < innerMapType.NumField(); i++ {
 			field, _ := innerMapType.FieldByName("source")
-			Cache["dic.source"] = field.Index
+			setCache("dic.source", field.Index)
 		}
 	}
-	if len(Cache["dic.source"]) == 1 {
-		return innerMapType.Field(Cache["dic.source"][0]).Type
+	if len(getCacheVal("dic.source")) == 1 {
+		return innerMapType.Field(getCacheVal("dic.source")[0]).Type
 	}
-	return innerMapType.FieldByIndex(Cache["dic.source"]).Type
+	return innerMapType.FieldByIndex(getCacheVal("dic.source")).Type
 }
