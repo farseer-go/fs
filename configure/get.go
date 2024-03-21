@@ -2,6 +2,7 @@ package configure
 
 import (
 	"fmt"
+	"github.com/farseer-go/fs/core"
 	"github.com/farseer-go/fs/parse"
 	"os"
 	"strings"
@@ -24,6 +25,35 @@ func InitConfig() {
 	err := configurationBuilder.Build()
 	if err != nil { // 捕获读取中遇到的error
 		fmt.Printf("An error occurred while reading: %s \n", err)
+		return
+	}
+
+	// 尝试加载fops中心的配置
+	if core.AppName != "fops" && GetFopsServer() != "" {
+		lstFopsConfigure, err := getFopsConfigure()
+		if err != nil {
+			fmt.Println(err.Error())
+			return
+		}
+
+		lstFopsConfigure.Foreach(func(item *fopsConfigureVO) {
+			if item.AppName == "global" {
+				item.AppName = ""
+			}
+		})
+
+		// 重新读取yml文件
+		data, _ := os.ReadFile(ymlFile)
+		dataContent := string(data)
+		lstFopsConfigure.Foreach(func(fopsConfigure *fopsConfigureVO) {
+			dataContent = strings.ReplaceAll(dataContent, "{{"+fopsConfigure.Key+"}}", fopsConfigure.Value)
+		})
+
+		// 重新写入yml提供者
+		if err = ymlProvider.LoadContent([]byte(dataContent)); err != nil {
+			fmt.Printf("There is a problem with the configuration read through the configuration center: %s \n", err)
+			return
+		}
 	}
 }
 

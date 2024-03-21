@@ -26,15 +26,7 @@ func (r *yamlConfig) LoadConfigure() error {
 	if err != nil {
 		return err
 	}
-	var m map[string]any
-	err = yaml.Unmarshal(data, &m)
-	if err != nil {
-		return err
-	}
-
-	// 结构化转成扁平化
-	r.flattening("", m)
-	return nil
+	return r.LoadContent(data)
 }
 
 // LoadContent 解析yml内容

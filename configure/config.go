@@ -6,6 +6,9 @@ import (
 
 var configurationBuilder = newConfigurationBuilder()
 
+// yml提供者
+var ymlProvider *yamlConfig
+
 type config struct {
 	def            map[string]any    // 默认配置
 	envKeyReplacer *strings.Replacer // 环境变量替换
@@ -21,14 +24,13 @@ func newConfigurationBuilder() config {
 
 // AddYamlFile 设置yaml文件配置
 func (c *config) AddYamlFile(configFile string) {
-	var yConfig IConfigProvider = NewYamlConfig(configFile)
-	c.configProvider = append(c.configProvider, yConfig)
+	ymlProvider = NewYamlConfig(configFile)
+	c.configProvider = append(c.configProvider, ymlProvider)
 }
 
 // AddEnvironmentVariables 加载环境变量
 func (c *config) AddEnvironmentVariables() {
-	var envConfig IConfigProvider = NewEnvConfig()
-	c.configProvider = append([]IConfigProvider{envConfig}, c.configProvider...)
+	c.configProvider = append([]IConfigProvider{NewEnvConfig()}, c.configProvider...)
 }
 
 // SetEnvKeyReplacer 环境变量替换
