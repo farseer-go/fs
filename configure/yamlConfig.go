@@ -17,6 +17,9 @@ func NewYamlConfig(configFile string) *yamlConfig {
 		configFile: configFile,
 	}
 }
+func (r *yamlConfig) Name() string {
+	return "yaml"
+}
 
 func (r *yamlConfig) LoadConfigure() error {
 	data, err := os.ReadFile(r.configFile)

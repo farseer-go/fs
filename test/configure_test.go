@@ -51,8 +51,13 @@ func TestConfigureGet(t *testing.T) {
 	assert.Len(t, configure.GetSliceNodes("aaa"), 0)
 }
 
-//func TestEnvConfig(t *testing.T) {
-//	fs.Initialize[modules.FarseerKernelModule]("unit test")
-//	_ = os.Setenv("Database_default", "aaa=bb")
-//	assert.Equal(t, "aaa=bb", configure.GetSubNodes("Database")["default"])
-//}
+func TestEnvConfig(t *testing.T) {
+	fs.Initialize[modules.FarseerKernelModule]("unit test")
+	_ = os.Setenv("Database_default", "aaa=bb")
+	assert.Equal(t, "aaa=bb", os.Getenv("Database_default"))
+	assert.Equal(t, "aaa=bb", configure.GetSubNodes("Database")["default"])
+
+	assert.Equal(t, os.Getenv("COMMAND_MODE"), configure.GetString("command_mode"))
+	nodes := configure.GetSubNodes("command")
+	assert.Equal(t, os.Getenv("COMMAND_MODE"), nodes["MODE"])
+}

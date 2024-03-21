@@ -70,7 +70,7 @@ func (c *config) Get(key string) any {
 func (c *config) GetSubNodes(key string) map[string]any {
 	// 这里需要倒序获取列表，利用后面覆盖前面的方式来获取
 	m := make(map[string]any)
-	// 先添加默认值
+	// 先加载默认值
 	prefixKey := key + "."
 	for k, v := range c.def {
 		if strings.HasPrefix(k, prefixKey) {
@@ -80,9 +80,13 @@ func (c *config) GetSubNodes(key string) map[string]any {
 
 	// 再添加yaml、环境变量
 	for i := len(c.configProvider) - 1; i >= 0; i-- {
-		subMap, exists := c.configProvider[i].GetSubNodes(key)
-		if exists {
+		if subMap, exists := c.configProvider[i].GetSubNodes(key); exists {
 			for k, v := range subMap {
+				// 尝试从之前的map中找到key（忽略大小写）
+				// 目的是以yaml的key为准
+				if c.configProvider[i].Name() == "env" {
+					k = lookupMapKeyIgnoreCase(m, k)
+				}
 				m[k] = v
 			}
 		}
@@ -127,4 +131,15 @@ func (c *config) GetSliceNodes(key string) []map[string]any {
 		}
 	}
 	return []map[string]any{}
+}
+
+// 尝试从之前的map中找到key（忽略大小写）
+// 目的是以yaml的key为准
+func lookupMapKeyIgnoreCase(m map[string]any, key string) string {
+	for k, _ := range m {
+		if strings.EqualFold(k, key) {
+			return k
+		}
+	}
+	return key
 }
