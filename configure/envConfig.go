@@ -27,7 +27,7 @@ func (r *envConfig) Get(key string) (any, bool) {
 
 func (r *envConfig) GetSubNodes(key string) (map[string]any, bool) {
 	m := make(map[string]any)
-	prefixKey := key + "_"
+	prefixKey := r.replace(key) + "_"
 	for _, env := range os.Environ() {
 		if strings.HasPrefix(env, prefixKey) {
 			index := strings.Index(env, "=")
