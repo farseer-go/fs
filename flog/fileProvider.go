@@ -69,7 +69,8 @@ func (r *fileLoggerPersistent) Log(LogLevel eumLogLevel.Enum, log *LogData, exce
 
 // 将缓冲区的日志，每隔1秒，写入文件
 func (r *fileLoggerPersistent) writeFile() {
-	for range time.NewTicker(time.Second * time.Duration(r.config.RefreshInterval)).C {
+	ticker := time.NewTicker(time.Second * time.Duration(r.config.RefreshInterval))
+	for range ticker.C {
 		// 组装要写入的日志内容
 		var logs []string
 		for len(r.logsBuffer) > 0 {

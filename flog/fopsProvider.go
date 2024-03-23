@@ -53,7 +53,8 @@ func (r *fopsLoggerPersistent) Log(LogLevel eumLogLevel.Enum, log *LogData, exce
 
 // 开启上传
 func (r *fopsLoggerPersistent) enableUpload() {
-	for range time.NewTicker(3 * time.Second).C {
+	ticker := time.NewTicker(5 * time.Second)
+	for range ticker.C {
 		var lst []*LogData
 		// 当队列中有数据 且 取出的数量<1000时，则继续取出
 		for len(r.queue) > 0 && len(lst) < 1000 {

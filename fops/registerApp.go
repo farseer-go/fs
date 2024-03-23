@@ -45,7 +45,7 @@ type RegisterAppRequest struct {
 // 每隔3秒，上传当前应用信息
 func register() {
 	if core.AppName == "fops" {
-		<-time.NewTicker(3 * time.Second).C
+		time.Sleep(5 * time.Second)
 	}
 	registerAppRequest := RegisterAppRequest{StartupAt: core.StartupAt, AppName: core.AppName, HostName: core.HostName, AppId: core.AppId, AppIp: core.AppIp, ProcessId: core.ProcessId}
 	for {
@@ -66,14 +66,14 @@ func register() {
 			apiRsp := core.NewApiResponseByReader[any](rsp.Body)
 			if apiRsp.StatusCode != 200 {
 				flog.Warningf("注册应用信息到FOPS失败（%v）%s", rsp.StatusCode, apiRsp.StatusMessage)
-				<-time.NewTicker(20 * time.Second).C
+				time.Sleep(20 * time.Second)
 				continue
 			}
 		} else {
 			flog.Warningf("注册应用信息到FOPS失败：%s", err.Error())
-			<-time.NewTicker(20 * time.Second).C
+			time.Sleep(20 * time.Second)
 			continue
 		}
-		<-time.NewTicker(20 * time.Second).C
+		time.Sleep(20 * time.Second)
 	}
 }
