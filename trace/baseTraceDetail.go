@@ -1,7 +1,6 @@
 package trace
 
 import (
-	"fmt"
 	"github.com/farseer-go/fs/dateTime"
 	"github.com/farseer-go/fs/path"
 	"github.com/farseer-go/fs/trace/eumCallType"
@@ -107,11 +106,16 @@ func GetCallerInfo() (string, string, int) {
 			frame.Function = strings.TrimPrefix(frame.Function, "github.com/")
 			// 移除绝对路径
 			prefixFunc := frame.Function[0 : strings.LastIndex(frame.Function, path.PathSymbol)+len(path.PathSymbol)]
-			packageIndex := strings.Index(frame.File, prefixFunc)
+			packageIndex := strings.Index(strings.ToLower(frame.File), strings.ToLower(prefixFunc))
 			if packageIndex == -1 {
-				fmt.Print(packageIndex)
+				packageIndex = 0 // 未找到，则使用0作为起始位置
 			}
-			file := frame.File[packageIndex:]
+
+			var file string
+			if len(frame.File) > packageIndex {
+				file = frame.File[packageIndex:]
+			}
+
 
 			// 只要最后的方法名
 			funcName := frame.Function[strings.LastIndex(frame.Function, path.PathSymbol)+len(path.PathSymbol):] + "()"
