@@ -3,7 +3,6 @@ package flog
 import (
 	"fmt"
 	"github.com/farseer-go/fs/core/eumLogLevel"
-	"github.com/farseer-go/fs/trace"
 )
 
 // ConsoleProvider 控制台打印
@@ -24,10 +23,6 @@ func (r *consoleLoggerPersistent) IsEnabled(logLevel eumLogLevel.Enum) bool {
 }
 
 func (r *consoleLoggerPersistent) Log(LogLevel eumLogLevel.Enum, log *LogData, exception error) {
-	if LogLevel == eumLogLevel.Error {
-		file, funcName, line := trace.GetCallerInfo()
-		fmt.Printf("%s:%s %s \n", file, Blue(line), funcName)
-	}
 	if log.newLine {
 		fmt.Println(r.formatter.Formatter(log))
 	} else {

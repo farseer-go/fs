@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/farseer-go/fs/core"
 	"github.com/farseer-go/fs/core/eumLogLevel"
+	"github.com/farseer-go/fs/trace"
 )
 
 // log 日志
@@ -16,7 +17,7 @@ func Trace(contents ...any) {
 
 // Tracef 打印Trace日志
 func Tracef(format string, a ...any) {
-	log.Tracef(format, a...)
+	log.Trace(fmt.Sprintf(format, a...))
 }
 
 // Debug 打印Debug日志
@@ -26,7 +27,7 @@ func Debug(contents ...any) {
 
 // Debugf 打印Debug日志
 func Debugf(format string, a ...any) {
-	log.Debugf(format, a...)
+	log.Debug(fmt.Sprintf(format, a...))
 }
 
 // Info 打印Info日志
@@ -36,7 +37,7 @@ func Info(contents ...any) {
 
 // Infof 打印Info日志
 func Infof(format string, a ...any) {
-	log.Infof(format, a...)
+	log.Info(fmt.Sprintf(format, a...))
 }
 
 // Warning 打印Warning日志
@@ -46,11 +47,14 @@ func Warning(contents ...any) {
 
 // Warningf 打印Warning日志
 func Warningf(format string, a ...any) {
-	log.Warningf(format, a...)
+	log.Warning(fmt.Sprintf(format, a...))
 }
 
 // Error 打印Error日志
 func Error(contents ...any) error {
+	if file, funcName, line := trace.GetCallerInfo(); file != "" {
+		Printf("%s:%s %s \n", file, Blue(line), funcName)
+	}
 	return log.Error(contents...)
 }
 
@@ -59,12 +63,18 @@ func ErrorIfExists(err error) {
 	if err == nil {
 		return
 	}
+	if file, funcName, line := trace.GetCallerInfo(); file != "" {
+		Printf("%s:%s %s \n", file, Blue(line), funcName)
+	}
 	_ = log.Error(err)
 }
 
 // Errorf 打印Error日志
 func Errorf(format string, a ...any) error {
-	return log.Errorf(format, a...)
+	if file, funcName, line := trace.GetCallerInfo(); file != "" {
+		Printf("%s:%s %s \n", file, Blue(line), funcName)
+	}
+	return log.Error(fmt.Sprintf(format, a...))
 }
 
 // Critical 打印Critical日志
@@ -74,7 +84,7 @@ func Critical(contents ...any) {
 
 // Criticalf 打印Critical日志
 func Criticalf(format string, a ...any) {
-	log.Criticalf(format, a...)
+	log.Critical(fmt.Sprintf(format, a...))
 }
 
 // Panic 打印Error日志并panic

@@ -25,7 +25,7 @@ func (r *CompositionLogger) Trace(contents ...any) {
 }
 
 func (r *CompositionLogger) Tracef(format string, a ...any) {
-	r.log(newLogData(eumLogLevel.Trace, fmt.Sprintf(format, a...), ""))
+	r.Trace(fmt.Sprintf(format, a...))
 }
 
 func (r *CompositionLogger) Debug(contents ...any) {
@@ -33,7 +33,7 @@ func (r *CompositionLogger) Debug(contents ...any) {
 }
 
 func (r *CompositionLogger) Debugf(format string, a ...any) {
-	r.log(newLogData(eumLogLevel.Debug, fmt.Sprintf(format, a...), ""))
+	r.Debug(fmt.Sprintf(format, a...))
 }
 
 func (r *CompositionLogger) Info(contents ...any) {
@@ -41,7 +41,7 @@ func (r *CompositionLogger) Info(contents ...any) {
 }
 
 func (r *CompositionLogger) Infof(format string, a ...any) {
-	r.log(newLogData(eumLogLevel.Information, fmt.Sprintf(format, a...), ""))
+	r.Info(fmt.Sprintf(format, a...))
 }
 
 func (r *CompositionLogger) Warning(contents ...any) {
@@ -49,7 +49,7 @@ func (r *CompositionLogger) Warning(contents ...any) {
 }
 
 func (r *CompositionLogger) Warningf(format string, a ...any) {
-	r.log(newLogData(eumLogLevel.Warning, fmt.Sprintf(format, a...), ""))
+	r.Warning(fmt.Sprintf(format, a...))
 }
 
 func (r *CompositionLogger) Error(contents ...any) error {
@@ -59,9 +59,7 @@ func (r *CompositionLogger) Error(contents ...any) error {
 }
 
 func (r *CompositionLogger) Errorf(format string, a ...any) error {
-	log := newLogData(eumLogLevel.Error, fmt.Sprintf(format, a...), "")
-	r.log(log)
-	return fmt.Errorf(TextFormatter{}.Formatter(log))
+	return r.Error(fmt.Sprintf(format, a...))
 }
 
 func (r *CompositionLogger) Critical(contents ...any) {
@@ -69,7 +67,7 @@ func (r *CompositionLogger) Critical(contents ...any) {
 }
 
 func (r *CompositionLogger) Criticalf(format string, a ...any) {
-	r.log(newLogData(eumLogLevel.Critical, fmt.Sprintf(format, a...), ""))
+	r.Criticalf(fmt.Sprintf(format, a...))
 }
 
 func (r *CompositionLogger) Log(logLevel eumLogLevel.Enum, content string, component string, newLine bool) {
