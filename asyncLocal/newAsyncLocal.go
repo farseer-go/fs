@@ -10,8 +10,12 @@ type AsyncLocal[T any] struct {
 
 // New 创建一个AsyncLocal
 func New[T any]() AsyncLocal[T] {
+	// 加入到list集合，用于手动GC
+	threadLocal := routine.NewInheritableThreadLocal()
+	list = append(list, threadLocal)
+
 	return AsyncLocal[T]{
-		threadLocal: routine.NewInheritableThreadLocal(),
+		threadLocal: threadLocal,
 	}
 }
 
@@ -33,4 +37,12 @@ func (receiver AsyncLocal[T]) Set(t T) {
 // Remove 移除对象
 func (receiver AsyncLocal[T]) Remove() {
 	receiver.threadLocal.Remove()
+}
+
+var list []routine.ThreadLocal
+
+func GC() {
+	for _, threadLocal := range list {
+		threadLocal.Remove()
+	}
 }
