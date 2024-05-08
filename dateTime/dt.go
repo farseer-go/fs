@@ -179,6 +179,11 @@ func (receiver DateTime) AddMillisecond(millisecond int) DateTime {
 	return New(receiver.time.Add(time.Duration(millisecond) * time.Millisecond))
 }
 
+// ResetDay 抹除天数，将天、小时、分、秒、毫秒 设为0
+func (receiver DateTime) ResetDay() DateTime {
+	return New(time.Date(receiver.Year(),time.Month(receiver.Month()),1,0,0,0,0,time.Local))
+}
+
 // Sub 时间相减
 func (receiver DateTime) Sub(dt DateTime) time.Duration {
 	return receiver.time.Sub(dt.time)
