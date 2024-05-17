@@ -3,6 +3,7 @@ package flog
 import (
 	"github.com/farseer-go/fs/core"
 	"github.com/farseer-go/fs/core/eumLogLevel"
+	"time"
 )
 
 // LogBuffer 日志缓冲区
@@ -12,7 +13,6 @@ var LogBuffer = make(chan string, 1000)
 func LoadLogBuffer(logIns core.ILog) {
 	for log := range LogBuffer {
 		logIns.Log(eumLogLevel.NoneLevel, log, "", true)
-		//Println(log)
 	}
 }
 
@@ -20,6 +20,10 @@ func LoadLogBuffer(logIns core.ILog) {
 func ClearLogBuffer(logIns core.ILog) {
 	for len(LogBuffer) > 0 {
 		logIns.Log(eumLogLevel.NoneLevel, <-LogBuffer, "", true)
-		//Println(<-LogBuffer)
 	}
+}
+
+func CloseBuffer() {
+	close(LogBuffer)
+	time.Sleep(200 * time.Microsecond)
 }

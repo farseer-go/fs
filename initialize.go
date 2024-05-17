@@ -65,20 +65,21 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 
 	// 执行所有模块初始化
 	modules.StartModules(dependModules)
-	flog.LogBuffer <- fmt.Sprint("Initialization completed, total time：" + sw.GetMillisecondsText())
-	flog.LogBuffer <- fmt.Sprint("---------------------------------------")
+	flog.CloseBuffer()
+	flog.Println("Initialization completed, total time：" + sw.GetMillisecondsText())
+	flog.Println("---------------------------------------")
 
 	// 健康检查
 	healthChecks := container.ResolveAll[core.IHealthCheck]()
 	if len(healthChecks) > 0 {
-		flog.LogBuffer <- fmt.Sprint("Health Check...")
+		flog.Println("Health Check...")
 		isSuccess := true
 		for _, healthCheck := range healthChecks {
 			item, err := healthCheck.Check()
 			if err == nil {
-				flog.LogBuffer <- fmt.Sprintf("%s%s", flog.Green("【✓】"), item)
+				flog.Printf("%s%s\n", flog.Green("【✓】"), item)
 			} else {
-				flog.LogBuffer <- fmt.Sprintf("%s%s：%s", flog.Red("【✕】"), item, flog.Red(err.Error()))
+				flog.Printf("%s%s：%s\n", flog.Red("【✕】"), item, flog.Red(err.Error()))
 				isSuccess = false
 			}
 		}
@@ -92,7 +93,7 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 	fops.RegisterApp()
 	// 日志内容美化
 	if len(healthChecks) > 0 || configure.GetString("Fops.Server") != "" {
-		flog.LogBuffer <- fmt.Sprint("---------------------------------------")
+		flog.Println("---------------------------------------")
 	}
 
 	// 加载callbackFnList，启动后才执行的模块
@@ -100,9 +101,9 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 		for index, fn := range callbackFnList {
 			sw.Restart()
 			fn.f()
-			flog.LogBuffer <- fmt.Sprint("Run " + strconv.Itoa(index+1) + "：" + fn.name + "，Use：" + sw.GetMillisecondsText())
+			flog.Println("Run " + strconv.Itoa(index+1) + "：" + fn.name + "，Use：" + sw.GetMillisecondsText())
 		}
-		flog.LogBuffer <- fmt.Sprint("---------------------------------------")
+		flog.Println("---------------------------------------")
 	}
 
 	isInit = true

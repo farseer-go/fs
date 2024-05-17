@@ -24,7 +24,7 @@ func RegisterApp() {
 		fopsServer := configure.GetString("Fops.Server")
 		if fopsServer != "" {
 			fopsServer = configure.GetFopsServer()
-			flog.LogBuffer <- flog.Green("【✓】") + "FOPS Center：" + flog.Blue(fopsServer)
+			flog.Println(flog.Green("【✓】") + "FOPS Center：" + flog.Blue(fopsServer))
 			// 定时向FOPS中心注册应用信息
 			go register()
 		}
