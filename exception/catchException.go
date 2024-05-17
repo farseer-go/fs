@@ -13,7 +13,7 @@ type catchException struct {
 func TryCatch(fn func()) error{
 	var  err error
 	Try(fn).CatchException(func(exp any) {
-		err = fmt.Errorf("%s", exp)
+		err = fmt.Errorf("%+v", exp)
 	})
 	return err
 }
