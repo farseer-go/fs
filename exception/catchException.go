@@ -9,6 +9,15 @@ type catchException struct {
 	exp any
 }
 
+// TryCatch 异常时返回error
+func TryCatch(fn func()) error{
+	var  err error
+	Try(fn).CatchException(func(exp any) {
+		err = fmt.Errorf("%s", exp)
+	})
+	return err
+}
+
 // Try 执行有可能发生异常的代码块
 func Try(fn func()) (catch *catchException) {
 	catch = &catchException{}
