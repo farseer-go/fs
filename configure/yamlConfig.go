@@ -56,6 +56,17 @@ func (r *yamlConfig) Get(key string) (any, bool) {
 	return v, exists
 }
 
+func (r *yamlConfig) GetArray(key string) ([]any, bool) {
+	v, exists := r.data[key]
+	if exists {
+		switch arr:=v.(type) {
+		case []any:
+			return arr, exists
+		}
+	}
+	return nil, exists
+}
+
 func (r *yamlConfig) GetSubNodes(key string) (map[string]any, bool) {
 	v, exists := r.data[key]
 	if exists {
