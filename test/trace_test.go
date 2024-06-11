@@ -2,7 +2,6 @@ package test
 
 import (
 	"fmt"
-	"github.com/farseer-go/fs/container"
 	"github.com/farseer-go/fs/trace"
 	"github.com/farseer-go/fs/trace/eumCallType"
 	"github.com/stretchr/testify/assert"
@@ -10,8 +9,6 @@ import (
 )
 
 func TestTrace(t *testing.T) {
-	//	fs.Initialize[modules.FarseerKernelModule]("unit test")
-
 	assert.Equal(t, "Grpc", eumCallType.Grpc.ToString())
 	assert.Equal(t, "Http", eumCallType.Http.ToString())
 	assert.Equal(t, "Database", eumCallType.Database.ToString())
@@ -30,7 +27,7 @@ func TestTrace(t *testing.T) {
 	testErr(baseTraceDetail)
 
 	// EmptyManager
-	iManager := container.Resolve[trace.IManager]()
+	iManager := trace.EmptyManager{}
 	iManager.EntryWebApi("", "", "", "", nil, "", "")
 	iManager.EntryFSchedule("", 0, nil)
 	iManager.EntryTaskGroup("", "", 0)
