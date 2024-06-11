@@ -36,18 +36,18 @@ func InitConfig() {
 			return
 		}
 
-		lstFopsConfigure.Foreach(func(item *fopsConfigureVO) {
+		for _, item := range lstFopsConfigure {
 			if item.AppName == "global" {
 				item.AppName = ""
 			}
-		})
+		}
 
 		// 重新读取yml文件
 		data, _ := os.ReadFile(ymlFile)
 		dataContent := string(data)
-		lstFopsConfigure.Foreach(func(fopsConfigure *fopsConfigureVO) {
+		for _, fopsConfigure := range lstFopsConfigure {
 			dataContent = strings.ReplaceAll(dataContent, "{{"+fopsConfigure.Key+"}}", fopsConfigure.Value)
-		})
+		}
 
 		// 重新写入yml提供者
 		if err = ymlProvider.LoadContent([]byte(dataContent)); err != nil {

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/farseer-go/collections"
 	"github.com/farseer-go/fs/core"
 	"net/http"
 )
@@ -17,20 +16,20 @@ type fopsConfigureVO struct {
 	Value   string // 配置VALUE
 }
 
-func getFopsConfigure() (collections.List[fopsConfigureVO], error) {
+func getFopsConfigure() ([]fopsConfigureVO, error) {
 	bodyByte, _ := json.Marshal(map[string]string{"AppName": core.AppName})
 	url := fopsServer + "configure/list"
 	newRequest, _ := http.NewRequest("POST", url, bytes.NewReader(bodyByte))
 	newRequest.Header.Set("Content-Type", "application/json")
 	// 读取配置
 	client := &http.Client{}
-	lst := collections.NewList[fopsConfigureVO]()
+	var lst []fopsConfigureVO
 	rsp, err := client.Do(newRequest)
 	if err != nil {
 		return lst, fmt.Errorf("读取配置中心时失败：%s", err.Error())
 	}
 
-	apiRsp := core.NewApiResponseByReader[collections.List[fopsConfigureVO]](rsp.Body)
+	apiRsp := core.NewApiResponseByReader[[]fopsConfigureVO](rsp.Body)
 	if apiRsp.StatusCode != 200 {
 		return lst, fmt.Errorf("读取配置中心时失败（%v）：%s", rsp.StatusCode, apiRsp.StatusMessage)
 	}

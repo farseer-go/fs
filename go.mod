@@ -3,7 +3,6 @@ module github.com/farseer-go/fs
 go 1.19
 
 require (
-	github.com/farseer-go/collections v0.13.0
 	github.com/stretchr/testify v1.8.4
 	github.com/timandy/routine v1.1.2
 	gopkg.in/yaml.v3 v3.0.1
