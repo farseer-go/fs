@@ -7,7 +7,7 @@ func (*EmptyManager) EntryWebApi(domain string, path string, method string, cont
 	return &emptyTraceContext{}
 }
 
-func (*EmptyManager) EntryMqConsumer(server string, queueName string, routingKey string) ITraceContext {
+func (*EmptyManager) EntryMqConsumer(parentTraceId, parentAppName, server string, queueName string, routingKey string) ITraceContext {
 	return &emptyTraceContext{}
 }
 func (*EmptyManager) EntryQueueConsumer(queueName, subscribeName string) ITraceContext {
@@ -31,7 +31,10 @@ func (*EmptyManager) EntryWatchKey(key string) ITraceContext { return &emptyTrac
 func (*EmptyManager) TraceMq(method string, server string, exchange string) ITraceDetail {
 	return &emptyTraceDetail{}
 }
-func (*EmptyManager) GetCurTrace() ITraceContext  { return nil }
+func (*EmptyManager) GetCurTrace() ITraceContext { return nil }
+func (*EmptyManager) GetTraceId() string {
+	return ""
+}
 func (*EmptyManager) TraceDatabase() ITraceDetail { return &emptyTraceDetail{} }
 func (*EmptyManager) TraceDatabaseOpen(dbName string, connectString string) ITraceDetail {
 	return &emptyTraceDetail{}

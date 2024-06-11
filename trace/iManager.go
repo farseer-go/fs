@@ -3,6 +3,8 @@ package trace
 // IManager 链路追踪管理
 type IManager interface {
 	GetCurTrace() ITraceContext
+	// GetTraceId 获取当前TraceId
+	GetTraceId() string
 	// EntryWebApi 创建webapi的链路追踪入口
 	EntryWebApi(domain string, path string, method string, contentType string, headerDictionary map[string]string, requestBody string, requestIp string) ITraceContext
 	// TraceDatabaseOpen 数据库埋点
@@ -22,7 +24,7 @@ type IManager interface {
 	// TraceMq open、create埋点
 	TraceMq(method string, server string, exchange string) ITraceDetail
 	// EntryMqConsumer 创建MQ消费入口
-	EntryMqConsumer(server string, queueName string, routingKey string) ITraceContext
+	EntryMqConsumer(parentTraceId, parentAppName, server string, queueName string, routingKey string) ITraceContext
 	// EntryQueueConsumer 创建Queue消费入口
 	EntryQueueConsumer(queueName, subscribeName string) ITraceContext
 	// EntryEventConsumer 创建Event消费入口
