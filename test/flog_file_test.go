@@ -1,9 +1,7 @@
 package test
 
 import (
-	"github.com/farseer-go/fs"
 	"github.com/farseer-go/fs/flog"
-	"github.com/farseer-go/fs/modules"
 	"github.com/stretchr/testify/assert"
 	fs2 "io/fs"
 	"os"
@@ -14,7 +12,7 @@ import (
 
 func TestFlogFile(t *testing.T) {
 	_ = os.RemoveAll("./log/")
-	fs.Initialize[modules.FarseerKernelModule]("flog test")
+	//fs.Initialize[modules.FarseerKernelModule]("flog test")
 	flog.Info("测试日志文件")
 	time.Sleep(time.Second * 2)
 

@@ -1,9 +1,7 @@
 package test
 
 import (
-	"github.com/farseer-go/fs"
 	"github.com/farseer-go/fs/container"
-	"github.com/farseer-go/fs/modules"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -20,7 +18,7 @@ func (d *databaseFactory) CreateDatabase() IDatabase {
 }
 
 func TestContainerMethod(t *testing.T) {
-	fs.Initialize[modules.FarseerKernelModule]("unit test")
+	//fs.Initialize[modules.FarseerKernelModule]("unit test")
 
 	container.Remove[IDatabase]()
 	// 注册获取IDatabase接口的方法

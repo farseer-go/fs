@@ -34,7 +34,7 @@ func TestTrace(t *testing.T) {
 	iManager.EntryWebApi("", "", "", "", nil, "", "")
 	iManager.EntryFSchedule("", 0, nil)
 	iManager.EntryTaskGroup("", "", 0)
-	iManager.EntryMqConsumer("", "", "")
+	iManager.EntryMqConsumer("", "", "", "", "")
 	iManager.EntryQueueConsumer("", "")
 	iManager.EntryTask("")
 	iManager.EntryWatchKey("")
