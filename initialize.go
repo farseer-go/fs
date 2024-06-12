@@ -8,7 +8,6 @@ import (
 	"github.com/farseer-go/fs/core"
 	"github.com/farseer-go/fs/dateTime"
 	"github.com/farseer-go/fs/flog"
-	"github.com/farseer-go/fs/fops"
 	"github.com/farseer-go/fs/modules"
 	"github.com/farseer-go/fs/net"
 	"github.com/farseer-go/fs/sonyflake"
@@ -89,8 +88,6 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 		}
 	}
 
-	// 定时向FOPS中心注册应用信息
-	fops.RegisterApp()
 	// 日志内容美化
 	if len(healthChecks) > 0 || configure.GetString("Fops.Server") != "" {
 		flog.Println("---------------------------------------")
