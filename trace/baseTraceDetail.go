@@ -1,6 +1,7 @@
 package trace
 
 import (
+	"fmt"
 	"github.com/farseer-go/fs/dateTime"
 	"github.com/farseer-go/fs/path"
 	"github.com/farseer-go/fs/trace/eumCallType"
@@ -82,9 +83,21 @@ func (receiver *BaseTraceDetail) GetLevel() int {
 	return receiver.Level
 }
 
+func (receiver *BaseTraceDetail) Run(fn func()) {
+	defer func() {
+		exp := recover()
+		if exp != nil {
+			receiver.End(fmt.Errorf("%s", exp))
+			panic(exp)
+		}
+	}()
+	fn()
+	receiver.End(nil)
+}
+
 var ComNames = []string{"/farseer-go/async/", "/farseer-go/cache/", "/farseer-go/cacheMemory/", "/farseer-go/collections/", "/farseer-go/data/", "/farseer-go/elasticSearch/", "/farseer-go/etcd/", "/farseer-go/eventBus/", "/farseer-go/fs/", "/farseer-go/fSchedule/", "/farseer-go/linkTrace/", "/farseer-go/mapper/", "/farseer-go/queue/", "/farseer-go/rabbit/", "/farseer-go/redis/", "/farseer-go/redisStream/", "/farseer-go/tasks/", "/farseer-go/utils/", "/farseer-go/webapi/", "/src/reflect/", "/usr/local/go/src/", "gorm.io/"}
 
-func IsSysCom(file string) bool {
+func isSysCom(file string) bool {
 	for _, comName := range ComNames {
 		if strings.Contains(file, comName) {
 			return true
@@ -102,7 +115,7 @@ func GetCallerInfo() (string, string, int) {
 	// 遍历调用栈帧
 	for {
 		frame, more := frames.Next()
-		if !strings.HasSuffix(frame.File, "_test.go") && (!IsSysCom(frame.File) || strings.HasSuffix(frame.File, "healthCheck.go")) { // !strings.HasPrefix(file, gormSourceDir) ||
+		if !strings.HasSuffix(frame.File, "_test.go") && (!isSysCom(frame.File) || strings.HasSuffix(frame.File, "healthCheck.go")) { // !strings.HasPrefix(file, gormSourceDir) ||
 			frame.Function = strings.TrimPrefix(frame.Function, "github.com/")
 			// 移除绝对路径
 			prefixFunc := frame.Function[0 : strings.LastIndex(frame.Function, path.PathSymbol)+len(path.PathSymbol)]
@@ -115,7 +128,6 @@ func GetCallerInfo() (string, string, int) {
 			if len(frame.File) > packageIndex {
 				file = frame.File[packageIndex:]
 			}
-
 
 			// 只要最后的方法名
 			funcName := frame.Function[strings.LastIndex(frame.Function, path.PathSymbol)+len(path.PathSymbol):] + "()"

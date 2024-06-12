@@ -1,6 +1,8 @@
 package trace
 
 type ITraceDetail interface {
+	// Run 运行完后调用End
+	Run(fn func())
 	ToString() string
 	GetTraceDetail() *BaseTraceDetail
 	End(err error)

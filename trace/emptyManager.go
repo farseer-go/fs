@@ -28,10 +28,7 @@ func (*EmptyManager) EntryTaskGroup(taskName string, taskGroupName string, taskI
 }
 
 func (*EmptyManager) EntryWatchKey(key string) ITraceContext { return &emptyTraceContext{} }
-func (*EmptyManager) TraceMq(method string, server string, exchange string) ITraceDetail {
-	return &emptyTraceDetail{}
-}
-func (*EmptyManager) GetCurTrace() ITraceContext { return nil }
+func (*EmptyManager) GetCurTrace() ITraceContext             { return nil }
 func (*EmptyManager) GetTraceId() string {
 	return ""
 }
@@ -48,6 +45,9 @@ func (*EmptyManager) TraceEtcd(method string, key string, leaseID int64) ITraceD
 func (*EmptyManager) TraceHand(name string) ITraceDetail              { return &emptyTraceDetail{} }
 func (*EmptyManager) TraceEventPublish(eventName string) ITraceDetail { return &emptyTraceDetail{} }
 func (*EmptyManager) TraceMqSend(method string, server string, exchange string, routingKey string) ITraceDetail {
+	return &emptyTraceDetail{}
+}
+func (*EmptyManager) TraceMq(method string, server string, exchange string) ITraceDetail {
 	return &emptyTraceDetail{}
 }
 func (*EmptyManager) TraceRedis(method string, key string, field string) ITraceDetail {
@@ -75,6 +75,7 @@ func (*emptyTraceContext) GetAppInfo() (string, string, string, string, string) 
 type emptyTraceDetail struct{}
 
 func (*emptyTraceDetail) GetLevel() int                    { return 0 }
+func (*emptyTraceDetail) Run(fn func())                    {}
 func (*emptyTraceDetail) IsIgnore() bool                   { return true }
 func (*emptyTraceDetail) ToString() string                 { return "" }
 func (*emptyTraceDetail) GetTraceDetail() *BaseTraceDetail { return &BaseTraceDetail{} }
