@@ -20,7 +20,7 @@ var defaultSonyflake, _ = New(Settings{
 	CheckMachineID: nil,
 })
 
-// GenerateId 生成唯一ID
+// GenerateId 生成唯一ID（18位）
 func GenerateId() int64 {
 	id, _ := defaultSonyflake.NextID()
 	return int64(id)
