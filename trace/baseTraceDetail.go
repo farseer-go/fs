@@ -49,7 +49,7 @@ func (receiver ExceptionStack) IsNil() bool {
 
 func (receiver *BaseTraceDetail) SetSql(connectionString string, dbName string, tableName string, sql string, rowsAffected int64) {
 }
-func (receiver *BaseTraceDetail) SetHttpRequest(url string, head map[string]any, requestBody string, responseBody string, statusCode int) {
+func (receiver *BaseTraceDetail) SetHttpRequest(url string, reqHead map[string]any, rspHead map[string]string, requestBody string, responseBody string, statusCode int) {
 }
 
 // End 链路明细执行完后，统计用时

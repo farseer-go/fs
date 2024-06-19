@@ -14,5 +14,5 @@ type ITraceDetail interface {
 	// GetLevel 获取层级
 	GetLevel() int
 	// SetHttpRequest 设置Http请求出入参
-	SetHttpRequest(url string, head map[string]any, requestBody string, responseBody string, statusCode int)
+	SetHttpRequest(url string, reqHead map[string]any, rspHead map[string]string, requestBody string, responseBody string, statusCode int)
 }

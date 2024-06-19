@@ -83,5 +83,5 @@ func (*emptyTraceDetail) End(err error)                    {}
 func (*emptyTraceDetail) Ignore()                          {}
 func (*emptyTraceDetail) SetSql(connectionString string, DbName string, tableName string, sql string, rowsAffected int64) {
 }
-func (*emptyTraceDetail) SetHttpRequest(url string, head map[string]any, requestBody string, responseBody string, statusCode int) {
+func (*emptyTraceDetail) SetHttpRequest(url string, reqHead map[string]any, rspHead map[string]string, requestBody string, responseBody string, statusCode int) {
 }
