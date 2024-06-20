@@ -2,6 +2,7 @@ package configure
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"github.com/farseer-go/fs/core"
@@ -22,7 +23,13 @@ func getFopsConfigure() ([]fopsConfigureVO, error) {
 	newRequest, _ := http.NewRequest("POST", url, bytes.NewReader(bodyByte))
 	newRequest.Header.Set("Content-Type", "application/json")
 	// 读取配置
-	client := &http.Client{}
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true, // 不验证 HTTPS 证书
+			},
+		},
+	}
 	var lst []fopsConfigureVO
 	rsp, err := client.Do(newRequest)
 	if err != nil {

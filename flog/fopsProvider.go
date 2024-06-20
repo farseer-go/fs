@@ -2,6 +2,7 @@ package flog
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"github.com/farseer-go/fs/configure"
@@ -88,7 +89,13 @@ func (r *fopsLoggerPersistent) upload(lstLog []*LogData) error {
 	newRequest, _ := http.NewRequest("POST", url, bytes.NewReader(bodyByte))
 	newRequest.Header.Set("Content-Type", "application/json")
 	// 链路追踪
-	client := &http.Client{}
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true, // 不验证 HTTPS 证书
+			},
+		},
+	}
 	rsp, err := client.Do(newRequest)
 	if err != nil {
 		return fmt.Errorf("上传日志到FOPS失败：%s", err.Error())
