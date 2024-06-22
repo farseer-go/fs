@@ -67,7 +67,12 @@ func Convert[T any](source any, defVal T) T {
 			jsonNumber := source.(json.Number)
 			strSource = string(jsonNumber)
 		} else {
-			strSource = source.(string)
+			// 如果是指针，则取值
+			if sourceMeta.IsAddr{
+				strSource = *(source.(*string))
+			}else{
+				strSource = source.(string)
+			}
 		}
 
 		switch defValMeta.TypeIdentity {
