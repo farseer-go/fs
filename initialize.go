@@ -68,6 +68,10 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 	flog.Println("Initialization completed, total time：" + sw.GetMillisecondsText())
 	flog.Println("---------------------------------------")
 
+	if proxy := configure.GetString("Proxy"); proxy != "" {
+		flog.Println("http使用代理：", flog.Blue(proxy))
+	}
+
 	// 健康检查
 	healthChecks := container.ResolveAll[core.IHealthCheck]()
 	if len(healthChecks) > 0 {
