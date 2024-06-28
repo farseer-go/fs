@@ -11,7 +11,7 @@ import (
 	"unsafe"
 )
 
-var layouts = []string{"2006-01-02 15:04:05", "2006-01-02", "2006-01-02T15:04:05Z07:00"}
+var layouts = []string{"2006-01-02 15:04:05", "2006-01-02", "2006-01-02T15:04:05Z07:00", "02/01/2006"}
 
 // ConvertValue 通用的类型转换
 func ConvertValue(source any, defValType reflect.Type) any {
@@ -68,9 +68,9 @@ func Convert[T any](source any, defVal T) T {
 			strSource = string(jsonNumber)
 		} else {
 			// 如果是指针，则取值
-			if sourceMeta.IsAddr{
+			if sourceMeta.IsAddr {
 				strSource = *(source.(*string))
-			}else{
+			} else {
 				strSource = source.(string)
 			}
 		}
@@ -114,7 +114,11 @@ func Convert[T any](source any, defVal T) T {
 					return toTime[T](defValMeta, parse)
 				}
 			case 10:
-				if parse, err := time.ParseInLocation(layouts[1], strSource, time.Local); err == nil {
+				layout := layouts[1]
+				if strings.Contains(strSource, "/") {
+					layout = layouts[3]
+				}
+				if parse, err := time.ParseInLocation(layout, strSource, time.Local); err == nil {
 					return toTime[T](defValMeta, parse)
 				}
 			case 25:
