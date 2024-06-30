@@ -37,6 +37,22 @@ func Convert[T any](source any, defVal T) T {
 		return source.(T)
 	}
 
+	// 枚举转...
+	if sourceMeta.IsEmum{
+		switch defValMeta.TypeIdentity {
+		// 转数字
+		case "number":
+			result := anyToNumber(source, sourceMeta.Kind, defVal, defValMeta.Kind)
+			return result.(T)
+		// 转字符串
+		case "string":
+			// 先转成数字
+			result := anyToNumber(source, sourceMeta.Kind, sourceMeta.ZeroValue, sourceMeta.Kind)
+			result = NumberToString(result, sourceMeta.Kind)
+			return result.(T)
+		}
+	}
+
 	// 数字转...
 	if sourceMeta.IsNumber {
 		switch defValMeta.TypeIdentity {
@@ -51,7 +67,6 @@ func Convert[T any](source any, defVal T) T {
 		case "string":
 			var result any = NumberToString(source, sourceMeta.Kind)
 			return result.(T)
-			//return *(*T)(unsafe.Pointer(&str))
 		// 转bool
 		case "bool":
 			var result any = EqualTo1(source, sourceMeta.Kind)
