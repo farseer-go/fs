@@ -64,7 +64,11 @@ func GetString(key string) string {
 
 // GetStrings 获取配置
 func GetStrings(key string) []string {
-	return strings.Split(GetString(key), ",")
+	val := GetString(key)
+	if val == "" {
+		return nil
+	}
+	return strings.Split(val, ",")
 }
 
 // GetInt 获取配置
