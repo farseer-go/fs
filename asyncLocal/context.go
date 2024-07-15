@@ -34,9 +34,10 @@ func GetOrSetContext[T any](key string, getValFunc func() T) T {
 		return val.(T)
 	}
 
-	mVal[key] = getValFunc()
+	t = getValFunc()
+	mVal[key] = t
 	routineContext.Set(mVal)
-	return mVal[key]
+	return t
 }
 
 // SetContext 写入上下文
