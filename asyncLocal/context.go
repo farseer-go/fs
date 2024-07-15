@@ -68,3 +68,13 @@ func SetContextIfNotExists[T any](key string, getValFunc func() T) {
 		routineContext.Set(mVal)
 	}
 }
+
+// Remove 移除缓存
+func Remove[T any](key string) {
+	var t T
+	key = fastReflect.PointerOf(t).ReflectTypeString + "_" + key
+	if mVal := routineContext.Get(); mVal != nil {
+		delete(mVal, key)
+		routineContext.Set(mVal)
+	}
+}
