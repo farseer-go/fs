@@ -12,12 +12,10 @@ import (
 	"github.com/farseer-go/fs/net"
 	"github.com/farseer-go/fs/sonyflake"
 	"github.com/farseer-go/fs/stopwatch"
-	"math/rand"
 	"os"
 	"strconv"
 	"strings"
 	"sync"
-	"time"
 )
 
 var (
@@ -39,7 +37,8 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 	sw := stopwatch.StartNew()
 	Context = context.Background()
 	onceInit.Do(func() {
-		rand.Seed(time.Now().UnixNano())
+		//rand.New(rand.NewSource(time.Now().UnixNano()))
+		//rand.Seed(time.Now().UnixNano())
 		core.AppName = appName
 		core.ProcessId = os.Getppid()
 		core.HostName, _ = os.Hostname()
