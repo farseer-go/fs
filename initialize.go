@@ -96,6 +96,7 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 		flog.Println("---------------------------------------")
 	}
 
+	isInit = true
 	// 加载callbackFnList，启动后才执行的模块
 	if len(callbackFnList) > 0 {
 		for index, fn := range callbackFnList {
@@ -106,7 +107,6 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 		flog.Println("---------------------------------------")
 	}
 
-	isInit = true
 }
 
 // 组件日志
