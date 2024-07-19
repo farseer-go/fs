@@ -135,6 +135,8 @@ func AddInitCallback(name string, fn func()) {
 	if !isInit {
 		callbackFnList = append(callbackFnList, callbackFn{name: name, f: fn})
 	} else { // 初始化完后，则立即执行
+		sw := stopwatch.StartNew()
 		fn()
+		flog.Println("Run ：" + name + "，Use：" + sw.GetMillisecondsText())
 	}
 }
