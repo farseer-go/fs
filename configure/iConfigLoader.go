@@ -7,6 +7,8 @@ type IConfigProvider interface {
 	Get(key string) (any, bool)
 	// GetSubNodes 获取所有子节点
 	GetSubNodes(key string) (map[string]any, bool)
+	// GetArray 读取切片
+	GetArray(key string) ([]any, bool)
 	// Name 提供者名称
 	Name() string
 }

@@ -1,6 +1,7 @@
 package configure
 
 import (
+	"github.com/farseer-go/fs/parse"
 	"strings"
 )
 
@@ -70,7 +71,6 @@ func (c *config) Get(key string) any {
 
 // GetSubNodes 获取所有子节点
 func (c *config) GetSubNodes(key string) map[string]any {
-	// 这里需要倒序获取列表，利用后面覆盖前面的方式来获取
 	m := make(map[string]any)
 	// 先加载默认值
 	prefixKey := key + "."
@@ -80,6 +80,7 @@ func (c *config) GetSubNodes(key string) map[string]any {
 		}
 	}
 
+	// 这里需要倒序获取列表，利用后面覆盖前面的方式来获取
 	// 再添加yaml、环境变量
 	for i := len(c.configProvider) - 1; i >= 0; i-- {
 		if subMap, exists := c.configProvider[i].GetSubNodes(key); exists {
@@ -99,21 +100,28 @@ func (c *config) GetSubNodes(key string) map[string]any {
 
 // GetSlice 获取数组
 func (c *config) GetSlice(key string) []string {
-	// 遍历配置提供者
-	for _, provider := range c.configProvider {
-		v, exists := provider.Get(key)
-		if exists {
-			m, isOk := v.([]any)
-			if isOk {
-				var arr []string
-				for _, s := range m {
-					arr = append(arr, s.(string))
+	var result []string
+	// 先加载默认值
+	if defVal, exists := c.def[key]; exists {
+		switch defArr := defVal.(type) {
+		case []string:
+			result = defArr
+		}
+	}
+
+	// 这里需要倒序获取列表，利用后面覆盖前面的方式来获取
+	// 再添加yaml、环境变量
+	for i := len(c.configProvider) - 1; i >= 0; i-- {
+		if arrVal, exists := c.configProvider[i].GetArray(key); exists {
+			for arrIndex, val := range arrVal {
+				for len(result) <= arrIndex {
+					result = append(result, "")
 				}
-				return arr
+				result[arrIndex] = parse.ToString(val)
 			}
 		}
 	}
-	return []string{}
+	return result
 }
 
 // GetSliceNodes 获取数组节点

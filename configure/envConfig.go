@@ -1,6 +1,7 @@
 package configure
 
 import (
+	"github.com/farseer-go/fs/parse"
 	"os"
 	"strings"
 )
@@ -27,6 +28,29 @@ func (r *envConfig) Get(key string) (any, bool) {
 		return val, true
 	}
 	return nil, false
+}
+
+func (r *envConfig) GetArray(key string) ([]any, bool) {
+	prefixKey := strings.ToLower(r.replace(key) + "_")
+	var result []any
+	for _, e := range os.Environ() {
+		pair := strings.SplitN(e, "=", 2)
+		if len(pair) != 2 {
+			continue
+		}
+
+		// 有指定key的前缀，说明是数组
+		envKey := strings.ToLower(r.replace(pair[0]))
+		if strings.HasPrefix(envKey, prefixKey) {
+			// 得到索引
+			arrIndex := parse.ToInt(envKey[len(prefixKey):])
+			for len(result) <= arrIndex {
+				result = append(result, "")
+			}
+			result[arrIndex] = pair[1]
+		}
+	}
+	return result, len(result) > 0
 }
 
 func (r *envConfig) GetSubNodes(key string) (map[string]any, bool) {
