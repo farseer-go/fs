@@ -220,5 +220,9 @@ func (receiver *TypeMeta) setItemHashCode(itemType reflect.Type) {
 }
 
 func (receiver *TypeMeta) GetItemMeta() *TypeMeta {
-	return cacheTyp[receiver.itemHashCode]
+	value, ok := cacheTyp.Load(receiver.itemHashCode)
+	if ok {
+		return value.(*TypeMeta)
+	}
+	return nil
 }

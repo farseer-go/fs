@@ -44,7 +44,11 @@ var anyNil = TypeMeta{
 	HashCode:          252279353,
 	Size:              16,
 }
-var cacheTyp = map[uint32]*TypeMeta{252279353: &anyNil}
+var cacheTyp sync.Map
+
+func init() {
+	cacheTyp.Store(uint32(252279353), &anyNil)
+}
 
 // PointerOfValue 传入任意变量类型的值，得出该值对应的类型
 // //go:linkname nanotime1 reflect.nanotime1
@@ -56,18 +60,13 @@ func PointerOfValue(val reflect.Value) PointerMeta {
 	//} else {
 	//	valueMeta.HashCode = 252279353
 	//}
-	var exists bool
-	lock.RLock()
-	valueMeta.TypeMeta, exists = cacheTyp[valueMeta.HashCode]
-	lock.RUnlock()
-
-	if !exists {
-		valueMeta.TypeMeta = typeOf(val.Type(), inf)
-		lock.Lock()
-		defer lock.Unlock()
-		cacheTyp[valueMeta.HashCode] = valueMeta.TypeMeta
+	if typeMeta, exists := cacheTyp.Load(valueMeta.HashCode); exists {
+		valueMeta.TypeMeta = typeMeta.(*TypeMeta)
 		return valueMeta
 	}
+
+	valueMeta.TypeMeta = typeOf(val.Type(), inf)
+	cacheTyp.Store(valueMeta.HashCode, valueMeta.TypeMeta)
 	return valueMeta
 }
 
@@ -76,30 +75,28 @@ func PointerOf(val any) PointerMeta {
 	inf := (*EmptyInterface)(unsafe.Pointer(&val))
 	valueMeta := PointerMeta{PointerValue: inf.Value, HashCode: inf.Typ.hash}
 
-	var exists bool
-	lock.RLock()
-	valueMeta.TypeMeta, exists = cacheTyp[valueMeta.HashCode]
-	lock.RUnlock()
-
-	if !exists {
-		valueMeta.TypeMeta = typeOf(reflect.TypeOf(val), inf)
-
-		lock.Lock()
-		defer lock.Unlock()
-		cacheTyp[valueMeta.HashCode] = valueMeta.TypeMeta
+	if typeMeta, exists := cacheTyp.Load(valueMeta.HashCode); exists {
+		valueMeta.TypeMeta = typeMeta.(*TypeMeta)
 		return valueMeta
 	}
+
+	valueMeta.TypeMeta = typeOf(reflect.TypeOf(val), inf)
+	cacheTyp.Store(valueMeta.HashCode, valueMeta.TypeMeta)
 	return valueMeta
 }
 
 func Test(val any) PointerMeta {
 	inf := (*EmptyInterface)(unsafe.Pointer(&val))
-	c, exists := cacheTyp[inf.Typ.hash]
-	if !exists {
-		reflectType := reflect.TypeOf(val)
-		c = typeOf(reflectType, inf)
-		cacheTyp[inf.Typ.hash] = c
+	if typeMeta, exists := cacheTyp.Load(inf.Typ.hash); exists {
+		return PointerMeta{
+			TypeMeta:     typeMeta.(*TypeMeta),
+			PointerValue: inf.Value,
+		}
 	}
+
+	reflectType := reflect.TypeOf(val)
+	c := typeOf(reflectType, inf)
+	cacheTyp.Store(inf.Typ.hash, c)
 	return PointerMeta{
 		TypeMeta:     c,
 		PointerValue: inf.Value,
