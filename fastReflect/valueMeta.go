@@ -39,11 +39,13 @@ var anyValueMap []any
 var anyNil = TypeMeta{
 	ReflectType:       reflect.TypeOf(anyValueMap).Elem(),
 	ReflectTypeString: "interface {}",
+	ReflectTypeBytes:  []byte("interface {}"),
 	Type:              Interface,
 	Kind:              reflect.Interface,
 	HashCode:          252279353,
 	Size:              16,
 }
+
 var cacheTyp sync.Map
 
 func init() {
@@ -55,16 +57,11 @@ func init() {
 func PointerOfValue(val reflect.Value) PointerMeta {
 	inf := (*EmptyInterface)(unsafe.Pointer(&val))
 	valueMeta := PointerMeta{PointerValue: inf.Value, HashCode: inf.Typ.hash}
-	//if inf.Typ != nil {
-	//	valueMeta.HashCode = inf.Typ.hash
-	//} else {
-	//	valueMeta.HashCode = 252279353
-	//}
+
 	if typeMeta, exists := cacheTyp.Load(valueMeta.HashCode); exists {
 		valueMeta.TypeMeta = typeMeta.(*TypeMeta)
 		return valueMeta
 	}
-
 	valueMeta.TypeMeta = typeOf(val.Type(), inf)
 	cacheTyp.Store(valueMeta.HashCode, valueMeta.TypeMeta)
 	return valueMeta

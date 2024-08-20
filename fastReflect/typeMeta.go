@@ -11,6 +11,8 @@ type TypeMeta struct {
 	//Name              string              // 字段名称
 	ReflectType          reflect.Type          // 字段类型
 	ReflectTypeString    string                // 类型
+	ReflectTypeBytes     []byte                // 类型
+	TypeIdentity         string                // 类型标识
 	Type                 FieldType             // 集合类型
 	IsAddr               bool                  // 原类型是否带指针
 	StructField          []reflect.StructField // 结构体的字段
@@ -31,9 +33,9 @@ type TypeMeta struct {
 	IsDateTime           bool                  // 是否dateTime.DateTime
 	IsSliceOrArray       bool                  // 是否切片或数组类型
 	IsStruct             bool                  // 是否结构体
+	IsMap                bool                  // 是否字典
 	HashCode             uint32                // 每个类型的HashCode都是唯一的
 	Size                 uintptr               // 内存占用大小
-	TypeIdentity         string                // 类型标识
 }
 
 func typeOf(reflectType reflect.Type, inf *EmptyInterface) *TypeMeta {
@@ -86,6 +88,7 @@ func (receiver *TypeMeta) parseType() {
 
 	//receiver.Name = receiver.ReflectType.Name()
 	receiver.ReflectTypeString = receiver.ReflectType.String()
+	receiver.ReflectTypeBytes = []byte(receiver.ReflectTypeString)
 
 	switch receiver.Kind {
 	case reflect.Slice:
@@ -99,6 +102,7 @@ func (receiver *TypeMeta) parseType() {
 		receiver.Type = Array
 		receiver.setItemHashCode(receiver.ReflectType.Elem())
 	case reflect.Map:
+		receiver.IsMap = true
 		receiver.Type = Map
 		receiver.MapType = receiver.ReflectType
 		// key type
@@ -143,6 +147,7 @@ func (receiver *TypeMeta) parseType() {
 
 		// Dictionary类型
 		if isTrue := types.IsDictionaryByType(receiver.ReflectType); isTrue {
+			receiver.IsMap = true
 			receiver.Type = Dic
 			// 得到底层的map类型
 			receiver.MapType = types.GetDictionaryMapType(receiver.ReflectType)

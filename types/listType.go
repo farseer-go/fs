@@ -87,21 +87,13 @@ func GetListItemType(lstType reflect.Type) reflect.Type {
 
 // GetListToArray 在集合中获取数据
 func GetListToArray(lstValue reflect.Value) []any {
-	key := lstValue.String() + ".ToArray"
-
+	key := lstValue.String() + ".ToArrayAny"
 	if _, isExists := getCache(key); !isExists {
-		method, _ := lstValue.Type().MethodByName("ToArray")
+		method, _ := lstValue.Type().MethodByName("ToArrayAny")
 		setCache(key, []int{method.Index})
 	}
-
 	arrValue := lstValue.Method(getCacheVal(key)[0]).Call(nil)[0]
-
-	var items []any
-	for i := 0; i < arrValue.Len(); i++ {
-		item := arrValue.Index(i).Interface()
-		items = append(items, item)
-	}
-	return items
+	return arrValue.Interface().([]any)
 }
 
 // GetListToArrayValue 在集合中获取数据
@@ -112,8 +104,18 @@ func GetListToArrayValue(lstValue reflect.Value) reflect.Value {
 		setCache(key, []int{method.Index})
 	}
 
-	arrValue := lstValue.Method(getCacheVal(key)[0]).Call(nil)[0]
-	return arrValue
+	return lstValue.Method(getCacheVal(key)[0]).Call(nil)[0]
+}
+
+// ExecuteMapperInit 在集合中获取数据
+func ExecuteMapperInit(targetVal reflect.Value) {
+	key := targetVal.String() + ".MapperInit"
+	if _, isExists := getCache(key); !isExists {
+		method, _ := targetVal.Type().MethodByName("MapperInit")
+		setCache(key, []int{method.Index})
+	}
+
+	targetVal.Method(getCacheVal(key)[0]).Call([]reflect.Value{})
 }
 
 func setCache(key string, val []int) {
