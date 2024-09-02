@@ -14,4 +14,4 @@ currently being supported with security updates.
 
 If you find a vulnerability or bug while using the framework, you can report it to us in the issue.
 
-When a new version fixes these issues, we will notify the fix [here](https://farseer-go.gitee.io/#/overview/version)
+When a new version fixes these issues, we will notify the fix [here](https://farseer-go.github.io/doc/#/overview/version)

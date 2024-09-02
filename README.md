@@ -1,8 +1,8 @@
 # Overview
 - `Document`
-  - [English](https://farseer-go.gitee.io/en-us/)
-  - [中文](https://farseer-go.gitee.io/)
-  - [English](https://farseer-go.github.io/doc/en-us/)
+  - [English](https://farseer-go.github.io/doc/#/en-us/)
+  - [中文](https://farseer-go.github.io/doc/)
+  - [English](https://farseer-go.github.io/doc/#/en-us/)
 - `Source`
   - [github](https://github.com/farseer-go/fs)
 
@@ -25,7 +25,7 @@ The framework perfectly supports `DDD domain-driven` tactical design, such as `w
 It has a mature version of [.net core](https://github.com/FarseerNet/Farseer.Net/) that has been in use for over 10
 years and is great
 
-![](https://farseer-go.gitee.io/images/farseer-go.png)
+![](https://farseer-go.github.io/doc/images/farseer-go.png)
 
 > Don't worry about the framework making you depend on too many packages, farseer-go's components are all separate
 > packages and unused packages are not downloaded into your application
