@@ -3,7 +3,10 @@ package trace
 type EmptyManager struct {
 }
 
-func (*EmptyManager) EntryWebApi(domain string, path string, method string, contentType string, header map[string]string, requestBody string, requestIp string) ITraceContext {
+func (*EmptyManager) EntryWebApi(domain string, path string, method string, contentType string, header map[string]string, requestIp string) ITraceContext {
+	return &emptyTraceContext{}
+}
+func (*EmptyManager) EntryWebSocket(domain string, path string, method string, contentType string, header map[string]string, requestIp string) ITraceContext {
 	return &emptyTraceContext{}
 }
 
