@@ -184,10 +184,10 @@ func (receiver *TypeMeta) parseType() {
 			// 遍历结构体的字段
 			for i := 0; i < numField; i++ {
 				// 只加载允许导出的类型
-				structField := receiver.ReflectType.Field(i)
-				receiver.StructField = append(receiver.StructField, structField)
+				curStructField := receiver.ReflectType.Field(i)
+				receiver.StructField = append(receiver.StructField, curStructField)
 				// 加载允许导出的索引
-				if structField.IsExported() {
+				if curStructField.IsExported() {
 					receiver.ExportedField = append(receiver.ExportedField, i)
 				}
 			}
