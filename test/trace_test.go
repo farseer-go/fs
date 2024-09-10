@@ -28,7 +28,7 @@ func TestTrace(t *testing.T) {
 
 	// EmptyManager
 	iManager := trace.EmptyManager{}
-	iManager.EntryWebApi("", "", "", "", nil, "", "")
+	iManager.EntryWebApi("", "", "", "", nil, "")
 	iManager.EntryFSchedule("", 0, nil)
 	iManager.EntryTaskGroup("", "", 0)
 	iManager.EntryMqConsumer("", "", "", "", "")
