@@ -11,8 +11,9 @@ import (
 
 // 容器
 type container struct {
-	name       string
-	dependency map[reflect.Type][]*componentModel // 依赖
+	name string
+	//dependency map[reflect.Type][]*componentModel // 依赖
+	dependency sync.Map // 依赖
 	//component  []*componentModel                  // 实现类
 	lock *sync.RWMutex
 }
@@ -20,8 +21,9 @@ type container struct {
 // NewContainer 实例化一个默认容器
 func NewContainer() *container {
 	return &container{
-		name:       "default",
-		dependency: make(map[reflect.Type][]*componentModel),
+		name: "default",
+		//dependency: make(map[reflect.Type][]*componentModel),
+		dependency: sync.Map{},
 		//component:  []*componentModel{},
 		lock: &sync.RWMutex{},
 	}
@@ -32,16 +34,18 @@ func (r *container) addComponent(model *componentModel) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	componentModels, exists := r.dependency[model.interfaceType]
+	componentModels, exists := r.dependency.Load(model.interfaceType)
 	if !exists {
-		r.dependency[model.interfaceType] = []*componentModel{model}
+		r.dependency.Store(model.interfaceType, []*componentModel{model})
 	} else {
-		for index := 0; index < len(componentModels); index++ {
-			if componentModels[index].name == model.name {
+		comModels := componentModels.([]*componentModel)
+		for index := 0; index < len(comModels); index++ {
+			if comModels[index].name == model.name {
 				panic(fmt.Sprintf("container：The same registration object already exists,interfaceType=%s,name=%s,instanceType=%s", model.interfaceType.String(), model.name, reflect.TypeOf(model.instanceType).String()))
 			}
 		}
-		r.dependency[model.interfaceType] = append(componentModels, model)
+		comModels = append(comModels, model)
+		r.dependency.Store(model.interfaceType, comModels)
 	}
 	//r.component = append(r.component, model)
 }
@@ -100,15 +104,16 @@ func (r *container) resolve(interfaceType reflect.Type, name string) (any, error
 	// 通过Interface查找注册过的container
 	if interfaceType.Kind() == reflect.Interface {
 		r.lock.RLock()
-		componentModels, exists := r.dependency[interfaceType]
+		componentModels, exists := r.dependency.Load(interfaceType)
 		r.lock.RUnlock()
 		if !exists {
 			return nil, fmt.Errorf("container：%s Unregistered，name=%s", interfaceType.String(), name)
 		}
 
-		for i := 0; i < len(componentModels); i++ {
+		comModels := componentModels.([]*componentModel)
+		for i := 0; i < len(comModels); i++ {
 			// 找到了实现类
-			if componentModels[i].name == name {
+			if comModels[i].name == name {
 				return r.getOrCreateIns(interfaceType, i), nil
 			}
 		}
@@ -130,14 +135,14 @@ func (r *container) resolveAll(interfaceType reflect.Type) []any {
 
 	// 通过Interface查找注册过的container
 	r.lock.RLock()
-	componentModels, exists := r.dependency[interfaceType]
+	componentModels, exists := r.dependency.Load(interfaceType)
 	r.lock.RUnlock()
 	if !exists {
 		return nil
 	}
 
 	var ins []any
-	for i := 0; i < len(componentModels); i++ {
+	for i := 0; i < len(componentModels.([]*componentModel)); i++ {
 		// 找到了实现类
 		ins = append(ins, r.getOrCreateIns(interfaceType, i))
 	}
@@ -146,16 +151,18 @@ func (r *container) resolveAll(interfaceType reflect.Type) []any {
 
 // 根据lifecycle获取实例
 func (r *container) getOrCreateIns(interfaceType reflect.Type, index int) any {
+	componentModels, _ := r.dependency.Load(interfaceType)
+	comModels := componentModels.([]*componentModel)
 	// 更新实例访问时间
-	r.dependency[interfaceType][index].lastVisitAt = time.Now()
+	comModels[index].lastVisitAt = time.Now()
 	// 单例
-	if r.dependency[interfaceType][index].lifecycle == eumLifecycle.Single {
-		if r.dependency[interfaceType][index].instance == nil {
-			r.dependency[interfaceType][index].instance = r.createIns(r.dependency[interfaceType][index])
+	if comModels[index].lifecycle == eumLifecycle.Single {
+		if comModels[index].instance == nil {
+			comModels[index].instance = r.createIns(comModels[index])
 		}
-		return r.dependency[interfaceType][index].instance
+		return comModels[index].instance
 	} else {
-		return r.createIns(r.dependency[interfaceType][index])
+		return r.createIns(comModels[index])
 	}
 }
 
@@ -176,7 +183,7 @@ func (r *container) createIns(model *componentModel) any {
 // 获取对象，如果默认别名不存在，则使用第一个注册的实例
 func (r *container) resolveDefaultOrFirstComponent(interfaceType reflect.Type) any {
 	r.lock.Lock()
-	componentModels, exists := r.dependency[interfaceType]
+	componentModels, exists := r.dependency.Load(interfaceType)
 	r.lock.Unlock()
 	if !exists {
 		_ = flog.Errorf("container：%s Unregistered", interfaceType.String())
@@ -185,9 +192,10 @@ func (r *container) resolveDefaultOrFirstComponent(interfaceType reflect.Type) a
 
 	findIndex := 0
 	// 优先找默认实例
-	for i := 0; i < len(componentModels); i++ {
+	comModels := componentModels.([]*componentModel)
+	for i := 0; i < len(comModels); i++ {
 		// 找到了实现类
-		if componentModels[i].name == "" {
+		if comModels[i].name == "" {
 			findIndex = i
 		}
 	}
@@ -234,14 +242,15 @@ func (r *container) injectByType(instanceType reflect.Type) any {
 // 是否注册过
 func (r *container) isRegister(interfaceType reflect.Type, name string) bool {
 	r.lock.RLock()
-	componentModels, exists := r.dependency[interfaceType]
+	componentModels, exists := r.dependency.Load(interfaceType)
 	r.lock.RUnlock()
 	if !exists {
 		return false
 	}
-	for i := 0; i < len(componentModels); i++ {
+	comModels := componentModels.([]*componentModel)
+	for i := 0; i < len(comModels); i++ {
 		// 找到了实现类
-		if componentModels[i].name == name {
+		if comModels[i].name == name {
 			return true
 		}
 	}
@@ -253,14 +262,16 @@ func (r *container) removeComponent(interfaceType reflect.Type, name string) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	componentModels, _ := r.dependency[interfaceType]
+	componentModels, _ := r.dependency.Load(interfaceType)
+	comModels := componentModels.([]*componentModel)
 	// 遍历已注册的实例列表
-	for index := 0; index < len(componentModels); index++ {
+	for index := 0; index < len(comModels); index++ {
 		// 找到实例后，删除
-		if componentModels[index].name == name {
-			r.dependency[interfaceType] = append(componentModels[:index], componentModels[index+1:]...)
+		if comModels[index].name == name {
+			comModels = append(comModels[:index], comModels[index+1:]...)
 		}
 	}
+	r.dependency.Store(interfaceType, comModels)
 }
 
 // 移除长时间未使用的实例
@@ -268,12 +279,14 @@ func (r *container) removeUnused(interfaceType reflect.Type, ttl time.Duration) 
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	componentModels, _ := r.dependency[interfaceType]
+	componentModels, _ := r.dependency.Load(interfaceType)
+	comModels := componentModels.([]*componentModel)
 	// 遍历已注册的实例列表
-	for index := 0; index < len(componentModels); index++ {
+	for index := 0; index < len(comModels); index++ {
 		// 删除超出ttl时间未访问的实例
-		if time.Now().Sub(componentModels[index].lastVisitAt) >= ttl {
-			r.dependency[interfaceType] = append(componentModels[:index], componentModels[index+1:]...)
+		if time.Now().Sub(comModels[index].lastVisitAt) >= ttl {
+			comModels = append(comModels[:index], comModels[index+1:]...)
 		}
 	}
+	r.dependency.Store(interfaceType, comModels)
 }
