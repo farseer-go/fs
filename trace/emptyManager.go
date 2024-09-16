@@ -6,7 +6,7 @@ type EmptyManager struct {
 func (*EmptyManager) EntryWebApi(domain string, path string, method string, contentType string, header map[string]string, requestIp string) ITraceContext {
 	return &emptyTraceContext{}
 }
-func (*EmptyManager) EntryWebSocket(domain string, path string, method string, contentType string, header map[string]string, requestIp string) ITraceContext {
+func (*EmptyManager) EntryWebSocket(domain string, path string, contentType string, header map[string]string, requestIp string) ITraceContext {
 	return &emptyTraceContext{}
 }
 
@@ -65,7 +65,7 @@ func (*emptyTraceContext) SetBody(requestBody string, statusCode int, responseBo
 func (*emptyTraceContext) GetTraceId() string                                              { return "" }
 func (*emptyTraceContext) GetTraceLevel() int                                              { return 0 }
 func (*emptyTraceContext) GetStartTs() int64                                               { return 0 }
-func (*emptyTraceContext) End()                                                            {}
+func (*emptyTraceContext) End(err error)                                                   {}
 func (*emptyTraceContext) Ignore()                                                         {}
 func (*emptyTraceContext) AddDetail(detail ITraceDetail)                                   {}
 func (*emptyTraceContext) GetList() []any {

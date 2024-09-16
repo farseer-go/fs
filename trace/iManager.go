@@ -8,7 +8,7 @@ type IManager interface {
 	// EntryWebApi 创建webapi的链路追踪入口
 	EntryWebApi(domain string, path string, method string, contentType string, headerDictionary map[string]string, requestIp string) ITraceContext
 	// EntryWebSocket 创建WebSocket的链路追踪入口
-	EntryWebSocket(domain string, path string, method string, contentType string, header map[string]string, requestIp string) ITraceContext
+	EntryWebSocket(domain string, path string, contentType string, headerDictionary map[string]string, requestIp string) ITraceContext
 	// EntryMqConsumer 创建MQ消费入口
 	EntryMqConsumer(parentTraceId, parentAppName, server string, queueName string, routingKey string) ITraceContext
 	// EntryQueueConsumer 创建Queue消费入口

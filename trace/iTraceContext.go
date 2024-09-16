@@ -2,7 +2,7 @@ package trace
 
 type ITraceContext interface {
 	// End 结束
-	End()
+	End(err error)
 	// SetBody 设置webapi的响应报文
 	SetBody(requestBody string, statusCode int, responseBody string)
 	// GetTraceId 获取traceId

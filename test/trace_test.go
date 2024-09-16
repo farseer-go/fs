@@ -55,7 +55,7 @@ func TestTrace(t *testing.T) {
 	iManager.TraceHand("").SetSql("", "", "", "", 0)
 	iManager.TraceHand("").SetHttpRequest("", nil, nil, "", "", 0)
 
-	iManager.EntryQueueConsumer("", "").End()
+	iManager.EntryQueueConsumer("", "").End(nil)
 	iManager.EntryQueueConsumer("", "").Ignore()
 	iManager.EntryQueueConsumer("", "").GetList()
 	iManager.EntryQueueConsumer("", "").GetAppInfo()
