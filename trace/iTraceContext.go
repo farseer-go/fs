@@ -5,6 +5,8 @@ type ITraceContext interface {
 	End(err error)
 	// SetBody 设置webapi的响应报文
 	SetBody(requestBody string, statusCode int, responseBody string)
+	// SetResponseBody 设置webapi的响应报文
+	SetResponseBody(responseBody string)
 	// GetTraceId 获取traceId
 	GetTraceId() string
 	// GetStartTs 获取链路开启时间
