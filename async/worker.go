@@ -27,6 +27,14 @@ func (ac *worker) Add(fn func()) {
 	})
 }
 
+// Add 添加异步执行的方法
+func (ac *worker) AddGO(fn func()) {
+	ac.wg.Add(1)
+	go func() {
+		ac.executeFunc(fn)
+	}()
+}
+
 func (ac *worker) executeFunc(fn func()) {
 	defer func() {
 		// 异常处理
