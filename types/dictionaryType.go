@@ -36,15 +36,12 @@ func GetDictionaryToMap(lstValue reflect.Value) reflect.Value {
 	return lstValue.Method(getCacheVal("dic.ToMap")[0]).Call(nil)[0]
 }
 
-// GetDictionaryMapType 获取List的原始数组类型
+// GetDictionaryMapType 获取Dictionary的原始数组类型
 func GetDictionaryMapType(lstType reflect.Type) reflect.Type {
 	innerMapType := lstType.Field(0).Type
-
 	if _, isExists := getCache("dic.source"); !isExists {
-		for i := 0; i < innerMapType.NumField(); i++ {
-			field, _ := innerMapType.FieldByName("source")
-			setCache("dic.source", field.Index)
-		}
+		field, _ := innerMapType.FieldByName("source2")
+		setCache("dic.source", field.Index)
 	}
 	if len(getCacheVal("dic.source")) == 1 {
 		return innerMapType.Field(getCacheVal("dic.source")[0]).Type

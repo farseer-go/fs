@@ -65,12 +65,6 @@ func (receiver *TypeMeta) parseType() {
 		receiver.Kind = receiver.ReflectType.Kind()
 	}
 
-	// 取真实的类型
-	//if receiver.Kind == reflect.Interface {
-	//	receiver.ReflectType = receiver.ReflectType.Elem()
-	//	receiver.Kind = receiver.ReflectType.Kind()
-	//}
-
 	// 设置零值
 	switch receiver.Kind {
 	case reflect.Slice:
