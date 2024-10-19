@@ -2,8 +2,9 @@ package trace
 
 import (
 	"fmt"
-	"github.com/farseer-go/fs/trace/eumCallType"
 	"testing"
+
+	"github.com/farseer-go/fs/trace/eumCallType"
 )
 
 func TestTrace(t *testing.T) {
@@ -20,7 +21,7 @@ func TestTrace(t *testing.T) {
 	emptyManager.EntryEventConsumer("", "", "")
 	emptyManager.EntryTask("")
 	emptyManager.EntryWatchKey("")
-	emptyManager.EntryWebApi("", "", "", "", nil, "", "")
+	emptyManager.EntryWebApi("", "", "", "", nil, "")
 	emptyManager.TraceDatabaseOpen("", "")
 	emptyManager.TraceHttp("", "")
 	emptyManager.TraceMqSend("", "", "", "")
