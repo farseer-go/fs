@@ -38,7 +38,7 @@ func TestTrace(t *testing.T) {
 
 	detail := BaseTraceDetail{}
 	detail.Exception.IsNil()
-	detail.SetHttpRequest("", nil, "", "", 0)
+	detail.SetHttpRequest("", nil, nil, "", "", 0)
 	detail.End(fmt.Errorf(""))
 	detail.Ignore()
 	detail.GetLevel()
