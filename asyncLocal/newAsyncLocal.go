@@ -4,18 +4,20 @@ import (
 	"github.com/timandy/routine"
 )
 
-var list []routine.ThreadLocal
+var lstRemoves []func()
 
 type AsyncLocal[T any] struct {
-	threadLocal routine.ThreadLocal
+	threadLocal routine.ThreadLocal[T]
 }
 
 // New 创建一个AsyncLocal
 func New[T any]() AsyncLocal[T] {
 	// 加入到list集合，用于手动GC
-	threadLocal := routine.NewInheritableThreadLocal()
-	list = append(list, threadLocal)
-
+	threadLocal := routine.NewInheritableThreadLocal[T]()
+	lstRemoves = append(lstRemoves, func() {
+		threadLocal.Remove()
+	})
+	threadLocal.Remove()
 	return AsyncLocal[T]{
 		threadLocal: threadLocal,
 	}
@@ -24,11 +26,12 @@ func New[T any]() AsyncLocal[T] {
 // Get 获取值
 func (receiver AsyncLocal[T]) Get() T {
 	val := receiver.threadLocal.Get()
-	if val == nil {
-		var t T
-		return t
-	}
-	return val.(T)
+	return val
+	// if val == nil {
+	// 	var t T
+	// 	return t
+	// }
+	// return val.(T)
 }
 
 // Set 设置值
@@ -43,8 +46,8 @@ func (receiver AsyncLocal[T]) Remove() {
 
 // Release 释放
 func Release() {
-	for _, threadLocal := range list {
-		threadLocal.Remove()
+	for _, threadLocalRemove := range lstRemoves {
+		threadLocalRemove()
 	}
 	routineContext.Remove()
 }
