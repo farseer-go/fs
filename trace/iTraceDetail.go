@@ -15,4 +15,6 @@ type ITraceDetail interface {
 	GetLevel() int
 	// SetHttpRequest 设置Http请求出入参
 	SetHttpRequest(url string, reqHead map[string]any, rspHead map[string]string, requestBody string, responseBody string, statusCode int)
+	// 设置得到的数据量
+	SetRows(rows int)
 }

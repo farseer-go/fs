@@ -89,3 +89,6 @@ func (*emptyTraceDetail) SetSql(connectionString string, DbName string, tableNam
 }
 func (*emptyTraceDetail) SetHttpRequest(url string, reqHead map[string]any, rspHead map[string]string, requestBody string, responseBody string, statusCode int) {
 }
+
+func (*emptyTraceDetail) SetRows(rows int) {
+}

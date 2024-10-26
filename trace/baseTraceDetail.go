@@ -2,12 +2,13 @@ package trace
 
 import (
 	"fmt"
-	"github.com/farseer-go/fs/dateTime"
-	"github.com/farseer-go/fs/path"
-	"github.com/farseer-go/fs/trace/eumCallType"
 	"runtime"
 	"strings"
 	"time"
+
+	"github.com/farseer-go/fs/dateTime"
+	"github.com/farseer-go/fs/path"
+	"github.com/farseer-go/fs/trace/eumCallType"
 )
 
 // BaseTraceDetail 埋点明细（基类）
@@ -50,6 +51,8 @@ func (receiver ExceptionStack) IsNil() bool {
 func (receiver *BaseTraceDetail) SetSql(connectionString string, dbName string, tableName string, sql string, rowsAffected int64) {
 }
 func (receiver *BaseTraceDetail) SetHttpRequest(url string, reqHead map[string]any, rspHead map[string]string, requestBody string, responseBody string, statusCode int) {
+}
+func (receiver *BaseTraceDetail) SetRows(rows int) {
 }
 
 // End 链路明细执行完后，统计用时
