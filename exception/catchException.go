@@ -2,6 +2,7 @@ package exception
 
 import (
 	"fmt"
+
 	"github.com/farseer-go/fs/trace"
 )
 
@@ -10,8 +11,8 @@ type catchException struct {
 }
 
 // TryCatch 异常时返回error
-func TryCatch(fn func()) error{
-	var  err error
+func TryCatch(fn func()) error {
+	var err error
 	Try(fn).CatchException(func(exp any) {
 		err = fmt.Errorf("%+v", exp)
 	})
