@@ -1,12 +1,14 @@
 package test
 
 import (
+	"os"
+	"testing"
+
 	"github.com/farseer-go/fs"
 	"github.com/farseer-go/fs/configure"
 	"github.com/farseer-go/fs/modules"
+	"github.com/farseer-go/fs/parse"
 	"github.com/stretchr/testify/assert"
-	"os"
-	"testing"
 )
 
 func TestConfigureFSEnv(t *testing.T) {
@@ -59,5 +61,5 @@ func TestEnvConfig(t *testing.T) {
 
 	assert.Equal(t, os.Getenv("COMMAND_MODE"), configure.GetString("command_mode"))
 	nodes := configure.GetSubNodes("command")
-	assert.Equal(t, os.Getenv("COMMAND_MODE"), nodes["MODE"])
+	assert.Equal(t, os.Getenv("COMMAND_MODE"), parse.ToString(nodes["MODE"]))
 }
