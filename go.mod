@@ -2,8 +2,10 @@ module github.com/farseer-go/fs
 
 go 1.19
 
+toolchain go1.23.3
+
 require (
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	github.com/timandy/routine v1.1.4
 	gopkg.in/yaml.v3 v3.0.1
 )
