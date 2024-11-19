@@ -2,7 +2,7 @@ module github.com/farseer-go/fs
 
 go 1.19
 
-toolchain go1.23.3
+toolchain go1.19
 
 require (
 	github.com/stretchr/testify v1.9.0

@@ -2,8 +2,9 @@ package configure
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v3"
 	"os"
+
+	"gopkg.in/yaml.v3"
 )
 
 type yamlConfig struct {
@@ -59,7 +60,7 @@ func (r *yamlConfig) Get(key string) (any, bool) {
 func (r *yamlConfig) GetArray(key string) ([]any, bool) {
 	v, exists := r.data[key]
 	if exists {
-		switch arr:=v.(type) {
+		switch arr := v.(type) {
 		case []any:
 			return arr, exists
 		}
