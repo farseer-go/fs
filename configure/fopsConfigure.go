@@ -5,8 +5,10 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"github.com/farseer-go/fs/core"
 	"net/http"
+	"time"
+
+	"github.com/farseer-go/fs/core"
 )
 
 // DomainObject 配置中心
@@ -29,6 +31,7 @@ func getFopsConfigure() ([]fopsConfigureVO, error) {
 				InsecureSkipVerify: true, // 不验证 HTTPS 证书
 			},
 		},
+		Timeout: time.Second * 2, // 设置2秒超时
 	}
 	var lst []fopsConfigureVO
 	rsp, err := client.Do(newRequest)
