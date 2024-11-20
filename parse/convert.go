@@ -2,13 +2,14 @@ package parse
 
 import (
 	"encoding/json"
-	"github.com/farseer-go/fs/dateTime"
-	"github.com/farseer-go/fs/fastReflect"
-	"github.com/farseer-go/fs/types"
 	"reflect"
 	"strings"
 	"time"
 	"unsafe"
+
+	"github.com/farseer-go/fs/dateTime"
+	"github.com/farseer-go/fs/fastReflect"
+	"github.com/farseer-go/fs/types"
 )
 
 var layouts = []string{"2006-01-02 15:04:05", "2006-01-02", "2006-01-02T15:04:05Z07:00", "02/01/2006"}
@@ -38,7 +39,7 @@ func Convert[T any](source any, defVal T) T {
 	}
 
 	// 枚举转...
-	if sourceMeta.IsEmum{
+	if sourceMeta.IsEmum {
 		switch defValMeta.TypeIdentity {
 		// 转数字
 		case "number":

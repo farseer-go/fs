@@ -1,8 +1,9 @@
 package eumLogLevel
 
 import (
-	"encoding/json"
 	"strings"
+
+	"github.com/bytedance/sonic"
 )
 
 // Enum 日志等级
@@ -59,13 +60,13 @@ func (receiver Enum) ToString() string {
 // MarshalJSON to output non base64 encoded []byte
 // 此处不能用指针，否则json序列化时不执行
 func (receiver Enum) MarshalJSON() ([]byte, error) {
-	return json.Marshal(receiver.ToString())
+	return sonic.Marshal(receiver.ToString())
 }
 
 // UnmarshalJSON to deserialize []byte
 func (receiver *Enum) UnmarshalJSON(b []byte) error {
 	var numStr string
-	err := json.Unmarshal(b, &numStr)
+	err := sonic.Unmarshal(b, &numStr)
 	*receiver = GetEnum(numStr)
 	return err
 }

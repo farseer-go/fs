@@ -2,11 +2,13 @@ package dateTime
 
 import (
 	"database/sql/driver"
-	"encoding/json"
+
 	"errors"
 	"fmt"
 	"strings"
 	"time"
+
+	"github.com/bytedance/sonic"
 )
 
 type DateTime struct {
@@ -210,7 +212,7 @@ func (receiver DateTime) Before(dt DateTime) bool {
 // MarshalJSON to output non base64 encoded []byte
 // 此处不能用指针，否则json序列化时不执行
 func (receiver DateTime) MarshalJSON() ([]byte, error) {
-	return json.Marshal(receiver.ToString("yyyy-MM-dd hh:mm:ss"))
+	return sonic.Marshal(receiver.ToString("yyyy-MM-dd hh:mm:ss"))
 }
 
 // UnmarshalJSON to deserialize []byte

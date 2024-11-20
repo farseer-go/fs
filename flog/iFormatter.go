@@ -1,8 +1,9 @@
 package flog
 
 import (
-	"encoding/json"
 	"fmt"
+
+	"github.com/bytedance/sonic"
 	"github.com/farseer-go/fs/core/eumLogLevel"
 )
 
@@ -16,7 +17,7 @@ type JsonFormatter struct {
 }
 
 func (r JsonFormatter) Formatter(log *LogData) string {
-	marshal, _ := json.Marshal(LogData{
+	marshal, _ := sonic.Marshal(LogData{
 		CreateAt:  log.CreateAt,
 		LogLevel:  log.LogLevel,
 		Component: log.Component,

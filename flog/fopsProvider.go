@@ -3,8 +3,11 @@ package flog
 import (
 	"bytes"
 	"crypto/tls"
-	"encoding/json"
 	"fmt"
+	"net/http"
+	"time"
+
+	"github.com/bytedance/sonic"
 	"github.com/farseer-go/fs/configure"
 	"github.com/farseer-go/fs/core"
 	"github.com/farseer-go/fs/core/eumLogLevel"
@@ -12,8 +15,6 @@ import (
 	"github.com/farseer-go/fs/parse"
 	"github.com/farseer-go/fs/sonyflake"
 	"github.com/farseer-go/fs/trace"
-	"net/http"
-	"time"
 )
 
 // FopsProvider 上传到FOPS
@@ -84,7 +85,7 @@ type UploadRequest struct {
 }
 
 func (r *fopsLoggerPersistent) upload(lstLog []*LogData) error {
-	bodyByte, _ := json.Marshal(UploadRequest{List: lstLog})
+	bodyByte, _ := sonic.Marshal(UploadRequest{List: lstLog})
 	url := r.fopsServer + "flog/upload"
 	newRequest, _ := http.NewRequest("POST", url, bytes.NewReader(bodyByte))
 	newRequest.Header.Set("Content-Type", "application/json")

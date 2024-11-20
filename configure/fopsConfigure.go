@@ -3,11 +3,11 @@ package configure
 import (
 	"bytes"
 	"crypto/tls"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
 
+	"github.com/bytedance/sonic"
 	"github.com/farseer-go/fs/core"
 )
 
@@ -20,7 +20,7 @@ type fopsConfigureVO struct {
 }
 
 func getFopsConfigure() ([]fopsConfigureVO, error) {
-	bodyByte, _ := json.Marshal(map[string]string{"AppName": core.AppName})
+	bodyByte, _ := sonic.Marshal(map[string]string{"AppName": core.AppName})
 	url := fopsServer + "configure/list"
 	newRequest, _ := http.NewRequest("POST", url, bytes.NewReader(bodyByte))
 	newRequest.Header.Set("Content-Type", "application/json")
