@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/bytedance/sonic"
@@ -12,7 +13,6 @@ import (
 	"github.com/farseer-go/fs/core"
 	"github.com/farseer-go/fs/core/eumLogLevel"
 	"github.com/farseer-go/fs/dateTime"
-	"github.com/farseer-go/fs/parse"
 	"github.com/farseer-go/fs/sonyflake"
 	"github.com/farseer-go/fs/trace"
 )
@@ -45,10 +45,10 @@ func (r *fopsLoggerPersistent) Log(LogLevel eumLogLevel.Enum, log *LogData, exce
 			log.TraceId = t.GetTraceId()
 		}
 		log.Content = mustCompile.ReplaceAllString(log.Content, "")
-		log.AppId = parse.ToString(core.AppId)
+		log.AppId = strconv.FormatInt(core.AppId, 10)
 		log.AppName = core.AppName
 		log.AppIp = core.AppIp
-		log.LogId = parse.ToString(sonyflake.GenerateId())
+		log.LogId = strconv.FormatInt(sonyflake.GenerateId(), 10)
 		r.queue <- log
 	}
 }
