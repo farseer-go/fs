@@ -4,14 +4,14 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/bytedance/sonic"
 	"github.com/farseer-go/fs/core"
+	"github.com/farseer-go/fs/snc"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestApiResponse(t *testing.T) {
 	api := core.Success("成功", "nice")
-	apiByte, _ := sonic.Marshal(api)
+	apiByte, _ := snc.Marshal(api)
 	assert.Equal(t, string(apiByte), api.ToJson())
 	assert.Equal(t, apiByte, api.ToBytes())
 

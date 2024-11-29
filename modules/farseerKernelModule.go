@@ -1,13 +1,14 @@
 package modules
 
 import (
+	"time"
+
 	"github.com/farseer-go/fs/configure"
 	"github.com/farseer-go/fs/container"
 	"github.com/farseer-go/fs/core"
 	"github.com/farseer-go/fs/flog"
 	"github.com/farseer-go/fs/timingWheel"
 	"github.com/farseer-go/fs/trace"
-	"time"
 )
 
 type FarseerKernelModule struct {

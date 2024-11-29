@@ -3,8 +3,8 @@ package core
 import (
 	"io"
 
-	"github.com/bytedance/sonic"
 	"github.com/farseer-go/fs/dateTime"
+	"github.com/farseer-go/fs/snc"
 )
 
 // ApiResponse 标准的API Response结构
@@ -33,13 +33,13 @@ func (receiver *ApiResponse[TData]) SetData(data TData) {
 
 // ToJson 转成Json
 func (receiver *ApiResponse[TData]) ToJson() string {
-	bytes, _ := sonic.Marshal(receiver)
+	bytes, _ := snc.Marshal(receiver)
 	return string(bytes)
 }
 
 // ToBytes 转成Json字节
 func (receiver *ApiResponse[TData]) ToBytes() []byte {
-	bytes, _ := sonic.Marshal(receiver)
+	bytes, _ := snc.Marshal(receiver)
 	return bytes
 }
 
@@ -83,6 +83,6 @@ func NewApiResponseByReader[TData any](reader io.Reader) ApiResponse[TData] {
 // NewApiResponseByByte 创建实例
 func NewApiResponseByByte[TData any](body []byte) ApiResponse[TData] {
 	var apiResponse ApiResponse[TData]
-	_ = sonic.Unmarshal(body, &apiResponse)
+	_ = snc.Unmarshal(body, &apiResponse)
 	return apiResponse
 }

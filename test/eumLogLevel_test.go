@@ -3,8 +3,8 @@ package test
 import (
 	"testing"
 
-	"github.com/bytedance/sonic"
 	"github.com/farseer-go/fs/core/eumLogLevel"
+	"github.com/farseer-go/fs/snc"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -33,7 +33,7 @@ func TestEumLogLevel(t *testing.T) {
 	assert.Equal(t, eumLogLevel.Warning, eumLogLevel.GetEnum("Warn"))
 
 	var e = eumLogLevel.Debug
-	b, _ := sonic.Marshal(e)
+	b, _ := snc.Marshal(e)
 	e = eumLogLevel.Information
 	_ = e.UnmarshalJSON(b)
 	assert.True(t, e == eumLogLevel.Debug)

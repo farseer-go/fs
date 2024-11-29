@@ -3,8 +3,8 @@ package flog
 import (
 	"fmt"
 
-	"github.com/bytedance/sonic"
 	"github.com/farseer-go/fs/core/eumLogLevel"
+	"github.com/farseer-go/fs/snc"
 )
 
 // IFormatter 日志格式
@@ -17,7 +17,7 @@ type JsonFormatter struct {
 }
 
 func (r JsonFormatter) Formatter(log *LogData) string {
-	marshal, _ := sonic.Marshal(LogData{
+	marshal, _ := snc.Marshal(LogData{
 		CreateAt:  log.CreateAt,
 		LogLevel:  log.LogLevel,
 		Component: log.Component,

@@ -8,11 +8,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/bytedance/sonic"
 	"github.com/farseer-go/fs/configure"
 	"github.com/farseer-go/fs/core"
 	"github.com/farseer-go/fs/core/eumLogLevel"
 	"github.com/farseer-go/fs/dateTime"
+	"github.com/farseer-go/fs/snc"
 	"github.com/farseer-go/fs/sonyflake"
 	"github.com/farseer-go/fs/trace"
 )
@@ -85,7 +85,7 @@ type UploadRequest struct {
 }
 
 func (r *fopsLoggerPersistent) upload(lstLog []*LogData) error {
-	bodyByte, _ := sonic.Marshal(UploadRequest{List: lstLog})
+	bodyByte, _ := snc.Marshal(UploadRequest{List: lstLog})
 	url := r.fopsServer + "flog/upload"
 	newRequest, _ := http.NewRequest("POST", url, bytes.NewReader(bodyByte))
 	newRequest.Header.Set("Content-Type", "application/json")
