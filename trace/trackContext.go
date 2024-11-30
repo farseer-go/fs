@@ -101,7 +101,10 @@ func (receiver *TraceContext) IgnoreDetail(f func()) {
 		receiver.ignoreDetail = false
 	}()
 
-	traceDetail := NewTraceDetail(eumCallType.Hand, "")
+	traceDetail := TraceDetailHand{
+		BaseTraceDetail: NewTraceDetail(eumCallType.Hand, ""),
+		Name:            "忽略明细",
+	}
 	traceDetail.Comment = "忽略明细"
 	traceDetail.Timeline = time.Duration(traceDetail.StartTs-receiver.StartTs) * time.Microsecond
 	if len(receiver.List) > 0 {
