@@ -1,6 +1,9 @@
 package snc
 
 import (
+	"bytes"
+	"encoding/json"
+
 	"github.com/bytedance/sonic"
 	"github.com/bytedance/sonic/option"
 )
@@ -21,10 +24,15 @@ func init() {
 	}.Froze()
 }
 
+// 将json转换成对象（反序列化）
 func Unmarshal(data []byte, v any) error {
-	return snc.Unmarshal(data, v)
+	d := json.NewDecoder(bytes.NewReader(data))
+	d.UseNumber()
+	return d.Decode(v)
+	//return snc.Unmarshal(data, v)
 }
 
+// 将对象转换成json（序列化）
 func Marshal(val any) ([]byte, error) {
 	return snc.Marshal(val)
 }
