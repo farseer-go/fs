@@ -96,7 +96,11 @@ func (receiver *TraceContext) IsIgnore() bool {
 	return receiver.ignore
 }
 
-func (receiver *TraceContext) IgnoreDetail() {
+func (receiver *TraceContext) IgnoreDetail(f func()) {
+	defer func() {
+		receiver.ignoreDetail = false
+	}()
+
 	traceDetail := NewTraceDetail(eumCallType.Hand, "")
 	traceDetail.Comment = "忽略明细"
 	traceDetail.Timeline = time.Duration(traceDetail.StartTs-receiver.StartTs) * time.Microsecond
@@ -106,8 +110,10 @@ func (receiver *TraceContext) IgnoreDetail() {
 		traceDetail.UnTraceTs = time.Duration(traceDetail.StartTs-receiver.StartTs) * time.Microsecond
 	}
 
-	receiver.List = append(receiver.List, traceDetail)
 	receiver.ignoreDetail = true
+	f()
+	traceDetail.End(nil)
+	receiver.List = append(receiver.List, traceDetail)
 }
 
 // GetList 获取链路明细
