@@ -59,6 +59,7 @@ func (receiver *BaseTraceDetail) SetRows(rows int) {
 func (receiver *BaseTraceDetail) End(err error) {
 	receiver.EndTs = time.Now().UnixMicro()
 	receiver.UseTs = time.Duration(receiver.EndTs-receiver.StartTs) * time.Microsecond
+	receiver.UseDesc = receiver.UseTs.String()
 
 	if err != nil {
 		receiver.Exception = &ExceptionStack{
