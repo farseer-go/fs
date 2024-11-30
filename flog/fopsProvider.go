@@ -42,7 +42,7 @@ func (r *fopsLoggerPersistent) Log(LogLevel eumLogLevel.Enum, log *LogData, exce
 	if LogLevel != eumLogLevel.NoneLevel {
 		// 上传到FOPS时需要
 		if t := trace.CurTraceContext.Get(); t != nil {
-			log.TraceId = t.GetTraceId()
+			log.TraceId = t.TraceId
 		}
 		log.Content = mustCompile.ReplaceAllString(log.Content, "")
 		log.AppId = strconv.FormatInt(core.AppId, 10)

@@ -3,35 +3,35 @@ package trace
 type EmptyManager struct {
 }
 
-func (*EmptyManager) EntryWebApi(domain string, path string, method string, contentType string, header map[string]string, requestIp string) ITraceContext {
-	return &emptyTraceContext{}
+func (*EmptyManager) EntryWebApi(domain string, path string, method string, contentType string, header map[string]string, requestIp string) *TraceContext {
+	return &TraceContext{}
 }
-func (*EmptyManager) EntryWebSocket(domain string, path string, header map[string]string, requestIp string) ITraceContext {
-	return &emptyTraceContext{}
-}
-
-func (*EmptyManager) EntryMqConsumer(parentTraceId, parentAppName, server string, queueName string, routingKey string) ITraceContext {
-	return &emptyTraceContext{}
-}
-func (*EmptyManager) EntryQueueConsumer(queueName, subscribeName string) ITraceContext {
-	return &emptyTraceContext{}
-}
-func (*EmptyManager) EntryEventConsumer(server, eventName, subscribeName string) ITraceContext {
-	return &emptyTraceContext{}
-}
-func (*EmptyManager) EntryTask(taskName string) ITraceContext {
-	return &emptyTraceContext{}
+func (*EmptyManager) EntryWebSocket(domain string, path string, header map[string]string, requestIp string) *TraceContext {
+	return &TraceContext{}
 }
 
-func (*EmptyManager) EntryFSchedule(taskGroupName string, taskId int64, data map[string]string) ITraceContext {
-	return &emptyTraceContext{}
+func (*EmptyManager) EntryMqConsumer(parentTraceId, parentAppName, server string, queueName string, routingKey string) *TraceContext {
+	return &TraceContext{}
 }
-func (*EmptyManager) EntryTaskGroup(taskName string, taskGroupName string, taskId int64) ITraceContext {
-	return &emptyTraceContext{}
+func (*EmptyManager) EntryQueueConsumer(queueName, subscribeName string) *TraceContext {
+	return &TraceContext{}
+}
+func (*EmptyManager) EntryEventConsumer(server, eventName, subscribeName string) *TraceContext {
+	return &TraceContext{}
+}
+func (*EmptyManager) EntryTask(taskName string) *TraceContext {
+	return &TraceContext{}
 }
 
-func (*EmptyManager) EntryWatchKey(key string) ITraceContext { return &emptyTraceContext{} }
-func (*EmptyManager) GetCurTrace() ITraceContext             { return nil }
+func (*EmptyManager) EntryFSchedule(taskGroupName string, taskId int64, data map[string]string) *TraceContext {
+	return &TraceContext{}
+}
+func (*EmptyManager) EntryTaskGroup(taskName string, taskGroupName string, taskId int64) *TraceContext {
+	return &TraceContext{}
+}
+
+func (*EmptyManager) EntryWatchKey(key string) *TraceContext { return &TraceContext{} }
+func (*EmptyManager) GetCurTrace() *TraceContext             { return nil }
 func (*EmptyManager) GetTraceId() string {
 	return ""
 }
@@ -58,23 +58,7 @@ func (*EmptyManager) TraceRedis(method string, key string, field string) ITraceD
 }
 func (*EmptyManager) TraceHttp(method string, url string) ITraceDetail { return &emptyTraceDetail{} }
 
-type emptyTraceContext struct{}
-
-func (*emptyTraceContext) Error(err error)                                                 {}
-func (*emptyTraceContext) SetBody(requestBody string, statusCode int, responseBody string) {}
-func (*emptyTraceContext) SetResponseBody(responseBody string)                             {}
-func (*emptyTraceContext) GetTraceId() string                                              { return "" }
-func (*emptyTraceContext) GetTraceLevel() int                                              { return 0 }
-func (*emptyTraceContext) GetStartTs() int64                                               { return 0 }
-func (*emptyTraceContext) End(err error)                                                   {}
-func (*emptyTraceContext) Ignore()                                                         {}
-func (*emptyTraceContext) AddDetail(detail ITraceDetail)                                   {}
-func (*emptyTraceContext) GetList() []any {
-	return []any{}
-}
-func (*emptyTraceContext) GetAppInfo() (string, string, string, string, string) {
-	return "", "", "", "", ""
-}
+func (*EmptyManager) Push(traceContext *TraceContext, err error) {}
 
 type emptyTraceDetail struct{}
 

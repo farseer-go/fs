@@ -2,10 +2,11 @@ package test
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/farseer-go/fs/trace"
 	"github.com/farseer-go/fs/trace/eumCallType"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestTrace(t *testing.T) {
@@ -55,15 +56,10 @@ func TestTrace(t *testing.T) {
 	iManager.TraceHand("").SetSql("", "", "", "", 0)
 	iManager.TraceHand("").SetHttpRequest("", nil, nil, "", "", 0)
 
-	iManager.EntryQueueConsumer("", "").End(nil)
 	iManager.EntryQueueConsumer("", "").Ignore()
-	iManager.EntryQueueConsumer("", "").GetList()
 	iManager.EntryQueueConsumer("", "").GetAppInfo()
-	iManager.EntryQueueConsumer("", "").GetTraceId()
-	iManager.EntryQueueConsumer("", "").GetTraceLevel()
 	iManager.EntryQueueConsumer("", "").AddDetail(nil)
 	iManager.EntryQueueConsumer("", "").Error(nil)
-	iManager.EntryQueueConsumer("", "").GetStartTs()
 	iManager.EntryQueueConsumer("", "").SetBody("", 0, "")
 }
 

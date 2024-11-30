@@ -8,7 +8,7 @@ import (
 var ScopeLevel = asyncLocal.New[[]BaseTraceDetail]()
 
 // CurTraceContext 当前请求的Trace上下文
-var CurTraceContext = asyncLocal.New[ITraceContext]()
+var CurTraceContext = asyncLocal.New[*TraceContext]()
 var detailComment = asyncLocal.New[string]()
 
 // SetComment 添加操作的注释
@@ -28,4 +28,11 @@ func GetComment() string {
 	cmt := detailComment.Get()
 	detailComment.Remove()
 	return cmt
+}
+
+func GetTraceId() string {
+	if traceContext := CurTraceContext.Get(); traceContext != nil {
+		return traceContext.TraceId
+	}
+	return ""
 }
