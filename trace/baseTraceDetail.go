@@ -3,11 +3,13 @@ package trace
 import (
 	"fmt"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/farseer-go/fs/dateTime"
 	"github.com/farseer-go/fs/path"
+	"github.com/farseer-go/fs/sonyflake"
 	"github.com/farseer-go/fs/trace/eumCallType"
 )
 
@@ -142,4 +144,27 @@ func GetCallerInfo() (string, string, int) {
 		}
 	}
 	return "", "", 0
+}
+
+func NewTraceDetail(callType eumCallType.Enum, methodName string) BaseTraceDetail {
+	// 获取当前层级列表
+	lstScope := ScopeLevel.Get()
+	var parentDetailId string
+	if len(lstScope) > 0 {
+		parentDetailId = lstScope[len(lstScope)-1].DetailId
+	}
+	baseTraceDetail := BaseTraceDetail{
+		DetailId:       strconv.FormatInt(sonyflake.GenerateId(), 10),
+		Level:          len(lstScope) + 1,
+		ParentDetailId: parentDetailId,
+		MethodName:     methodName,
+		CallType:       callType,
+		StartTs:        time.Now().UnixMicro(),
+		EndTs:          time.Now().UnixMicro(),
+		Comment:        GetComment(),
+		CreateAt:       dateTime.Now(),
+	}
+	// 加入到当前层级列表
+	ScopeLevel.Set(append(lstScope, baseTraceDetail))
+	return baseTraceDetail
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/farseer-go/collections"
 	"github.com/farseer-go/fs/dateTime"
+	"github.com/farseer-go/fs/trace/eumCallType"
 	"github.com/farseer-go/fs/trace/eumTraceType"
 )
 
@@ -96,7 +97,16 @@ func (receiver *TraceContext) IsIgnore() bool {
 }
 
 func (receiver *TraceContext) IgnoreDetail() {
-	//receiver.AddDetail()
+	traceDetail := NewTraceDetail(eumCallType.Hand, "")
+	traceDetail.Comment = "忽略明细"
+	traceDetail.Timeline = time.Duration(traceDetail.StartTs-receiver.StartTs) * time.Microsecond
+	if len(receiver.List) > 0 {
+		traceDetail.UnTraceTs = time.Duration(traceDetail.StartTs-receiver.List[len(receiver.List)-1].(ITraceDetail).GetTraceDetail().EndTs) * time.Microsecond
+	} else {
+		traceDetail.UnTraceTs = time.Duration(traceDetail.StartTs-receiver.StartTs) * time.Microsecond
+	}
+
+	receiver.List = append(receiver.List, traceDetail)
 	receiver.ignoreDetail = true
 }
 
