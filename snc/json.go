@@ -8,8 +8,12 @@ import (
 var snc sonic.API
 
 func init() {
-	// 设置较小的缓冲区
-	option.LimitBufferSize = 4 * 1024
+	// 设置较小的缓冲区，以减少内存使用
+	option.LimitBufferSize = 2 * 1024
+	option.DefaultDecoderBufferSize = 2 * 1024
+	option.DefaultEncoderBufferSize = 2 * 1024
+	option.DefaultAstBufferSize = 2 * 1024
+
 	snc = sonic.Config{
 		CompactMarshaler: true,
 		UseNumber:        true,
