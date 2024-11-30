@@ -37,11 +37,16 @@ func TestTrace(t *testing.T) {
 	eumCallType.Hand.ToString()
 
 	detail := BaseTraceDetail{}
-	detail.Exception.IsNil()
 	detail.SetHttpRequest("", nil, nil, "", "", 0)
 	detail.End(fmt.Errorf(""))
 	detail.Ignore()
 	detail.GetLevel()
 	detail.IsIgnore()
 	detail.SetSql("", "", "", "", 0)
+
+	var traceHand ITraceDetail = &TraceDetailHand{
+		BaseTraceDetail: detail,
+		Name:            "",
+	}
+	traceHand.End(nil)
 }

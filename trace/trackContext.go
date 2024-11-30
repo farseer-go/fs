@@ -101,7 +101,7 @@ func (receiver *TraceContext) IgnoreDetail(f func()) {
 		receiver.ignoreDetail = false
 	}()
 
-	traceDetail := TraceDetailHand{
+	traceDetail := &TraceDetailHand{
 		BaseTraceDetail: NewTraceDetail(eumCallType.Hand, ""),
 		Name:            "忽略明细",
 	}
