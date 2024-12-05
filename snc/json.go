@@ -18,9 +18,11 @@ func init() {
 	option.DefaultAstBufferSize = 2 * 1024
 
 	snc = sonic.Config{
-		CompactMarshaler: true,
-		UseNumber:        true,
-		CopyString:       true,
+		CompactMarshaler: true, // 输出紧凑json
+		NoNullSliceOrMap: true, // 空对象编码为：[] {}
+		UseInt64:         true, // 整数对象转换为int64，否则为float64
+		UseNumber:        true, // 不要转换成float64而是json.number
+		CopyString:       true, // 不要引用字符串，而是复制一份出来
 	}.Froze()
 }
 
