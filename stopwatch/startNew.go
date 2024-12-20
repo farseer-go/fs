@@ -2,6 +2,7 @@ package stopwatch
 
 import (
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/farseer-go/fs/flog"
@@ -84,5 +85,22 @@ func (sw *Watch) GetNanosecondsText() string {
 
 // GetNanosecondsText 返回当前已计时的时间
 func (sw *Watch) GetText() string {
-	return flog.Red(sw.ElapsedDuration().String())
+	t := sw.ElapsedDuration().String()
+	if ts := strings.Split(t, "."); len(ts) == 2 {
+		if len(ts[1]) > 4 {
+			if strings.HasSuffix(ts[1], "ms") {
+				ts[1] = ts[1][:2] + "ms"
+			} else if strings.HasSuffix(ts[1], "us") {
+				ts[1] = ts[1][:2] + "us"
+			} else if strings.HasSuffix(ts[1], "ns") {
+				ts[1] = ts[1][:2] + "ns"
+			} else if strings.HasSuffix(ts[1], "s") {
+				ts[1] = ts[1][:2] + "s"
+			}
+		} else if len(ts[1]) > 3 && strings.HasSuffix(ts[1], "s") {
+			ts[1] = ts[1][:2] + "s"
+		}
+		t = ts[0] + "." + flog.Red(ts[1])
+	}
+	return flog.Red(t)
 }
