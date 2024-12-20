@@ -4,6 +4,7 @@ import (
 	"github.com/farseer-go/fs/fastReflect"
 )
 
+// 在一次请求中共享数据（适用于多层架构中不同层之间的数据共享，省去传值）
 var routineContext = New[map[string]any]()
 
 // GetContext 获取Context
