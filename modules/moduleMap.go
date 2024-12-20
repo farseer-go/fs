@@ -2,12 +2,14 @@ package modules
 
 import (
 	"fmt"
-	"github.com/farseer-go/fs/flog"
 	"reflect"
 	"sync"
+	"time"
+
+	"github.com/farseer-go/fs/flog"
 )
 
-var moduleMap = make(map[string]int64)
+var moduleMap = make(map[string]time.Duration)
 var moduleMapLocker sync.RWMutex
 
 // IsLoad 模块是否加载

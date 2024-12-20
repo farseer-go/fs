@@ -2,9 +2,10 @@ package modules
 
 import (
 	"fmt"
+	"reflect"
+
 	"github.com/farseer-go/fs/flog"
 	"github.com/farseer-go/fs/stopwatch"
-	"reflect"
 )
 
 func GetDependModules(startupModule FarseerModule) []FarseerModule {
@@ -65,8 +66,8 @@ func StartModules(farseerModules []FarseerModule) {
 			sw := stopwatch.StartNew()
 			moduleName := reflect.TypeOf(farseerModule).String()
 			module.PreInitialize()
-			flog.LogBuffer <- fmt.Sprint("Elapsed time：" + sw.GetMillisecondsText() + " " + moduleName + flog.Yellow(".PreInitialize()"))
-			moduleMap[moduleName] += sw.ElapsedMilliseconds()
+			flog.LogBuffer <- fmt.Sprint("Elapsed time：" + sw.GetText() + " " + moduleName + flog.Yellow(".PreInitialize()"))
+			moduleMap[moduleName] += sw.ElapsedDuration()
 		}
 	}
 
@@ -75,8 +76,8 @@ func StartModules(farseerModules []FarseerModule) {
 			sw := stopwatch.StartNew()
 			moduleName := reflect.TypeOf(farseerModule).String()
 			module.Initialize()
-			flog.LogBuffer <- fmt.Sprint("Elapsed time：" + sw.GetMillisecondsText() + " " + moduleName + flog.Blue(".Initialize()"))
-			moduleMap[moduleName] += sw.ElapsedMilliseconds()
+			flog.LogBuffer <- fmt.Sprint("Elapsed time：" + sw.GetText() + " " + moduleName + flog.Blue(".Initialize()"))
+			moduleMap[moduleName] += sw.ElapsedDuration()
 		}
 	}
 
@@ -85,8 +86,8 @@ func StartModules(farseerModules []FarseerModule) {
 			sw := stopwatch.StartNew()
 			moduleName := reflect.TypeOf(farseerModule).String()
 			module.PostInitialize()
-			flog.LogBuffer <- fmt.Sprint("Elapsed time：" + sw.GetMillisecondsText() + " " + moduleName + flog.Green(".PostInitialize()"))
-			moduleMap[moduleName] += sw.ElapsedMilliseconds()
+			flog.LogBuffer <- fmt.Sprint("Elapsed time：" + sw.GetText() + " " + moduleName + flog.Green(".PostInitialize()"))
+			moduleMap[moduleName] += sw.ElapsedDuration()
 		}
 	}
 }

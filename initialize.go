@@ -3,6 +3,11 @@ package fs
 import (
 	"context"
 	"fmt"
+	"os"
+	"strconv"
+	"strings"
+	"sync"
+
 	"github.com/farseer-go/fs/configure"
 	"github.com/farseer-go/fs/container"
 	"github.com/farseer-go/fs/core"
@@ -12,10 +17,6 @@ import (
 	"github.com/farseer-go/fs/net"
 	"github.com/farseer-go/fs/sonyflake"
 	"github.com/farseer-go/fs/stopwatch"
-	"os"
-	"strconv"
-	"strings"
-	"sync"
 )
 
 var (
@@ -102,7 +103,7 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 		for index, fn := range callbackFnList {
 			sw.Restart()
 			fn.f()
-			flog.Println("Run " + strconv.Itoa(index+1) + "：" + fn.name + "，Use：" + sw.GetMillisecondsText())
+			flog.Println("Run " + strconv.Itoa(index+1) + "：" + fn.name + "，Use：" + sw.GetText())
 		}
 		flog.Println("---------------------------------------")
 	}
