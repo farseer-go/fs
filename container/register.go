@@ -1,9 +1,10 @@
 package container
 
 import (
+	"reflect"
+
 	"github.com/farseer-go/fs/container/eumLifecycle"
 	"github.com/farseer-go/fs/exception"
-	"reflect"
 )
 
 // Container 容器操作
@@ -22,7 +23,7 @@ func Register(constructor any, iocName ...string) {
 	defContainer.registerConstructor(constructor, name, eumLifecycle.Single)
 }
 
-// RegisterTransient 注册实例，默认使用单例
+// RegisterTransient 注册实例，临时生命周期
 func RegisterTransient(constructor any, iocName ...string) {
 	if defContainer == nil {
 		exception.ThrowException("Please call fs.Initialize[Module]() to initialize the module first")
@@ -31,7 +32,7 @@ func RegisterTransient(constructor any, iocName ...string) {
 	defContainer.registerConstructor(constructor, name, eumLifecycle.Transient)
 }
 
-// RegisterInstance 注册实例，默认使用单例
+// RegisterInstance 注册实例，单例
 func RegisterInstance[TInterface any](ins TInterface, iocName ...string) {
 	if defContainer == nil {
 		exception.ThrowException("Please call fs.Initialize[Module]() to initialize the module first")
