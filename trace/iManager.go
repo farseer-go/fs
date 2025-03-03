@@ -22,25 +22,25 @@ type IManager interface {
 	EntryWatchKey(key string) *TraceContext
 
 	// TraceDatabaseOpen 数据库埋点
-	TraceDatabaseOpen(dbName string, connectString string) ITraceDetail
+	TraceDatabaseOpen(dbName string, connectString string) TraceDetail
 	// TraceDatabase 数据库埋点
-	TraceDatabase() ITraceDetail
+	TraceDatabase() TraceDetail
 	// TraceElasticsearch Elasticsearch埋点
-	TraceElasticsearch(method string, IndexName string, AliasesName string) ITraceDetail
+	TraceElasticsearch(method string, IndexName string, AliasesName string) TraceDetail
 	// TraceEtcd etcd埋点
-	TraceEtcd(method string, key string, leaseID int64) ITraceDetail
+	TraceEtcd(method string, key string, leaseID int64) TraceDetail
 	// TraceHand 手动埋点
-	TraceHand(name string) ITraceDetail
+	TraceHand(name string) TraceDetail
 	// TraceEventPublish 事件发布
-	TraceEventPublish(eventName string) ITraceDetail
+	TraceEventPublish(eventName string) TraceDetail
 	// TraceMqSend send埋点
-	TraceMqSend(method string, server string, exchange string, routingKey string) ITraceDetail
+	TraceMqSend(method string, server string, exchange string, routingKey string) TraceDetail
 	// TraceMq open、create埋点
-	TraceMq(method string, server string, exchange string) ITraceDetail
+	TraceMq(method string, server string, exchange string) TraceDetail
 	// TraceRedis Redis埋点
-	TraceRedis(method string, key string, field string) ITraceDetail
+	TraceRedis(method string, key string, field string) TraceDetail
 	// TraceHttp http埋点
-	TraceHttp(method string, url string) ITraceDetail
+	TraceHttp(method string, url string) TraceDetail
 	// 推送到队列
 	Push(traceContext *TraceContext, err error)
 }

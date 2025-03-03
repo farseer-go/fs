@@ -8,6 +8,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/farseer-go/fs/color"
 	"github.com/farseer-go/fs/configure"
 	"github.com/farseer-go/fs/container"
 	"github.com/farseer-go/fs/core"
@@ -48,19 +49,19 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 		core.AppIp = net.GetIp()
 	})
 
-	flog.LogBuffer <- fmt.Sprint("AppName： ", flog.Colors[2](core.AppName))
-	flog.LogBuffer <- fmt.Sprint("AppID：   ", flog.Colors[2](core.AppId))
-	flog.LogBuffer <- fmt.Sprint("AppIP：   ", flog.Colors[2](core.AppIp))
-	flog.LogBuffer <- fmt.Sprint("HostName：", flog.Colors[2](core.HostName))
-	flog.LogBuffer <- fmt.Sprint("HostTime：", flog.Colors[2](core.StartupAt.ToString("yyyy-MM-dd hh:mm:ss")))
-	flog.LogBuffer <- fmt.Sprint("PID：     ", flog.Colors[2](core.ProcessId))
+	flog.LogBuffer <- fmt.Sprint("AppName： ", color.Colors[2](core.AppName))
+	flog.LogBuffer <- fmt.Sprint("AppID：   ", color.Colors[2](core.AppId))
+	flog.LogBuffer <- fmt.Sprint("AppIP：   ", color.Colors[2](core.AppIp))
+	flog.LogBuffer <- fmt.Sprint("HostName：", color.Colors[2](core.HostName))
+	flog.LogBuffer <- fmt.Sprint("HostTime：", color.Colors[2](core.StartupAt.ToString("yyyy-MM-dd hh:mm:ss")))
+	flog.LogBuffer <- fmt.Sprint("PID：     ", color.Colors[2](core.ProcessId))
 	showComponentLog()
 	flog.LogBuffer <- fmt.Sprint("---------------------------------------")
 
 	// 加载模块依赖
 	var startupModule TModule
 	dependModules = modules.GetDependModules(startupModule)
-	flog.LogBuffer <- fmt.Sprint("Loaded, " + flog.Red(len(dependModules)) + " modules in total")
+	flog.LogBuffer <- fmt.Sprint("Loaded, " + color.Red(len(dependModules)) + " modules in total")
 
 	// 执行所有模块初始化
 	modules.StartModules(dependModules)
@@ -69,7 +70,7 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 	flog.Println("---------------------------------------")
 
 	if proxy := configure.GetString("Proxy"); proxy != "" {
-		flog.Println("http使用代理：", flog.Blue(proxy))
+		flog.Println("http使用代理：", color.Blue(proxy))
 	}
 
 	// 健康检查
@@ -80,9 +81,9 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 		for _, healthCheck := range healthChecks {
 			item, err := healthCheck.Check()
 			if err == nil {
-				flog.Printf("%s%s\n", flog.Green("【✓】"), item)
+				flog.Printf("%s%s\n", color.Green("【✓】"), item)
 			} else {
-				flog.Printf("%s%s：%s\n", flog.Red("【✕】"), item, flog.Red(err.Error()))
+				flog.Printf("%s%s：%s\n", color.Red("【✕】"), item, color.Red(err.Error()))
 				isSuccess = false
 			}
 		}
@@ -120,7 +121,7 @@ func showComponentLog() {
 		}
 	}
 	if len(logSets) > 0 {
-		flog.LogBuffer <- fmt.Sprint("Log Switch：", flog.Colors[2](strings.Join(logSets, " ")))
+		flog.LogBuffer <- fmt.Sprint("Log Switch：", color.Colors[2](strings.Join(logSets, " ")))
 	}
 }
 

@@ -3,6 +3,7 @@ package flog
 import (
 	"fmt"
 
+	"github.com/farseer-go/fs/color"
 	"github.com/farseer-go/fs/core/eumLogLevel"
 	"github.com/farseer-go/fs/snc"
 )
@@ -35,10 +36,10 @@ type TextFormatter struct {
 func (r TextFormatter) Formatter(log *LogData) string {
 	var logLevelString string
 	if log.LogLevel != eumLogLevel.NoneLevel {
-		logLevelString = Colors[log.LogLevel]("[" + log.LogLevel.ToString() + "]")
+		logLevelString = color.Colors[log.LogLevel]("[" + log.LogLevel.ToString() + "]")
 
 	} else if log.Component != "" {
-		logLevelString = Colors[0]("[" + log.Component + "]")
+		logLevelString = color.Colors[0]("[" + log.Component + "]")
 	}
 
 	if logLevelString != "" {

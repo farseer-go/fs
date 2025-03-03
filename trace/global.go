@@ -5,7 +5,7 @@ import (
 )
 
 // ScopeLevel 层级列表
-var ScopeLevel = asyncLocal.New[[]BaseTraceDetail]()
+var ScopeLevel = asyncLocal.New[[]TraceDetail]()
 
 // CurTraceContext 当前请求的Trace上下文
 var CurTraceContext = asyncLocal.New[*TraceContext]()

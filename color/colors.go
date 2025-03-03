@@ -1,9 +1,10 @@
-package flog
+package color
 
 import (
 	"fmt"
-	"github.com/farseer-go/fs/parse"
 	"strings"
+
+	"github.com/farseer-go/fs/parse"
 )
 
 // brush is a color join function
@@ -99,9 +100,4 @@ func ReplaceBlues(strSource string, texts ...string) string {
 		strSource = strings.ReplaceAll(strSource, text, Blue(text))
 	}
 	return strSource
-}
-
-// ClearColor 清除颜色
-func ClearColor(content string) string {
-	return mustCompile.ReplaceAllString(content, "")
 }

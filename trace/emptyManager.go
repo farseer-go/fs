@@ -35,44 +35,27 @@ func (*EmptyManager) GetCurTrace() *TraceContext             { return nil }
 func (*EmptyManager) GetTraceId() string {
 	return ""
 }
-func (*EmptyManager) TraceDatabase() ITraceDetail { return &emptyTraceDetail{} }
-func (*EmptyManager) TraceDatabaseOpen(dbName string, connectString string) ITraceDetail {
-	return &emptyTraceDetail{}
+func (*EmptyManager) TraceDatabase() TraceDetail { return TraceDetail{} }
+func (*EmptyManager) TraceDatabaseOpen(dbName string, connectString string) TraceDetail {
+	return TraceDetail{}
 }
-func (*EmptyManager) TraceElasticsearch(method string, IndexName string, AliasesName string) ITraceDetail {
-	return &emptyTraceDetail{}
+func (*EmptyManager) TraceElasticsearch(method string, IndexName string, AliasesName string) TraceDetail {
+	return TraceDetail{}
 }
-func (*EmptyManager) TraceEtcd(method string, key string, leaseID int64) ITraceDetail {
-	return &emptyTraceDetail{}
+func (*EmptyManager) TraceEtcd(method string, key string, leaseID int64) TraceDetail {
+	return TraceDetail{}
 }
-func (*EmptyManager) TraceHand(name string) ITraceDetail              { return &emptyTraceDetail{} }
-func (*EmptyManager) TraceEventPublish(eventName string) ITraceDetail { return &emptyTraceDetail{} }
-func (*EmptyManager) TraceMqSend(method string, server string, exchange string, routingKey string) ITraceDetail {
-	return &emptyTraceDetail{}
+func (*EmptyManager) TraceHand(name string) TraceDetail              { return TraceDetail{} }
+func (*EmptyManager) TraceEventPublish(eventName string) TraceDetail { return TraceDetail{} }
+func (*EmptyManager) TraceMqSend(method string, server string, exchange string, routingKey string) TraceDetail {
+	return TraceDetail{}
 }
-func (*EmptyManager) TraceMq(method string, server string, exchange string) ITraceDetail {
-	return &emptyTraceDetail{}
+func (*EmptyManager) TraceMq(method string, server string, exchange string) TraceDetail {
+	return TraceDetail{}
 }
-func (*EmptyManager) TraceRedis(method string, key string, field string) ITraceDetail {
-	return &emptyTraceDetail{}
+func (*EmptyManager) TraceRedis(method string, key string, field string) TraceDetail {
+	return TraceDetail{}
 }
-func (*EmptyManager) TraceHttp(method string, url string) ITraceDetail { return &emptyTraceDetail{} }
+func (*EmptyManager) TraceHttp(method string, url string) TraceDetail { return TraceDetail{} }
 
 func (*EmptyManager) Push(traceContext *TraceContext, err error) {}
-
-type emptyTraceDetail struct{}
-
-func (*emptyTraceDetail) GetLevel() int                    { return 0 }
-func (*emptyTraceDetail) Run(fn func())                    {}
-func (*emptyTraceDetail) IsIgnore() bool                   { return true }
-func (*emptyTraceDetail) ToString() string                 { return "" }
-func (*emptyTraceDetail) GetTraceDetail() *BaseTraceDetail { return &BaseTraceDetail{} }
-func (*emptyTraceDetail) End(err error)                    {}
-func (*emptyTraceDetail) Ignore()                          {}
-func (*emptyTraceDetail) SetSql(connectionString string, DbName string, tableName string, sql string, rowsAffected int64) {
-}
-func (*emptyTraceDetail) SetHttpRequest(url string, reqHead map[string]any, rspHead map[string]string, requestBody string, responseBody string, statusCode int) {
-}
-
-func (*emptyTraceDetail) SetRows(rows int) {
-}

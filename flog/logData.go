@@ -1,12 +1,12 @@
 package flog
 
 import (
+	"regexp"
+
 	"github.com/farseer-go/fs/core/eumLogLevel"
 	"github.com/farseer-go/fs/dateTime"
-	"regexp"
 )
 
-// var regexStr = "\\\\u001b\\[[\\d;]*m"
 var regexStr = "\u001b\\[[\\d;]*m"
 var mustCompile = regexp.MustCompile(regexStr)
 

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/farseer-go/fs/flog"
+	"github.com/farseer-go/fs/color"
 )
 
 type Watch struct {
@@ -70,17 +70,17 @@ func (sw *Watch) ElapsedDuration() time.Duration {
 
 // GetMillisecondsText 返回当前已计时的时间（毫秒）
 func (sw *Watch) GetMillisecondsText() string {
-	return flog.Red(strconv.FormatInt(sw.ElapsedDuration().Milliseconds(), 10) + " ms")
+	return color.Red(strconv.FormatInt(sw.ElapsedDuration().Milliseconds(), 10) + " ms")
 }
 
 // GetMicrosecondsText 返回当前已计时的时间（微秒）
 func (sw *Watch) GetMicrosecondsText() string {
-	return flog.Red(strconv.FormatInt(sw.ElapsedDuration().Microseconds(), 10) + " us")
+	return color.Red(strconv.FormatInt(sw.ElapsedDuration().Microseconds(), 10) + " us")
 }
 
 // GetNanosecondsText 返回当前已计时的时间（纳秒）
 func (sw *Watch) GetNanosecondsText() string {
-	return flog.Red(strconv.FormatInt(sw.ElapsedDuration().Nanoseconds(), 10) + " ns")
+	return color.Red(strconv.FormatInt(sw.ElapsedDuration().Nanoseconds(), 10) + " ns")
 }
 
 // GetNanosecondsText 返回当前已计时的时间
@@ -100,5 +100,5 @@ func (sw *Watch) GetText() string {
 		}
 		t = ts[0] + "." + ts[1]
 	}
-	return flog.Red(t)
+	return color.Red(t)
 }

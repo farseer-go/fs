@@ -7,20 +7,21 @@ import (
 	"strings"
 	"time"
 
+	"github.com/farseer-go/fs/color"
 	"github.com/farseer-go/fs/dateTime"
 	"github.com/farseer-go/fs/path"
 	"github.com/farseer-go/fs/sonyflake"
 	"github.com/farseer-go/fs/trace/eumCallType"
 )
 
-// BaseTraceDetail 埋点明细（基类）
-type BaseTraceDetail struct {
-	TraceId        string            // 上下文ID
+// TraceDetail 埋点明细（基类）
+type TraceDetail struct {
+	// TraceId    string // 上下文ID
+	// AppId          string            // 应用ID
+	// AppName        string            // 应用名称
+	// AppIp          string            // 应用IP
+	// ParentAppName  string            // 上游应用
 	TraceLevel     int               // 逐层递增（显示上下游顺序）
-	AppId          string            // 应用ID
-	AppName        string            // 应用名称
-	AppIp          string            // 应用IP
-	ParentAppName  string            // 上游应用
 	DetailId       string            // 明细ID
 	ParentDetailId string            // 父级明细ID
 	Level          int               // 当前层级（入口为0层）
@@ -31,11 +32,20 @@ type BaseTraceDetail struct {
 	UnTraceTs      time.Duration     // 上一次结束到现在开始之间未Trace的时间（微秒）
 	StartTs        int64             // 调用开始时间戳（微秒）
 	EndTs          int64             // 调用停止时间戳（微秒）
-	UseTs          time.Duration     // 总共使用时间微秒
-	UseDesc        string            // 总共使用时间（描述）
 	ignore         bool              // 忽略这次的链路追踪
 	Exception      *ExceptionStack   // 异常信息
 	CreateAt       dateTime.DateTime // 请求时间
+	TraceDetailHand
+	TraceDetailDatabase
+	TraceDetailEs
+	TraceDetailEtcd
+	TraceDetailEvent
+	TraceDetailGrpc
+	TraceDetailHttp
+	TraceDetailMq
+	TraceDetailRedis
+	// UseTs          time.Duration     // 总共使用时间微秒
+	// UseDesc        string            // 总共使用时间（描述）
 }
 
 type ExceptionStack struct {
@@ -50,18 +60,18 @@ func (receiver ExceptionStack) IsNil() bool {
 	return receiver.ExceptionCallFile == "" && receiver.ExceptionCallLine == 0 && receiver.ExceptionCallFuncName == "" && receiver.ExceptionIsException == false && receiver.ExceptionMessage == ""
 }
 
-func (receiver *BaseTraceDetail) SetSql(connectionString string, dbName string, tableName string, sql string, rowsAffected int64) {
+func (receiver *TraceDetail) SetSql(connectionString string, dbName string, tableName string, sql string, rowsAffected int64) {
 }
-func (receiver *BaseTraceDetail) SetHttpRequest(url string, reqHead map[string]any, rspHead map[string]string, requestBody string, responseBody string, statusCode int) {
+func (receiver *TraceDetail) SetHttpRequest(url string, reqHead map[string]any, rspHead map[string]string, requestBody string, responseBody string, statusCode int) {
 }
-func (receiver *BaseTraceDetail) SetRows(rows int) {
+func (receiver *TraceDetail) SetRows(rows int) {
 }
 
 // End 链路明细执行完后，统计用时
-func (receiver *BaseTraceDetail) End(err error) {
+func (receiver *TraceDetail) End(err error) {
 	receiver.EndTs = time.Now().UnixMicro()
-	receiver.UseTs = time.Duration(receiver.EndTs-receiver.StartTs) * time.Microsecond
-	receiver.UseDesc = receiver.UseTs.String()
+	// useTs = time.Duration(receiver.EndTs-receiver.StartTs) * time.Microsecond
+	// receiver.UseDesc = useTs.String()
 
 	if err != nil {
 		receiver.Exception = &ExceptionStack{
@@ -79,17 +89,14 @@ func (receiver *BaseTraceDetail) End(err error) {
 	}
 }
 
-func (receiver *BaseTraceDetail) Ignore() {
+func (receiver *TraceDetail) Ignore() {
 	receiver.ignore = true
 }
-func (receiver *BaseTraceDetail) IsIgnore() bool {
+func (receiver *TraceDetail) IsIgnore() bool {
 	return receiver.ignore
 }
-func (receiver *BaseTraceDetail) GetLevel() int {
-	return receiver.Level
-}
 
-func (receiver *BaseTraceDetail) Run(fn func()) {
+func (receiver *TraceDetail) Run(fn func()) {
 	defer func() {
 		exp := recover()
 		if exp != nil {
@@ -99,6 +106,39 @@ func (receiver *BaseTraceDetail) Run(fn func()) {
 	}()
 	fn()
 	receiver.End(nil)
+}
+
+func (receiver *TraceDetail) ToString() string {
+	useTs := time.Duration(receiver.EndTs-receiver.StartTs) * time.Microsecond
+	switch receiver.CallType {
+	case eumCallType.Database:
+		if sql := receiver.TraceDetailDatabase.DbSql; sql != "" {
+			if len(sql) > 1000 {
+				sql = sql[:1000] + "......"
+			}
+			sql = color.ReplaceBlues(sql, "SELECT ", "UPDATE ", "DELETE ", "INSERT INTO ", " FROM ", " WHERE ", " LIMIT ", " SET ", " ORDER BY ", " VALUES ", " and ", " or ", "`")
+			sql = strings.ReplaceAll(sql, receiver.TraceDetailDatabase.DbTableName, color.Green(receiver.TraceDetailDatabase.DbTableName))
+			return fmt.Sprintf("[%s]耗时：%s，[影响%d行]%s", color.Yellow(receiver.CallType.ToString()), color.Red(useTs.String()), receiver.TraceDetailDatabase.DbRowsAffected, sql)
+		} else if receiver.TraceDetailDatabase.DbConnectionString != "" {
+			return fmt.Sprintf("[%s]耗时：%s， 连接数据库：%s", color.Yellow(receiver.CallType.ToString()), color.Red(useTs.String()), receiver.TraceDetailDatabase.DbConnectionString)
+		}
+		return ""
+	case eumCallType.Elasticsearch:
+		return fmt.Sprintf("[%s]耗时：%s，%s IndexName=%s，AliasesName=%s", color.Yellow(receiver.CallType.ToString()), color.Red(useTs.String()), receiver.MethodName, receiver.TraceDetailEs.EsIndexName, receiver.TraceDetailEs.EsAliasesName)
+	case eumCallType.Etcd:
+		return fmt.Sprintf("[%s]耗时：%s，%s Key=%s LeaseID=%v", color.Yellow(receiver.CallType.ToString()), color.Red(useTs.String()), receiver.MethodName, receiver.TraceDetailEtcd.EtcdKey, receiver.EtcdLeaseID)
+	case eumCallType.EventPublish:
+		return fmt.Sprintf("[%s]耗时：%s， %s", color.Yellow(receiver.CallType.ToString()), color.Red(useTs.String()), receiver.TraceDetailEvent.EventName)
+	case eumCallType.Grpc:
+		return fmt.Sprintf("[%s]耗时：%s，%s [%s]%s", color.Yellow(receiver.CallType.ToString()), color.Red(useTs.String()), receiver.MethodName, receiver.TraceDetailGrpc.GrpcMethod, receiver.TraceDetailGrpc.GrpcUrl)
+	case eumCallType.Http:
+		return fmt.Sprintf("[%s]耗时：%s，%s [%s]%s", color.Yellow(receiver.CallType.ToString()), color.Red(useTs.String()), receiver.MethodName, receiver.TraceDetailHttp.HttpMethod, receiver.TraceDetailHttp.HttpUrl)
+	case eumCallType.Mq:
+		return fmt.Sprintf("[%s]耗时：%s，%s Server=%s，Exchange=%s，RoutingKey=%s", color.Yellow(receiver.CallType.ToString()), color.Red(useTs.String()), receiver.MethodName, receiver.TraceDetailMq.MqServer, receiver.TraceDetailMq.MqExchange, receiver.TraceDetailMq.MqRoutingKey)
+	case eumCallType.Redis:
+		return fmt.Sprintf("[%s]耗时：%s，%s Key=%s，Field=%s", color.Yellow(receiver.CallType.ToString()), color.Red(useTs.String()), receiver.MethodName, receiver.TraceDetailRedis.RedisKey, receiver.TraceDetailRedis.RedisField)
+	}
+	return fmt.Sprintf("[%s]耗时：%s， %s", receiver.CallType.ToString(), useTs.String(), receiver.MethodName)
 }
 
 var ComNames = []string{"/farseer-go/async/", "/farseer-go/cache/", "/farseer-go/cacheMemory/", "/farseer-go/collections/", "/farseer-go/data/", "/farseer-go/elasticSearch/", "/farseer-go/etcd/", "/farseer-go/eventBus/", "/farseer-go/fs/", "/farseer-go/fSchedule/", "/farseer-go/linkTrace/", "/farseer-go/mapper/", "/farseer-go/queue/", "/farseer-go/rabbit/", "/farseer-go/redis/", "/farseer-go/redisStream/", "/farseer-go/tasks/", "/farseer-go/utils/", "/farseer-go/webapi/", "/src/reflect/", "/usr/local/go/src/", "gorm.io/"}
@@ -146,14 +186,14 @@ func GetCallerInfo() (string, string, int) {
 	return "", "", 0
 }
 
-func NewTraceDetail(callType eumCallType.Enum, methodName string) BaseTraceDetail {
+func NewTraceDetail(callType eumCallType.Enum, methodName string) TraceDetail {
 	// 获取当前层级列表
 	lstScope := ScopeLevel.Get()
 	var parentDetailId string
 	if len(lstScope) > 0 {
 		parentDetailId = lstScope[len(lstScope)-1].DetailId
 	}
-	baseTraceDetail := BaseTraceDetail{
+	baseTraceDetail := TraceDetail{
 		DetailId:       strconv.FormatInt(sonyflake.GenerateId(), 10),
 		Level:          len(lstScope) + 1,
 		ParentDetailId: parentDetailId,

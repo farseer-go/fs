@@ -2,9 +2,11 @@ package test
 
 import (
 	"fmt"
+	"testing"
+
+	"github.com/farseer-go/fs/color"
 	"github.com/farseer-go/fs/flog"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestFlog(t *testing.T) {
@@ -28,20 +30,16 @@ func TestFlog(t *testing.T) {
 	flog.ComponentInfo("task", "")
 	flog.ComponentInfof("task", "")
 
-	assert.Equal(t, "aaa"+flog.Red("b")+"aaa", flog.ReplaceRed("aaabaaa", "b"))
-	assert.Equal(t, "aaa"+flog.Blue("b")+"aaa", flog.ReplaceBlue("aaabaaa", "b"))
-	assert.Equal(t, "aaa"+flog.Green("b")+"aaa", flog.ReplaceGreen("aaabaaa", "b"))
-	assert.Equal(t, "aaa"+flog.Yellow("b")+"aaa", flog.ReplaceYellow("aaabaaa", "b"))
+	assert.Equal(t, "aaa"+color.Red("b")+"aaa", color.ReplaceRed("aaabaaa", "b"))
+	assert.Equal(t, "aaa"+color.Blue("b")+"aaa", color.ReplaceBlue("aaabaaa", "b"))
+	assert.Equal(t, "aaa"+color.Green("b")+"aaa", color.ReplaceGreen("aaabaaa", "b"))
+	assert.Equal(t, "aaa"+color.Yellow("b")+"aaa", color.ReplaceYellow("aaabaaa", "b"))
 
-	assert.Equal(t, "aaa"+flog.Red("b")+flog.Red("c")+"aaa", flog.ReplaceReds("aaabcaaa", "b", "c"))
-	assert.Equal(t, "aaa"+flog.Blue("b")+flog.Blue("c")+"aaa", flog.ReplaceBlues("aaabcaaa", "b", "c"))
-	assert.Equal(t, "aaa"+flog.Green("b")+flog.Green("c")+"aaa", flog.ReplaceGreens("aaabcaaa", "b", "c"))
-	assert.Equal(t, "aaa"+flog.Yellow("b")+flog.Yellow("c")+"aaa", flog.ReplaceYellows("aaabcaaa", "b", "c"))
+	assert.Equal(t, "aaa"+color.Red("b")+color.Red("c")+"aaa", color.ReplaceReds("aaabcaaa", "b", "c"))
+	assert.Equal(t, "aaa"+color.Blue("b")+color.Blue("c")+"aaa", color.ReplaceBlues("aaabcaaa", "b", "c"))
+	assert.Equal(t, "aaa"+color.Green("b")+color.Green("c")+"aaa", color.ReplaceGreens("aaabcaaa", "b", "c"))
+	assert.Equal(t, "aaa"+color.Yellow("b")+color.Yellow("c")+"aaa", color.ReplaceYellows("aaabcaaa", "b", "c"))
 
-	flog.Red("")
-	flog.Blue("")
-	flog.Green("")
-	flog.Yellow("")
 	assert.Panics(t, func() {
 		flog.Panic("test error")
 	})

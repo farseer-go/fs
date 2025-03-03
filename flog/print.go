@@ -2,6 +2,8 @@ package flog
 
 import (
 	"fmt"
+
+	"github.com/farseer-go/fs/color"
 	"github.com/farseer-go/fs/core"
 	"github.com/farseer-go/fs/core/eumLogLevel"
 	"github.com/farseer-go/fs/trace"
@@ -53,7 +55,7 @@ func Warningf(format string, a ...any) {
 // Error 打印Error日志
 func Error(contents ...any) error {
 	if file, funcName, line := trace.GetCallerInfo(); file != "" {
-		Printf("%s:%s %s \n", file, Blue(line), funcName)
+		Printf("%s:%s %s \n", file, color.Blue(line), funcName)
 	}
 	return log.Error(contents...)
 }
@@ -64,7 +66,7 @@ func ErrorIfExists(err error) {
 		return
 	}
 	if file, funcName, line := trace.GetCallerInfo(); file != "" {
-		Printf("%s:%s %s \n", file, Blue(line), funcName)
+		Printf("%s:%s %s \n", file, color.Blue(line), funcName)
 	}
 	_ = log.Error(err)
 }
@@ -72,7 +74,7 @@ func ErrorIfExists(err error) {
 // Errorf 打印Error日志
 func Errorf(format string, a ...any) error {
 	if file, funcName, line := trace.GetCallerInfo(); file != "" {
-		Printf("%s:%s %s \n", file, Blue(line), funcName)
+		Printf("%s:%s %s \n", file, color.Blue(line), funcName)
 	}
 	return log.Error(fmt.Sprintf(format, a...))
 }

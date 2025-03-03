@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/farseer-go/fs/flog"
+	"github.com/farseer-go/fs/color"
 )
 
 var moduleMap = make(map[string]time.Duration)
@@ -27,6 +27,6 @@ func ThrowIfNotLoad(module FarseerModule) {
 	load := IsLoad(module)
 	if !load {
 		moduleName := reflect.TypeOf(module).String()
-		panic(fmt.Sprintf("When using the %s module, you need to depend on the %s module in the startup module", flog.Colors[4](moduleName), flog.Colors[4](moduleName)))
+		panic(fmt.Sprintf("When using the %s module, you need to depend on the %s module in the startup module", color.Colors[4](moduleName), color.Colors[4](moduleName)))
 	}
 }

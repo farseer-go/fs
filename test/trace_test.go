@@ -20,11 +20,10 @@ func TestTrace(t *testing.T) {
 	assert.Equal(t, "Etcd", eumCallType.Etcd.ToString())
 	assert.Equal(t, "", eumCallType.Enum(9).ToString())
 
-	baseTraceDetail := trace.BaseTraceDetail{}
+	baseTraceDetail := trace.TraceDetail{}
 	baseTraceDetail.SetSql("", "", "", "", 0)
 	baseTraceDetail.Ignore()
 	assert.Equal(t, true, baseTraceDetail.IsIgnore())
-	baseTraceDetail.GetLevel()
 	testErr(baseTraceDetail)
 
 	// EmptyManager
@@ -47,22 +46,13 @@ func TestTrace(t *testing.T) {
 	iManager.TraceMqSend("", "", "", "")
 	iManager.TraceRedis("", "", "")
 
-	iManager.TraceHand("").ToString()
-	iManager.TraceHand("").GetTraceDetail()
-	iManager.TraceHand("").End(nil)
-	iManager.TraceHand("").Ignore()
-	iManager.TraceHand("").IsIgnore()
-	iManager.TraceHand("").GetLevel()
-	iManager.TraceHand("").SetSql("", "", "", "", 0)
-	iManager.TraceHand("").SetHttpRequest("", nil, nil, "", "", 0)
-
 	iManager.EntryQueueConsumer("", "").Ignore()
 	iManager.EntryQueueConsumer("", "").GetAppInfo()
-	iManager.EntryQueueConsumer("", "").AddDetail(nil)
+	iManager.EntryQueueConsumer("", "").AddDetail(trace.TraceDetail{})
 	iManager.EntryQueueConsumer("", "").Error(nil)
 	iManager.EntryQueueConsumer("", "").SetBody("", 0, "")
 }
 
-func testErr(baseTraceDetail trace.BaseTraceDetail) {
+func testErr(baseTraceDetail trace.TraceDetail) {
 	baseTraceDetail.End(fmt.Errorf(""))
 }
