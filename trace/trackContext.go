@@ -10,22 +10,22 @@ import (
 )
 
 type TraceContext struct {
-	TraceId       string                        `json:"tid"` // 上下文ID
-	AppId         string                        `json:"aid"` // 应用ID
-	AppName       string                        `json:"an"`  // 应用名称
-	AppIp         string                        `json:"aip"` // 应用IP
-	ParentAppName string                        `json:"pn"`  // 上游应用
-	TraceLevel    int                           `json:"tl"`  // 逐层递增（显示上下游顺序）
-	StartTs       int64                         `json:"st"`  // 调用开始时间戳（微秒）
-	EndTs         int64                         `json:"et"`  // 调用结束时间戳（微秒）
-	UseTs         time.Duration                 `json:"ut"`  // 总共使用时间（微秒）
-	UseDesc       string                        `json:"ud"`  // 总共使用时间（描述）
-	TraceType     eumTraceType.Enum             `json:"tt"`  // 状态码
-	List          collections.List[TraceDetail] `json:"l"`   // 调用的上下文trace.TraceDetail
-	TraceCount    int                           `json:"tc"`  // 追踪明细数量
-	ignore        bool                          // 忽略这次的链路追踪
-	ignoreDetail  bool                          // 忽略链路明细
-	Exception     *ExceptionStack               `json:"e"` // 异常信息
+	TraceId       string                         `json:"tid"` // 上下文ID
+	AppId         string                         `json:"aid"` // 应用ID
+	AppName       string                         `json:"an"`  // 应用名称
+	AppIp         string                         `json:"aip"` // 应用IP
+	ParentAppName string                         `json:"pn"`  // 上游应用
+	TraceLevel    int                            `json:"tl"`  // 逐层递增（显示上下游顺序）
+	StartTs       int64                          `json:"st"`  // 调用开始时间戳（微秒）
+	EndTs         int64                          `json:"et"`  // 调用结束时间戳（微秒）
+	UseTs         time.Duration                  `json:"ut"`  // 总共使用时间（微秒）
+	UseDesc       string                         `json:"ud"`  // 总共使用时间（描述）
+	TraceType     eumTraceType.Enum              `json:"tt"`  // 状态码
+	List          collections.List[*TraceDetail] `json:"l"`   // 调用的上下文trace.TraceDetail
+	TraceCount    int                            `json:"tc"`  // 追踪明细数量
+	ignore        bool                           // 忽略这次的链路追踪
+	ignoreDetail  bool                           // 忽略链路明细
+	Exception     *ExceptionStack                `json:"e"` // 异常信息
 	WebContext
 	ConsumerContext
 	TaskContext
@@ -118,7 +118,7 @@ func (receiver *TraceContext) IgnoreDetail(f func()) {
 }
 
 // AddDetail 添加链路明细
-func (receiver *TraceContext) AddDetail(traceDetail TraceDetail) {
+func (receiver *TraceContext) AddDetail(traceDetail *TraceDetail) {
 	// 没有忽略明细，才要加入
 	if !receiver.ignoreDetail {
 		receiver.List.Add(traceDetail)

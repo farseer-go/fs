@@ -5,6 +5,7 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/farseer-go/fs/color"
@@ -56,15 +57,27 @@ type ExceptionStack struct {
 	ExceptionMessage      string // 异常信息
 }
 
-func (receiver ExceptionStack) IsNil() bool {
-	return receiver.ExceptionCallFile == "" && receiver.ExceptionCallLine == 0 && receiver.ExceptionCallFuncName == "" && receiver.ExceptionIsException == false && receiver.ExceptionMessage == ""
+// 添加明细时，需要用锁保护，防止并发追加链路明细时，同时操作同一个链路上下文
+var lock = &sync.RWMutex{}
+
+func (receiver *TraceDetail) Join() {
+	lock.Lock()
+	defer lock.Unlock()
+
+	if t := CurTraceContext.Get(); t != nil {
+		// 时间轴：上下文入口起点时间到本次开始时间
+		receiver.Timeline = time.Duration(receiver.StartTs-t.StartTs) * time.Microsecond
+		if lastDetail := t.List.Last(); lastDetail != nil {
+			receiver.UnTraceTs = time.Duration(receiver.StartTs-lastDetail.EndTs) * time.Microsecond
+		} else {
+			receiver.UnTraceTs = time.Duration(receiver.StartTs-t.StartTs) * time.Microsecond
+		}
+		t.AddDetail(receiver)
+	}
 }
 
-func (receiver *TraceDetail) SetSql(connectionString string, dbName string, tableName string, sql string, rowsAffected int64) {
-}
-func (receiver *TraceDetail) SetHttpRequest(url string, reqHead map[string]any, rspHead map[string]string, requestBody string, responseBody string, statusCode int) {
-}
-func (receiver *TraceDetail) SetRows(rows int) {
+func (receiver ExceptionStack) IsNil() bool {
+	return receiver.ExceptionCallFile == "" && receiver.ExceptionCallLine == 0 && receiver.ExceptionCallFuncName == "" && receiver.ExceptionIsException == false && receiver.ExceptionMessage == ""
 }
 
 // End 链路明细执行完后，统计用时
@@ -186,14 +199,14 @@ func GetCallerInfo() (string, string, int) {
 	return "", "", 0
 }
 
-func NewTraceDetail(callType eumCallType.Enum, methodName string) TraceDetail {
+func NewTraceDetail(callType eumCallType.Enum, methodName string) *TraceDetail {
 	// 获取当前层级列表
 	lstScope := ScopeLevel.Get()
 	var parentDetailId string
 	if len(lstScope) > 0 {
 		parentDetailId = lstScope[len(lstScope)-1].DetailId
 	}
-	baseTraceDetail := TraceDetail{
+	baseTraceDetail := &TraceDetail{
 		DetailId:       strconv.FormatInt(sonyflake.GenerateId(), 10),
 		Level:          len(lstScope) + 1,
 		ParentDetailId: parentDetailId,
