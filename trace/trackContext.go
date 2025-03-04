@@ -1,10 +1,13 @@
 package trace
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/farseer-go/collections"
+	"github.com/farseer-go/fs/core"
 	"github.com/farseer-go/fs/dateTime"
+	"github.com/farseer-go/fs/sonyflake"
 	"github.com/farseer-go/fs/trace/eumCallType"
 	"github.com/farseer-go/fs/trace/eumTraceType"
 )
@@ -31,6 +34,23 @@ type TraceContext struct {
 	TaskContext
 	WatchKeyContext
 	CreateAt dateTime.DateTime `json:"ca"` // 请求时间
+}
+
+func NewTraceContext() *TraceContext {
+	context := &TraceContext{
+		AppId:      strconv.FormatInt(core.AppId, 10),
+		AppName:    core.AppName,
+		AppIp:      core.AppIp,
+		TraceId:    strconv.FormatInt(sonyflake.GenerateId(), 10),
+		TraceLevel: 0,
+		StartTs:    time.Now().UnixMicro(),
+		TraceType:  eumTraceType.WebApi,
+		CreateAt:   dateTime.Now(),
+		List:       collections.NewList[*TraceDetail](),
+	}
+	CurTraceContext.Set(context)
+	ScopeLevel.Set([]*TraceDetail{})
+	return context
 }
 
 type WebContext struct {

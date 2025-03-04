@@ -1,37 +1,41 @@
 package trace
 
+import "github.com/farseer-go/collections"
+
 type EmptyManager struct {
 }
 
 func (*EmptyManager) EntryWebApi(domain string, path string, method string, contentType string, header map[string]string, requestIp string) *TraceContext {
-	return &TraceContext{}
+	return &TraceContext{List: collections.NewList[*TraceDetail]()}
 }
 func (*EmptyManager) EntryWebSocket(domain string, path string, header map[string]string, requestIp string) *TraceContext {
-	return &TraceContext{}
+	return &TraceContext{List: collections.NewList[*TraceDetail]()}
 }
 
 func (*EmptyManager) EntryMqConsumer(parentTraceId, parentAppName, server string, queueName string, routingKey string) *TraceContext {
-	return &TraceContext{}
+	return &TraceContext{List: collections.NewList[*TraceDetail]()}
 }
 func (*EmptyManager) EntryQueueConsumer(queueName, subscribeName string) *TraceContext {
-	return &TraceContext{}
+	return &TraceContext{List: collections.NewList[*TraceDetail]()}
 }
 func (*EmptyManager) EntryEventConsumer(server, eventName, subscribeName string) *TraceContext {
-	return &TraceContext{}
+	return &TraceContext{List: collections.NewList[*TraceDetail]()}
 }
 func (*EmptyManager) EntryTask(taskName string) *TraceContext {
-	return &TraceContext{}
+	return &TraceContext{List: collections.NewList[*TraceDetail]()}
 }
 
 func (*EmptyManager) EntryFSchedule(taskGroupName string, taskId int64, data map[string]string) *TraceContext {
-	return &TraceContext{}
+	return &TraceContext{List: collections.NewList[*TraceDetail]()}
 }
 func (*EmptyManager) EntryTaskGroup(taskName string, taskGroupName string, taskId int64) *TraceContext {
-	return &TraceContext{}
+	return &TraceContext{List: collections.NewList[*TraceDetail]()}
 }
 
-func (*EmptyManager) EntryWatchKey(key string) *TraceContext { return &TraceContext{} }
-func (*EmptyManager) GetCurTrace() *TraceContext             { return nil }
+func (*EmptyManager) EntryWatchKey(key string) *TraceContext {
+	return &TraceContext{List: collections.NewList[*TraceDetail]()}
+}
+func (*EmptyManager) GetCurTrace() *TraceContext { return nil }
 func (*EmptyManager) GetTraceId() string {
 	return ""
 }

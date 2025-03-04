@@ -6,6 +6,7 @@ import (
 
 var lstRemoves []func()
 
+// 当前线程共享的变量
 type AsyncLocal[T any] struct {
 	threadLocal routine.ThreadLocal[T]
 }
