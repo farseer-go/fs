@@ -1,6 +1,8 @@
 package snc
 
 import (
+	"encoding/json"
+
 	"github.com/bytedance/sonic"
 	"github.com/bytedance/sonic/option"
 )
@@ -31,11 +33,11 @@ func Unmarshal(data []byte, v any) error {
 
 // 将对象转换成json（序列化）
 func Marshal(val any) ([]byte, error) {
-	//return json.Marshal(val)
-	return snc.Marshal(val)
+	return json.Marshal(val)
+	//return snc.Marshal(val)
 }
 
 func MarshalIndent(v any, prefix, indent string) ([]byte, error) {
-	//return json.MarshalIndent(v, prefix, indent)
-	return snc.MarshalIndent(v, prefix, indent)
+	return json.MarshalIndent(v, prefix, indent)
+	//return snc.MarshalIndent(v, prefix, indent)
 }
