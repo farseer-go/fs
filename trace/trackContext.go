@@ -99,12 +99,20 @@ func (receiver WatchKeyContext) IsNil() bool {
 }
 
 func (receiver *TraceContext) SetBody(requestBody string, statusCode int, responseBody string) {
+	// 限制响应报文最多存储4096长度
+	if len(responseBody) > 4096 {
+		responseBody = responseBody[:4096]
+	}
 	receiver.WebContext.WebRequestBody = requestBody
 	receiver.WebContext.WebStatusCode = statusCode
 	receiver.WebContext.WebResponseBody = responseBody
 }
 
 func (receiver *TraceContext) SetResponseBody(responseBody string) {
+	// 限制响应报文最多存储4096长度
+	if len(responseBody) > 4096 {
+		responseBody = responseBody[:4096]
+	}
 	receiver.WebContext.WebResponseBody = responseBody
 }
 
