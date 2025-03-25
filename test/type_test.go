@@ -1,12 +1,13 @@
 package test
 
 import (
-	"github.com/farseer-go/fs/core"
-	"github.com/farseer-go/fs/types"
-	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/farseer-go/fs/core"
+	"github.com/farseer-go/fs/types"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestType(t *testing.T) {
@@ -89,7 +90,7 @@ func TestType(t *testing.T) {
 	assert.True(t, types.IsDtoModelIgnoreInterface([]reflect.Type{reflect.TypeOf(sqlserver{})}))
 
 	assert.Panics(t, func() {
-		types.ListNew(nil)
+		types.ListNew(nil, 0)
 	})
 	assert.Panics(t, func() {
 		types.ListAdd(reflect.ValueOf(""), nil)

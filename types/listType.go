@@ -11,7 +11,7 @@ var Cache = make(map[string][]int)
 var lock sync.RWMutex
 
 // ListNew 动态创建一个新的List
-func ListNew(lstType reflect.Type) reflect.Value {
+func ListNew(lstType reflect.Type, cap int) reflect.Value {
 	key := lstType.String() + ".New"
 	if _, isExists := getCache(key); !isExists {
 		method, _ := reflect.New(lstType).Type().MethodByName("New")
@@ -19,7 +19,7 @@ func ListNew(lstType reflect.Type) reflect.Value {
 	}
 
 	lstValue := reflect.New(lstType)
-	lstValue.Method(getCacheVal(key)[0]).Call(nil)
+	lstValue.Method(getCacheVal(key)[0]).Call([]reflect.Value{reflect.ValueOf(cap)})
 	return lstValue
 }
 

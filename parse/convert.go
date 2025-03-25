@@ -150,8 +150,8 @@ func Convert[T any](source any, defVal T) T {
 			}
 		// list类型
 		case "list":
-			lstReflectValue := types.ListNew(defValMeta.ReflectType)
 			arr := strings.Split(strSource, ",")
+			lstReflectValue := types.ListNew(defValMeta.ReflectType, len(arr))
 			itemMeta := defValMeta.GetItemMeta()
 			for i := 0; i < len(arr); i++ {
 				types.ListAddValue(lstReflectValue, reflect.ValueOf(ConvertValue(arr[i], itemMeta.ReflectType)))
