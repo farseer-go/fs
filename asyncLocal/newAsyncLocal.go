@@ -4,7 +4,8 @@ import (
 	"github.com/timandy/routine"
 )
 
-var lstRemoves []func()
+// 存储当前线程生成的共享变量，在线程结束后，释放
+var lstRemoves routine.ThreadLocal[[]func()] = routine.NewInheritableThreadLocal[[]func()]()
 
 // 当前线程共享的变量
 type AsyncLocal[T any] struct {
@@ -15,10 +16,14 @@ type AsyncLocal[T any] struct {
 func New[T any]() AsyncLocal[T] {
 	// 加入到list集合，用于手动GC
 	threadLocal := routine.NewInheritableThreadLocal[T]()
-	lstRemoves = append(lstRemoves, func() {
+	threadLocal.Remove()
+
+	f := lstRemoves.Get()
+	f = append(f, func() {
 		threadLocal.Remove()
 	})
-	threadLocal.Remove()
+	lstRemoves.Set(f)
+
 	return AsyncLocal[T]{
 		threadLocal: threadLocal,
 	}
@@ -47,8 +52,9 @@ func (receiver AsyncLocal[T]) Remove() {
 
 // Release 释放
 func Release() {
-	for _, threadLocalRemove := range lstRemoves {
+	for _, threadLocalRemove := range lstRemoves.Get() {
 		threadLocalRemove()
 	}
+	lstRemoves.Remove()
 	routineContext.Remove()
 }
