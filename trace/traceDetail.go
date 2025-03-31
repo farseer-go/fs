@@ -67,7 +67,8 @@ func (receiver *TraceDetail) Join() {
 	if t := CurTraceContext.Get(); t != nil {
 		// 时间轴：上下文入口起点时间到本次开始时间
 		receiver.Timeline = time.Duration(receiver.StartTs-t.StartTs) * time.Microsecond
-		if lastDetail := t.List[len(t.List)-1]; lastDetail != nil {
+		if len(t.List) > 0 {
+			lastDetail := t.List[len(t.List)-1]
 			receiver.UnTraceTs = time.Duration(receiver.StartTs-lastDetail.EndTs) * time.Microsecond
 		} else {
 			receiver.UnTraceTs = time.Duration(receiver.StartTs-t.StartTs) * time.Microsecond
