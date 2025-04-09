@@ -26,7 +26,7 @@ func Try(fn func()) (catch *catchException) {
 		catch.exp = recover()
 		if catch.exp != nil {
 			switch catch.exp.(type) {
-			case RefuseException, WebException:
+			case WebException:
 			default:
 				// 如果使用了链路追踪，则记录异常
 				if traceContext := trace.CurTraceContext.Get(); traceContext != nil {

@@ -6,6 +6,7 @@ import (
 	"github.com/farseer-go/fs/flog"
 )
 
+// WebException 此异常类型在链路上不会被认定为异常，仅为业务上作为拒绝的继续往下执行的一种中断行为
 type WebException struct {
 	// 异常信息
 	Message    string
