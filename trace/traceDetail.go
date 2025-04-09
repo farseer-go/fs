@@ -50,11 +50,15 @@ type TraceDetail struct {
 }
 
 type ExceptionStack struct {
+	ExceptionIsException bool                   // 是否执行异常
+	ExceptionMessage     string                 // 异常信息
+	Details              []ExceptionStackDetail // 异常详情
+}
+
+type ExceptionStackDetail struct {
 	ExceptionCallFile     string // 调用者文件路径
 	ExceptionCallLine     int    // 调用者行号
 	ExceptionCallFuncName string // 调用者函数名称
-	ExceptionIsException  bool   // 是否执行异常
-	ExceptionMessage      string // 异常信息
 }
 
 // 添加明细时，需要用锁保护，防止并发追加链路明细时，同时操作同一个链路上下文
@@ -78,7 +82,7 @@ func (receiver *TraceDetail) Join() {
 }
 
 func (receiver ExceptionStack) IsNil() bool {
-	return receiver.ExceptionCallFile == "" && receiver.ExceptionCallLine == 0 && receiver.ExceptionCallFuncName == "" && receiver.ExceptionIsException == false && receiver.ExceptionMessage == ""
+	return len(receiver.Details) == 0 && receiver.ExceptionIsException == false && receiver.ExceptionMessage == ""
 }
 
 // End 链路明细执行完后，统计用时
@@ -91,9 +95,8 @@ func (receiver *TraceDetail) End(err error) {
 		receiver.Exception = &ExceptionStack{
 			ExceptionIsException: true,
 			ExceptionMessage:     err.Error(),
+			Details:              GetCallerInfo(),
 		}
-		// 调用者
-		receiver.Exception.ExceptionCallFile, receiver.Exception.ExceptionCallFuncName, receiver.Exception.ExceptionCallLine = GetCallerInfo()
 	}
 
 	// 移除层级
@@ -166,12 +169,13 @@ func isSysCom(file string) bool {
 	return false
 }
 
-func GetCallerInfo() (string, string, int) {
+func GetCallerInfo() []ExceptionStackDetail {
 	// 获取调用栈信息
 	pc := make([]uintptr, 15) // 假设最多获取 10 层调用栈
 	n := runtime.Callers(0, pc)
 	frames := runtime.CallersFrames(pc[:n])
 
+	var details []ExceptionStackDetail
 	// 遍历调用栈帧
 	for {
 		frame, more := frames.Next()
@@ -191,13 +195,13 @@ func GetCallerInfo() (string, string, int) {
 
 			// 只要最后的方法名
 			funcName := frame.Function[strings.LastIndex(frame.Function, path.PathSymbol)+len(path.PathSymbol):] + "()"
-			return file, funcName, frame.Line
+			details = append(details, ExceptionStackDetail{ExceptionCallFile: file, ExceptionCallLine: frame.Line, ExceptionCallFuncName: funcName})
 		}
 		if !more {
 			break
 		}
 	}
-	return "", "", 0
+	return details
 }
 
 func NewTraceDetail(callType eumCallType.Enum, methodName string) *TraceDetail {

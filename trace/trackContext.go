@@ -157,8 +157,8 @@ func (receiver *TraceContext) Error(err error) {
 		receiver.Exception = &ExceptionStack{
 			ExceptionIsException: true,
 			ExceptionMessage:     err.Error(),
+			Details:              GetCallerInfo(),
 		}
-		receiver.Exception.ExceptionCallFile, receiver.Exception.ExceptionCallFuncName, receiver.Exception.ExceptionCallLine = GetCallerInfo()
 	}
 }
 

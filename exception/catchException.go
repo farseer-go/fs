@@ -25,12 +25,12 @@ func Try(fn func()) (catch *catchException) {
 	defer func() {
 		catch.exp = recover()
 		if catch.exp != nil {
-			switch catch.exp.(type) {
+			switch e := catch.exp.(type) {
 			case WebException:
 			default:
 				// 如果使用了链路追踪，则记录异常
 				if traceContext := trace.CurTraceContext.Get(); traceContext != nil {
-					traceContext.Error(fmt.Errorf("%s", catch.exp))
+					traceContext.Error(fmt.Errorf("%+v", e))
 				}
 			}
 		}
