@@ -44,7 +44,9 @@ jobs:
 
             # 【主模块】所有依赖到新版本
             for DEP in "${REPOS[@]}"; do
-                go get -u "github.com/$ORG/$DEP@$NEW_VERSION"
+                if [[ "$DEP" != "$REPO" ]]; then
+                    go get -u "github.com/$ORG/$DEP@$NEW_VERSION"
+                fi
             done
 
             # 提交【主模块】更改
