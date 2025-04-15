@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ORG: "farseer-go"  # 替换为你的 GitHub 组织或用户名
-      REPO_LIST: "fs collections"  # 直接在此列出所有组件仓库名 tasks utils mapper webapi eventBus queue linkTrace cache cacheMemory data docker elasticSearch etcd rabbit redis fSchedule monitor
+      REPO_LIST: "fs collections tasks utils mapper webapi eventBus queue linkTrace cache cacheMemory data docker elasticSearch etcd rabbit redis fSchedule monitor"  # 直接在此列出所有组件仓库名
     steps:
       - name: Validate Input
         run: |
