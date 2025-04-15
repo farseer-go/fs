@@ -45,9 +45,7 @@ jobs:
 
             # 更新所有依赖到新版本
             for DEP in "${REPOS[@]}"; do
-              if [[ "$DEP" != "$REPO" ]]; then
-                go mod edit -replace "github.com/$ORG/$DEP=github.com/$ORG/$DEP@$NEW_VERSION"
-              fi
+                go get -u "github.com/$ORG/$DEP@$NEW_VERSION"
             done
 
             # 提交更改
