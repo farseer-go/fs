@@ -17,3 +17,5 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 )
+
+replace github.com/farseer-go/collections => github.com/farseer-go/collections v0.16.3
