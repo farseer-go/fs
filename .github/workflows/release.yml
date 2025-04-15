@@ -48,7 +48,6 @@ jobs:
             git add .
             if ! git commit -m "chore: update dependencies to $NEW_VERSION"; then
               echo "🟡 无变更需要提交: $REPO"
-              continue
             fi
             
             # 创建【主模块】新标签
@@ -86,7 +85,6 @@ jobs:
                 git add .
                 if ! git commit -m "chore: update dependencies to $NEW_VERSION"; then
                     echo "🟡 无变更需要提交: $REPO"
-                    continue
                 fi
 
                 # 创建【子模块】新标签
