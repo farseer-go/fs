@@ -18,4 +18,4 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 )
 
-replace github.com/farseer-go/collections => github.com/farseer-go/collections v0.16.3
+replace github.com/farseer-go/collections => github.com/farseer-go/collections v0.16.4
