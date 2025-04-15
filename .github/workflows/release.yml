@@ -52,7 +52,7 @@ jobs:
             
             # 创建【主模块】新标签
             git tag -f "$NEW_VERSION"
-            git push origin main
+            git push origin main --force
             git push origin "$NEW_VERSION" --force
 
             # 根据仓库类型定义子模块路径
@@ -89,7 +89,7 @@ jobs:
 
                 # 创建【子模块】新标签
                 git tag -f "$SUB_PATH/$NEW_VERSION"
-                git push origin main
+                git push origin main --force
                 git push origin "$NEW_VERSION" --force
 
                 popd > /dev/null
