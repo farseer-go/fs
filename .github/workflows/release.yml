@@ -60,10 +60,6 @@ jobs:
             git push origin main --force
             git push origin "$NEW_VERSION" --force
             
-            # 推送代码前休眠 20 秒（防止高频操作触发限流）
-            echo "⏳ 等待 20 秒..."
-            sleep 20
-
             # 根据仓库类型定义子模块路径
             case "$REPO" in
                 data)
