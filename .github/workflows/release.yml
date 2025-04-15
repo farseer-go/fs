@@ -40,6 +40,11 @@ jobs:
             git clone "https://${{ secrets.RELEASE_PAT }}@github.com/$ORG/$REPO.git" "$TEMP_DIR"
             cd "$TEMP_DIR"
 
+            # 更新所有依赖到新版本
+            for DEP in "${REPOS[@]}"; do
+                go get "github.com/$ORG/$DEP@$NEW_VERSION"
+            done
+
             go get -u && go mod tidy
 
             # 提交【主模块】更改
@@ -80,10 +85,10 @@ jobs:
 
                 go get -u && go mod tidy
 
-                # # 更新所有依赖到新版本
-                # for DEP in "${REPOS[@]}"; do
-                #     go get -u "github.com/$ORG/$DEP@$NEW_VERSION"
-                # done
+                # 更新所有依赖到新版本
+                for DEP in "${REPOS[@]}"; do
+                    go get "github.com/$ORG/$DEP@$NEW_VERSION"
+                done
 
                 # 提交【子模块】更改
                 git add .
