@@ -98,9 +98,13 @@ jobs:
                 fi
             done
 
-            
-            # 创建 GitHub Release（无需显式登录）
-            gh release create "$NEW_VERSION" --title "$NEW_VERSION" --notes "Release version $NEW_VERSION" --repo "$ORG/$REPO"
+            # 检查 Release 是否已存在
+            if gh release view "$NEW_VERSION" --repo "$ORG/$REPO" >/dev/null 2>&1; then
+                echo "🟡 Release $NEW_VERSION 已存在，跳过创建"
+            else
+                # 创建 GitHub Release（无需显式登录）
+                gh release create "$NEW_VERSION" --title "$NEW_VERSION" --notes "Release version $NEW_VERSION" --repo "$ORG/$REPO"
+            fi
 
             # 清理临时目录
             cd ..
