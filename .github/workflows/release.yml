@@ -42,13 +42,6 @@ jobs:
 
             go get -u && go mod tidy
 
-            # 【主模块】所有依赖到新版本
-            for DEP in "${REPOS[@]}"; do
-                if [[ "$DEP" != "$REPO" ]]; then
-                    go get -u "github.com/$ORG/$DEP@$NEW_VERSION"
-                fi
-            done
-
             # 提交【主模块】更改
             git config user.name "Release Bot"
             git config user.email "bot@example.com"
