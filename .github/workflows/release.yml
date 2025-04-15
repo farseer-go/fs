@@ -7,17 +7,64 @@ on:
         required: true
 
 jobs:
-  batch-update:
+  batch-release:
     runs-on: ubuntu-latest
+    env:
+      ORG: "farseer-go"  # 替换为你的 GitHub 组织或用户名
+      REPO_LIST: "fs collections"  # 直接在此列出所有组件仓库名 tasks utils mapper webapi eventBus queue linkTrace cache cacheMemory data docker elasticSearch etcd rabbit redis fSchedule monitor
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Run Batch Script
+      - name: Validate Input
         run: |
-          chmod +x batch-release.sh
-          ./batch-release.sh ${{ github.event.inputs.version }}
+          if [[ ! "${{ github.event.inputs.version }}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "❌ 错误：版本号必须是 vX.Y.Z 格式（如 v0.4.0）"
+            exit 1
+          fi
+
+      - name: Batch Update and Release
+        run: |
+          set -euxo pipefail  # 启用详细日志和严格错误检查
+          NEW_VERSION="${{ github.event.inputs.version }}"
+
+          # 转换为数组并处理空格分隔的仓库列表
+          read -ra REPOS <<< "$REPO_LIST"
+
+          for REPO in "${REPOS[@]}"; do
+            echo "🔧 正在处理仓库: $REPO"
+
+            # 克隆仓库
+            TEMP_DIR=$(mktemp -d)
+            git clone "https://$PAT@github.com/$ORG/$REPO.git" "$TEMP_DIR"
+            cd "$TEMP_DIR"
+
+            # 清理依赖
+            go get -u && go mod tidy
+
+            # 更新所有依赖到新版本
+            for DEP in "${REPOS[@]}"; do
+              if [[ "$DEP" != "$REPO" ]]; then
+                go mod edit -replace "github.com/$ORG/$DEP=github.com/$ORG/$DEP@$NEW_VERSION"
+              fi
+            done
+
+            # 提交更改
+            git config user.name "Release Bot"
+            git config user.email "bot@example.com"
+            git add go.mod
+            if ! git commit -m "chore: update dependencies to $NEW_VERSION"; then
+              echo "🟡 无变更需要提交: $REPO"
+              continue
+            fi
+
+            # 强制推送标签（覆盖旧标签）
+            git tag -f "$NEW_VERSION"
+            git push origin main
+            git push origin "$NEW_VERSION" --force
+
+            # 清理临时目录
+            cd ..
+            rm -rf "$TEMP_DIR"
+          done
+
+          echo "✅ 所有仓库已更新至 $NEW_VERSION"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PAT: ${{ secrets.RELEASE_PAT }}  # 需要具有仓库写入权限的 PAT
