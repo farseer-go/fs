@@ -40,34 +40,74 @@ jobs:
             git clone "https://${{ secrets.RELEASE_PAT }}@github.com/$ORG/$REPO.git" "$TEMP_DIR"
             cd "$TEMP_DIR"
 
-            # 清理依赖
             go get -u && go mod tidy
 
-            # 更新所有依赖到新版本
+            # 【主模块】所有依赖到新版本
             for DEP in "${REPOS[@]}"; do
                 go get -u "github.com/$ORG/$DEP@$NEW_VERSION"
             done
 
-            # 提交更改
+            # 提交【主模块】更改
             git config user.name "Release Bot"
             git config user.email "bot@example.com"
-            git add go.mod
+            git add .
             if ! git commit -m "chore: update dependencies to $NEW_VERSION"; then
               echo "🟡 无变更需要提交: $REPO"
               continue
             fi
-
-            # 强制推送标签（覆盖旧标签）
+            
+            # 创建【主模块】新标签
             git tag -f "$NEW_VERSION"
             git push origin main
             git push origin "$NEW_VERSION" --force
 
+            # 根据仓库类型定义子模块路径
+            case "$REPO" in
+                data)
+                SUB_MODULES=("driver/clickhouse" "driver/sqlite" "driver/postgres" "driver/sqlserver")
+                ;;
+                webapi)
+                SUB_MODULES=("session-redis")
+                ;;
+                *)
+                SUB_MODULES=()
+                ;;
+            esac
+
+            # 递归处理所有指定模块
+            for SUB_PATH in "${SUB_MODULES[@]}"; do
+                if [[ -f "$SUB_PATH/go.mod" ]]; then
+                echo "🔧 处理模块: $SUB_PATH"
+                pushd "$SUB_PATH" > /dev/null
+
+                go get -u && go mod tidy
+
+                # 更新所有依赖到新版本
+                for DEP in "${REPOS[@]}"; do
+                    go get -u "github.com/$ORG/$DEP@$NEW_VERSION"
+                done
+
+                # 提交【子模块】更改
+                git add .
+                if ! git commit -m "chore: update dependencies to $NEW_VERSION"; then
+                    echo "🟡 无变更需要提交: $REPO"
+                    continue
+                fi
+
+                # 创建【子模块】新标签
+                git tag -f "$SUB_PATH/$NEW_VERSION"
+                git push origin main
+                git push origin "$NEW_VERSION" --force
+
+                popd > /dev/null
+                else
+                    echo "⏩ 跳过无效路径: $SUB_PATH"
+                fi
+            done
+
             
             # 创建 GitHub Release（无需显式登录）
-            gh release create "$NEW_VERSION" \
-              --title "$NEW_VERSION" \
-              --notes "Release version $NEW_VERSION" \
-              --repo "$ORG/$REPO"
+            gh release create "$NEW_VERSION" --title "$NEW_VERSION" --notes "Release version $NEW_VERSION" --repo "$ORG/$REPO"
 
             # 清理临时目录
             cd ..
