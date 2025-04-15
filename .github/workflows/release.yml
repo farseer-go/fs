@@ -78,4 +78,5 @@ jobs:
 
           echo "✅ 所有仓库已更新至 $NEW_VERSION"
         env:
-            GH_TOKEN: ${{ secrets.RELEASE_PAT }}  # 通过环境变量传递
+            GH_TOKEN: ${{ secrets.RELEASE_PAT }}  # 必须设置
+            GITHUB_TOKEN: ${{ secrets.RELEASE_PAT }}  # 双重保障
