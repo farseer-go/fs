@@ -1,0 +1,23 @@
+name: Batch Release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'New version (e.g. v0.4.0)'
+        required: true
+
+jobs:
+  batch-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run Batch Script
+        run: |
+          chmod +x batch-release.sh
+          ./batch-release.sh ${{ github.event.inputs.version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
