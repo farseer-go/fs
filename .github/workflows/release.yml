@@ -28,6 +28,12 @@ jobs:
           # 转换为数组并处理空格分隔的仓库列表
           read -ra REPOS <<< "$REPO_LIST"
 
+          # 安装 GitHub CLI
+          type -p gh >/dev/null || sudo apt-get install -y gh
+
+          # 登录 GitHub CLI
+          echo "${{ secrets.RELEASE_PAT }}" | gh auth login --with-token
+
           for REPO in "${REPOS[@]}"; do
             echo "🔧 正在处理仓库: $REPO"
 
@@ -59,6 +65,12 @@ jobs:
             git tag -f "$NEW_VERSION"
             git push origin main
             git push origin "$NEW_VERSION" --force
+
+            # 创建 GitHub Release
+            gh release create "$NEW_VERSION" \
+              --title "$NEW_VERSION" \
+              --notes "Release version $NEW_VERSION" \
+              --repo "$ORG/$REPO"
 
             # 清理临时目录
             cd ..
