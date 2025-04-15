@@ -51,7 +51,7 @@ jobs:
             fi
             
             # 创建【主模块】新标签
-            #git tag -f "$NEW_VERSION"
+            git tag -f "$NEW_VERSION"
             git push origin main --force
             git push origin "$NEW_VERSION" --force
 
@@ -88,17 +88,8 @@ jobs:
                 fi
 
                 # 创建【子模块】新标签
-                #git tag -f "$SUB_PATH/$NEW_VERSION"
-                git push origin main --force
-                git push origin "$NEW_VERSION" --force
-
-                # 检查 Release 是否已存在
-                if gh release view "$SUB_PATH/$NEW_VERSION" --repo "$ORG/$REPO" >/dev/null 2>&1; then
-                    echo "🟡 Release $SUB_PATH/$NEW_VERSION 已存在，跳过创建"
-                else
-                    # 创建 GitHub Release（无需显式登录）
-                    gh release create "$SUB_PATH/$NEW_VERSION" --title "$SUB_PATH/$NEW_VERSION" --notes "Release version $SUB_PATH/$NEW_VERSION" --repo "$ORG/$REPO"
-                fi
+                git tag -f "$SUB_PATH/$NEW_VERSION"
+                git push origin "$SUB_PATH/$NEW_VERSION" --force
 
                 popd > /dev/null
                 else
