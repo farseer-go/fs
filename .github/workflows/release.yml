@@ -42,7 +42,7 @@ jobs:
 
             # 更新所有依赖到新版本
             for DEP in "${REPOS[@]}"; do
-                go get "github.com/$ORG/$DEP@$NEW_VERSION"
+                go get "github.com/$ORG/$DEP@$NEW_VERSION" || true
             done
 
             go get -u && go mod tidy
@@ -79,12 +79,12 @@ jobs:
                 echo "🔧 处理模块: $SUB_PATH"
                 pushd "$SUB_PATH" > /dev/null
 
-                go get -u && go mod tidy
-
                 # 更新所有依赖到新版本
                 for DEP in "${REPOS[@]}"; do
-                    go get "github.com/$ORG/$DEP@$NEW_VERSION"
+                    go get "github.com/$ORG/$DEP@$NEW_VERSION" || true
                 done
+
+                go get -u && go mod tidy
 
                 # 提交【子模块】更改
                 git add .
