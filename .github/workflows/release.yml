@@ -19,6 +19,10 @@ jobs:
             echo "❌ 错误：版本号必须是 vX.Y.Z 格式（如 v0.4.0）"
             exit 1
           fi
+      - name: Install GitHub CLI
+        run: |
+            sudo apt-get update
+            sudo apt-get install -y gh
 
       - name: Batch Update and Release
         run: |
@@ -28,18 +32,12 @@ jobs:
           # 转换为数组并处理空格分隔的仓库列表
           read -ra REPOS <<< "$REPO_LIST"
 
-          # 安装 GitHub CLI
-          type -p gh >/dev/null || sudo apt-get install -y gh
-
-          # 登录 GitHub CLI
-          echo "${{ secrets.RELEASE_PAT }}" | gh auth login --with-token
-
           for REPO in "${REPOS[@]}"; do
             echo "🔧 正在处理仓库: $REPO"
 
             # 克隆仓库
             TEMP_DIR=$(mktemp -d)
-            git clone "https://$PAT@github.com/$ORG/$REPO.git" "$TEMP_DIR"
+            git clone "https://${{ secrets.RELEASE_PAT }}@github.com/$ORG/$REPO.git" "$TEMP_DIR"
             cd "$TEMP_DIR"
 
             # 清理依赖
@@ -66,7 +64,8 @@ jobs:
             git push origin main
             git push origin "$NEW_VERSION" --force
 
-            # 创建 GitHub Release
+            
+            # 创建 GitHub Release（无需显式登录）
             gh release create "$NEW_VERSION" \
               --title "$NEW_VERSION" \
               --notes "Release version $NEW_VERSION" \
@@ -79,4 +78,4 @@ jobs:
 
           echo "✅ 所有仓库已更新至 $NEW_VERSION"
         env:
-          PAT: ${{ secrets.RELEASE_PAT }}  # 需要具有仓库写入权限的 PAT
+            GH_TOKEN: ${{ secrets.RELEASE_PAT }}  # 通过环境变量传递
