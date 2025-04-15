@@ -76,10 +76,10 @@ jobs:
 
                 go get -u && go mod tidy
 
-                # 更新所有依赖到新版本
-                for DEP in "${REPOS[@]}"; do
-                    go get -u "github.com/$ORG/$DEP@$NEW_VERSION"
-                done
+                # # 更新所有依赖到新版本
+                # for DEP in "${REPOS[@]}"; do
+                #     go get -u "github.com/$ORG/$DEP@$NEW_VERSION"
+                # done
 
                 # 提交【子模块】更改
                 git add .
