@@ -33,19 +33,20 @@ jobs:
           read -ra REPOS <<< "$REPO_LIST"
 
           for REPO in "${REPOS[@]}"; do
-            echo "🔧 正在处理仓库: $REPO"
+            echo "🟡 🟡 🟡 🟡 🟡 🟡 正在处理仓库: $REPO🟡 🟡 🟡 🟡 🟡 🟡 "
 
             # 克隆仓库
             TEMP_DIR=$(mktemp -d)
             git clone "https://${{ secrets.RELEASE_PAT }}@github.com/$ORG/$REPO.git" "$TEMP_DIR"
             cd "$TEMP_DIR"
 
-            # 更新所有依赖到新版本
-            for DEP in "${REPOS[@]}"; do
-                go get "github.com/$ORG/$DEP@$NEW_VERSION" || true
-            done
-
             go get -u && go mod tidy
+
+            # 遍历所有需要更新的依赖组件
+            for DEP in "${REPOS[@]}"; do
+                # 精准替换依赖版本（避免误改其他模块）
+                sed -i "s|github.com/$ORG/$DEP v[0-9]\+.[0-9]\+.[0-9]\+|github.com/$ORG/$DEP $NEW_VERSION|g" go.mod
+            done
 
             # 提交【主模块】更改
             git config user.name "Release Bot"
@@ -79,13 +80,14 @@ jobs:
                 echo "🔧 处理模块: $SUB_PATH"
                 pushd "$SUB_PATH" > /dev/null
 
-                # 更新所有依赖到新版本
-                for DEP in "${REPOS[@]}"; do
-                    go get "github.com/$ORG/$DEP@$NEW_VERSION" || true
-                done
-
                 go get -u && go mod tidy
 
+                # 遍历所有需要更新的依赖组件
+                for DEP in "${REPOS[@]}"; do
+                    # 精准替换依赖版本（避免误改其他模块）
+                    sed -i "s|github.com/$ORG/$DEP v[0-9]\+.[0-9]\+.[0-9]\+|github.com/$ORG/$DEP $NEW_VERSION|g" go.mod
+                done
+                
                 # 提交【子模块】更改
                 git add .
                 if ! git commit -m "chore: update dependencies to $NEW_VERSION"; then
