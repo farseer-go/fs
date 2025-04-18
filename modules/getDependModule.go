@@ -30,12 +30,12 @@ func GetDependModule(module ...FarseerModule) []FarseerModule {
 		}
 
 		moduleName := reflect.TypeOf(farseerModule).String()
-		flog.LogBuffer <- fmt.Sprint("Loading Module：" + color.Colors[5](moduleName) + "")
 		modules = append(modules, farseerModule)
 		moduleMapLocker.Lock()
 		moduleMap[moduleName] = 0
 		moduleMapLocker.Unlock()
 	}
+
 	return modules
 }
 

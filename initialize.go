@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"reflect"
 	"strconv"
 	"strings"
 	"sync"
@@ -49,6 +50,7 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 		core.AppIp = net.GetIp()
 	})
 
+	flog.LogBuffer <- fmt.Sprint("Version： ", color.Colors[2](core.Version))
 	flog.LogBuffer <- fmt.Sprint("AppName： ", color.Colors[2](core.AppName))
 	flog.LogBuffer <- fmt.Sprint("AppID：   ", color.Colors[2](core.AppId))
 	flog.LogBuffer <- fmt.Sprint("AppIP：   ", color.Colors[2](core.AppIp))
@@ -61,7 +63,14 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 	// 加载模块依赖
 	var startupModule TModule
 	dependModules = modules.GetDependModules(startupModule)
-	flog.LogBuffer <- fmt.Sprint("Loaded, " + color.Red(len(dependModules)) + " modules in total")
+
+	var moduleNames []string
+	for _, farseerModule := range dependModules {
+		moduleName := reflect.TypeOf(farseerModule).String()
+		moduleNames = append(moduleNames, color.Colors[5](moduleName))
+	}
+	flog.LogBuffer <- fmt.Sprint("Loading Module：" + strings.Join(moduleNames, "->") + "（" + color.Red(len(dependModules)) + " modules）")
+	//flog.LogBuffer <- fmt.Sprint("Loaded, " + color.Red(len(dependModules)) + " modules in total")
 
 	// 执行所有模块初始化
 	modules.StartModules(dependModules)
