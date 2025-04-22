@@ -50,7 +50,7 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 		core.AppIp = net.GetIp()
 	})
 
-	flog.LogBuffer <- fmt.Sprint("Version： ", color.Colors[2](core.Version))
+	flog.LogBuffer <- fmt.Sprint("FarsVer： ", color.Colors[2](core.Version))
 	flog.LogBuffer <- fmt.Sprint("AppName： ", color.Colors[2](core.AppName))
 	flog.LogBuffer <- fmt.Sprint("AppID：   ", color.Colors[2](core.AppId))
 	flog.LogBuffer <- fmt.Sprint("AppIP：   ", color.Colors[2](core.AppIp))
@@ -58,7 +58,7 @@ func Initialize[TModule modules.FarseerModule](appName string) {
 	flog.LogBuffer <- fmt.Sprint("HostTime：", color.Colors[2](core.StartupAt.ToString("yyyy-MM-dd hh:mm:ss")))
 	flog.LogBuffer <- fmt.Sprint("PID：     ", color.Colors[2](core.ProcessId))
 	showComponentLog()
-	flog.LogBuffer <- fmt.Sprint("---------------------------------------")
+	flog.LogBuffer <- "---------------------------------------"
 
 	// 加载模块依赖
 	var startupModule TModule
