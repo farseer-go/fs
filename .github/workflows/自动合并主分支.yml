@@ -1,0 +1,70 @@
+name: 自动合并主分支
+
+on:
+  push:
+    branches: [ main ]  # 或 master
+  pull_request:
+    branches: [ main ]
+    types: [ closed ]
+
+# 设置必要的权限
+permissions:
+  contents: write  # 授予推送权限
+  pull-requests: write  # 如果需要创建PR
+
+jobs:
+  merge-main-to-branches:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          # 使用具有写权限的token
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git config --global pull.rebase false
+
+      - name: Fetch all branches
+        run: git fetch --all
+
+      - name: Merge main into other branches
+        run: |
+          # 获取所有远程分支（排除HEAD和主分支）
+          branches=$(git for-each-ref --format='%(refname:short)' refs/remotes/origin | 
+                    grep -v -E 'origin/(HEAD|main|master)$' | 
+                    sed 's/origin\///')
+          
+          echo "Branches to process:"
+          echo "$branches"
+          
+          IFS=$'\n'
+          for branch in $branches; do
+            echo "┌─────────────────────────────────────"
+            echo "│ Processing branch: $branch"
+            echo "└─────────────────────────────────────"
+            
+            # 检出分支
+            if ! git checkout -b "$branch" "origin/$branch"; then
+              echo "❌ Checkout failed for $branch"
+              continue
+            fi
+            
+            # 尝试合并
+            if git merge origin/main --no-edit; then
+              echo "✅ Merge succeeded"
+              if git push origin "$branch"; then
+                echo "🚀 Successfully pushed updates to $branch"
+              else
+                echo "❌ Push failed for $branch"
+              fi
+            else
+              echo "⚠️ Merge conflict in $branch"
+              git merge --abort
+              # 可以在此添加冲突通知逻辑
+            fi
+          done
