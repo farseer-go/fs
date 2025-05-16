@@ -2,7 +2,11 @@ package exception
 
 import (
 	"fmt"
+	"strings"
 
+	"github.com/farseer-go/collections"
+	"github.com/farseer-go/fs/color"
+	"github.com/farseer-go/fs/flog"
 	"github.com/farseer-go/fs/trace"
 )
 
@@ -31,6 +35,13 @@ func Try(fn func()) (catch *catchException) {
 				// 如果使用了链路追踪，则记录异常
 				if traceContext := trace.CurTraceContext.Get(); traceContext != nil {
 					traceContext.Error(fmt.Errorf("%+v", e))
+				} else {
+					lst := collections.NewList[string]()
+					lst.Add(color.Red("【异常】") + color.Red(fmt.Sprintf("%+v", e)))
+					for index, exceptionStackDetail := range trace.GetCallerInfo() {
+						lst.Add(fmt.Sprintf("\t%d、%s:%s %s", index+1, exceptionStackDetail.ExceptionCallFile, color.Yellow(exceptionStackDetail.ExceptionCallLine), color.Red(exceptionStackDetail.ExceptionCallFuncName)))
+					}
+					flog.Printf(strings.Join(lst.ToArray(), "\n"))
 				}
 			}
 		}

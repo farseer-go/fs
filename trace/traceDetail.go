@@ -52,7 +52,7 @@ type TraceDetail struct {
 type ExceptionStack struct {
 	ExceptionIsException bool                   // 是否执行异常
 	ExceptionMessage     string                 // 异常信息
-	Details              []ExceptionStackDetail // 异常详情
+	ExceptionDetails     []ExceptionStackDetail // 异常详情
 }
 
 type ExceptionStackDetail struct {
@@ -82,7 +82,7 @@ func (receiver *TraceDetail) Join() {
 }
 
 func (receiver ExceptionStack) IsNil() bool {
-	return len(receiver.Details) == 0 && receiver.ExceptionIsException == false && receiver.ExceptionMessage == ""
+	return len(receiver.ExceptionDetails) == 0 && !receiver.ExceptionIsException && receiver.ExceptionMessage == ""
 }
 
 // End 链路明细执行完后，统计用时
@@ -95,7 +95,7 @@ func (receiver *TraceDetail) End(err error) {
 		receiver.Exception = &ExceptionStack{
 			ExceptionIsException: true,
 			ExceptionMessage:     err.Error(),
-			Details:              GetCallerInfo(),
+			ExceptionDetails:     GetCallerInfo(),
 		}
 	}
 
