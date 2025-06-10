@@ -2,11 +2,12 @@ package container
 
 import (
 	"fmt"
-	"github.com/farseer-go/fs/container/eumLifecycle"
-	"github.com/farseer-go/fs/flog"
 	"reflect"
 	"sync"
 	"time"
+
+	"github.com/farseer-go/fs/container/eumLifecycle"
+	"github.com/farseer-go/fs/flog"
 )
 
 // 容器
@@ -96,7 +97,7 @@ func (r *container) registerInstance(interfaceType any, ins any, name string, li
 }
 
 // 获取对象
-func (r *container) resolve(interfaceType reflect.Type, name string) (any, error) {
+func (r *container) resolveField(interfaceType reflect.Type, name string) (any, error) {
 	if interfaceType.Kind() == reflect.Pointer {
 		interfaceType = interfaceType.Elem()
 	}
@@ -211,7 +212,7 @@ func (r *container) inject(ins any) any {
 	for i := 0; i < insVal.NumField(); i++ {
 		field := insVal.Type().Field(i)
 		if field.IsExported() && field.Type.Kind() == reflect.Interface && insVal.Field(i).IsNil() {
-			fieldIns, err := r.resolve(field.Type, field.Tag.Get("inject"))
+			fieldIns, err := r.resolveField(field.Type, field.Tag.Get("inject"))
 			if err != nil {
 				_ = flog.Error(err)
 				continue
@@ -228,7 +229,7 @@ func (r *container) injectByType(instanceType reflect.Type) any {
 	for i := 0; i < instanceVal.NumField(); i++ {
 		field := instanceVal.Type().Field(i)
 		if field.IsExported() && field.Type.Kind() == reflect.Interface {
-			fieldIns, err := r.resolve(field.Type, field.Tag.Get("inject"))
+			fieldIns, err := r.resolveField(field.Type, field.Tag.Get("inject"))
 			if err != nil {
 				_ = flog.Error(err)
 				continue

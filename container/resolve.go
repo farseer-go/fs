@@ -1,8 +1,9 @@
 package container
 
 import (
-	"github.com/farseer-go/fs/flog"
 	"reflect"
+
+	"github.com/farseer-go/fs/flog"
 )
 
 // Resolve 从容器中获取实例
@@ -11,7 +12,7 @@ func Resolve[TInterface any](iocName ...string) TInterface {
 	name := getIocName(iocName...)
 	//var t TInterface
 	interfaceType := reflect.TypeOf((*TInterface)(nil)).Elem()
-	ins, err := defContainer.resolve(interfaceType, name)
+	ins, err := defContainer.resolveField(interfaceType, name)
 	if err != nil {
 		_ = flog.Error(err)
 		var nilResult TInterface
@@ -25,7 +26,7 @@ func Resolve[TInterface any](iocName ...string) TInterface {
 // iocName = 别名
 func ResolveType(interfaceType reflect.Type, iocName ...string) (any, error) {
 	name := getIocName(iocName...)
-	return defContainer.resolve(interfaceType, name)
+	return defContainer.resolveField(interfaceType, name)
 }
 
 // ResolveIns 将现有中实例内的字段做注入操作
