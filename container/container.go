@@ -35,6 +35,7 @@ func (r *container) addComponent(model *componentModel) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
+	model.lastVisitAt.Store(time.Now())
 	componentModels, exists := r.dependency.Load(model.interfaceType)
 	if !exists {
 		r.dependency.Store(model.interfaceType, []*componentModel{model})
@@ -154,16 +155,17 @@ func (r *container) resolveAll(interfaceType reflect.Type) []any {
 func (r *container) getOrCreateIns(interfaceType reflect.Type, index int) any {
 	componentModels, _ := r.dependency.Load(interfaceType)
 	comModels := componentModels.([]*componentModel)
+	curComModel := comModels[index]
 	// 更新实例访问时间
-	comModels[index].lastVisitAt = time.Now()
+	curComModel.lastVisitAt.Store(time.Now())
 	// 单例
-	if comModels[index].lifecycle == eumLifecycle.Single {
-		if comModels[index].instance == nil {
-			comModels[index].instance = r.createIns(comModels[index])
+	if curComModel.lifecycle == eumLifecycle.Single {
+		if curComModel.instance == nil {
+			curComModel.instance = r.createIns(curComModel)
 		}
-		return comModels[index].instance
+		return curComModel.instance
 	} else {
-		return r.createIns(comModels[index])
+		return r.createIns(curComModel)
 	}
 }
 
@@ -285,7 +287,7 @@ func (r *container) removeUnused(interfaceType reflect.Type, ttl time.Duration) 
 	// 遍历已注册的实例列表
 	for index := 0; index < len(comModels); index++ {
 		// 删除超出ttl时间未访问的实例
-		if time.Now().Sub(comModels[index].lastVisitAt) >= ttl {
+		if time.Since(comModels[index].lastVisitAt.Load().(time.Time)) >= ttl {
 			comModels = append(comModels[:index], comModels[index+1:]...)
 		}
 	}

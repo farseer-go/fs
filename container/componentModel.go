@@ -1,9 +1,10 @@
 package container
 
 import (
-	"github.com/farseer-go/fs/container/eumLifecycle"
 	"reflect"
-	"time"
+	"sync/atomic"
+
+	"github.com/farseer-go/fs/container/eumLifecycle"
 )
 
 // 实现类模型
@@ -14,7 +15,7 @@ type componentModel struct {
 	instanceType      reflect.Type      // 函数类型
 	instanceValue     reflect.Value     // 函数值
 	instance          any               // 实例
-	lastVisitAt       time.Time         // 最后访问时间
+	lastVisitAt       atomic.Value      // 最后访问时间
 	interfaceTypeName string            // 接口类型名称
 }
 
