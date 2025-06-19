@@ -5,7 +5,6 @@ go 1.23.0
 toolchain go1.23.3
 
 require (
-	github.com/farseer-go/collections v0.17.2
 	github.com/json-iterator/go v1.1.12
 	github.com/stretchr/testify v1.10.0
 	github.com/timandy/routine v1.1.5
