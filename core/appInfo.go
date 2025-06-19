@@ -11,5 +11,5 @@ var (
 	AppId     int64                         // 应用ID
 	AppIp     string                        // 应用IP
 	ProcessId int                           // 进程Id
-	Version   string            = "v0.17.1" // 版本号
+	Version   string            = "v0.17.2" // 版本号
 )
