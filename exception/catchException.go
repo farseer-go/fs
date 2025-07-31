@@ -39,7 +39,7 @@ func Try(fn func()) (catch *catchException) {
 					for index, exceptionStackDetail := range trace.GetCallerInfo() {
 						lstLogs = append(lstLogs, fmt.Sprintf("\t%d、%s:%s %s", index+1, exceptionStackDetail.ExceptionCallFile, color.Yellow(exceptionStackDetail.ExceptionCallLine), color.Red(exceptionStackDetail.ExceptionCallFuncName)))
 					}
-					flog.Printf(strings.Join(lstLogs, "\n"))
+					flog.Printf(strings.Join(lstLogs, "\n") + "\n")
 				}
 			}
 		}
