@@ -24,7 +24,7 @@ func InitConfig() {
 	// 找到并读取配置文件
 	err := configurationBuilder.Build()
 	if err != nil { // 捕获读取中遇到的error
-		fmt.Printf("An error occurred while reading: %s \n", err)
+		panic(fmt.Sprintf("An error occurred while reading: %s \n", err))
 		return
 	}
 
@@ -51,7 +51,8 @@ func InitConfig() {
 
 		// 重新写入yml提供者
 		if err = ymlProvider.LoadContent([]byte(dataContent)); err != nil {
-			fmt.Printf("There is a problem with the configuration read through the configuration center: %s \n", err)
+			//fmt.Printf("There is a problem with the configuration read through the configuration center: %s \n", err)
+			panic(fmt.Sprintf("There is a problem with the configuration read through the configuration center: %s \n", err))
 			return
 		}
 	}
