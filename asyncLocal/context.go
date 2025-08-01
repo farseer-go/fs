@@ -44,6 +44,7 @@ func getLock(mVal *sync.Map) *sync.Mutex {
 		lock = val.(*sync.Mutex)
 	} else {
 		lock = &sync.Mutex{}
+		mVal.Store("ContextLock", lock)
 	}
 	return lock
 }
