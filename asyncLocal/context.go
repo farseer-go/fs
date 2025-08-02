@@ -14,10 +14,6 @@ func InitContext() *sync.Map {
 	mVal := routineContext.Get()
 	if mVal == nil {
 		mVal = &sync.Map{}
-		// 协程锁
-		// 这里使用sync.Mutex是为了在同一协程中可以共享数据，避免多次初始化
-		// 如果需要在不同协程中共享数据，可以使用sync.RWMutex或其他同步机制
-		mVal.Store("ContextLock", &sync.Mutex{})
 		routineContext.Set(mVal)
 	}
 	return mVal
@@ -38,13 +34,14 @@ func GetContext[T any](key string) T {
 	return t
 }
 
-func getLock(mVal *sync.Map) *sync.Mutex {
+func getLock(mVal *sync.Map, key string) *sync.Mutex {
+	lockKey := "ContextLock_" + key
 	var lock *sync.Mutex
-	if val, exists := mVal.Load("ContextLock"); exists {
+	if val, exists := mVal.Load(lockKey); exists {
 		lock = val.(*sync.Mutex)
 	} else {
 		lock = &sync.Mutex{}
-		mVal.Store("ContextLock", lock)
+		mVal.Store(lockKey, lock)
 	}
 	return lock
 }
@@ -60,7 +57,7 @@ func GetOrSetContext[T any](key string, getValFunc func() T) T {
 	}
 
 	// 使用锁来确保在单个协程环境下的线程安全
-	lock := getLock(mVal)
+	lock := getLock(mVal, key)
 	lock.Lock()
 	defer lock.Unlock()
 
