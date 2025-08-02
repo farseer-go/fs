@@ -81,7 +81,9 @@ func SetContext[T any](key string, getValFunc func() T) {
 	if mVal == nil {
 		mVal = &sync.Map{}
 	}
-	mVal.Store(key, getValFunc())
+
+	t = getValFunc()
+	mVal.Store(key, t)
 	routineContext.Set(mVal)
 }
 
@@ -96,7 +98,8 @@ func SetContextIfNotExists[T any](key string, getValFunc func() T) {
 	}
 
 	if _, exists := mVal.Load(key); !exists {
-		mVal.Store(key, getValFunc())
+		t = getValFunc()
+		mVal.Store(key, t)
 		routineContext.Set(mVal)
 	}
 }
