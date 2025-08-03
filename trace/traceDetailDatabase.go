@@ -14,4 +14,7 @@ func (receiver *TraceDetailDatabase) SetSql(connectionString string, DbName stri
 	receiver.DbTableName = tableName
 	receiver.DbSql = sql
 	receiver.DbRowsAffected = rowsAffected
+	if len(receiver.DbSql) > 1000 {
+		receiver.DbSql = receiver.DbSql[:1000] + "......"
+	}
 }
