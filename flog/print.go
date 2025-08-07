@@ -52,9 +52,6 @@ func Warningf(format string, a ...any) {
 
 // Error 打印Error日志
 func Error(contents ...any) error {
-	// if file, funcName, line := trace.GetCallerInfo(); file != "" {
-	// 	Printf("%s:%s %s \n", file, color.Blue(line), funcName)
-	// }
 	return log.Error(contents...)
 }
 
@@ -63,17 +60,11 @@ func ErrorIfExists(err error) {
 	if err == nil {
 		return
 	}
-	// if file, funcName, line := trace.GetCallerInfo(); file != "" {
-	// 	Printf("%s:%s %s \n", file, color.Blue(line), funcName)
-	// }
 	_ = log.Error(err)
 }
 
 // Errorf 打印Error日志
 func Errorf(format string, a ...any) error {
-	// if file, funcName, line := trace.GetCallerInfo(); file != "" {
-	// 	Printf("%s:%s %s \n", file, color.Blue(line), funcName)
-	// }
 	return log.Error(fmt.Sprintf(format, a...))
 }
 
