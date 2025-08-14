@@ -1,9 +1,10 @@
 package fastReflect
 
 import (
-	"github.com/farseer-go/fs/types"
 	"reflect"
 	"strings"
+
+	"github.com/farseer-go/fs/types"
 )
 
 // TypeMeta 类型元数据
@@ -34,6 +35,7 @@ type TypeMeta struct {
 	IsSliceOrArray       bool                  // 是否切片或数组类型
 	IsStruct             bool                  // 是否结构体
 	IsMap                bool                  // 是否字典
+	IsUint8              bool                  // 是否[]uint8
 	HashCode             uint32                // 每个类型的HashCode都是唯一的
 	Size                 uintptr               // 内存占用大小
 }
@@ -89,7 +91,7 @@ func (receiver *TypeMeta) parseType() {
 		receiver.IsSliceOrArray = true
 		receiver.Type = Slice
 		receiver.SliceType = receiver.ReflectType
-
+		receiver.IsUint8 = receiver.ReflectTypeString == "[]uint8"
 		receiver.setItemHashCode(receiver.ReflectType.Elem())
 	case reflect.Array:
 		receiver.IsSliceOrArray = true

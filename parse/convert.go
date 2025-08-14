@@ -216,7 +216,16 @@ func Convert[T any](source any, defVal T) T {
 			return result.(T)
 		}
 	}
-
+	// []uint8转string
+	if sourceMeta.IsUint8 {
+		switch defValMeta.TypeIdentity {
+		case "string":
+			if s, ok := source.([]uint8); ok {
+				var result any = string(s)
+				return result.(T)
+			}
+		}
+	}
 	// 切片转切片
 	if sourceMeta.Type == fastReflect.Slice && defValMeta.Type == fastReflect.Slice {
 		arr := reflect.MakeSlice(defValMeta.ReflectType, 0, 0)
