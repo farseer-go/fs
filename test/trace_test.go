@@ -50,7 +50,7 @@ func TestTrace(t *testing.T) {
 	iManager.EntryQueueConsumer("", "").GetAppInfo()
 	iManager.EntryQueueConsumer("", "").AddDetail(&trace.TraceDetail{})
 	iManager.EntryQueueConsumer("", "").Error(nil)
-	iManager.EntryQueueConsumer("", "").SetBody("", 0, "")
+	iManager.EntryQueueConsumer("", "").SetBody("", 0, "", nil)
 }
 
 func testErr(baseTraceDetail trace.TraceDetail) {

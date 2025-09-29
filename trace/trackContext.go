@@ -53,15 +53,16 @@ func NewTraceContext() *TraceContext {
 }
 
 type WebContext struct {
-	WebDomain       string            `json:"wd"`  // 请求域名
-	WebPath         string            `json:"wp"`  // 请求地址
-	WebMethod       string            `json:"wm"`  // 请求方式
-	WebContentType  string            `json:"wct"` // 请求内容类型
-	WebStatusCode   int               `json:"wsc"` // 状态码
-	WebHeaders      map[string]string `json:"wh"`  // 请求头部
-	WebRequestBody  string            `json:"wrb"` // 请求参数
-	WebResponseBody string            `json:"wpb"` // 输出参数
-	WebRequestIp    string            `json:"wip"` // 客户端IP
+	WebDomain          string            `json:"wd"`  // 请求域名
+	WebPath            string            `json:"wp"`  // 请求地址
+	WebMethod          string            `json:"wm"`  // 请求方式
+	WebContentType     string            `json:"wct"` // 请求内容类型
+	WebStatusCode      int               `json:"wsc"` // 状态码
+	WebHeaders         map[string]string `json:"wh"`  // 请求头部
+	WebResponseHeaders map[string]string `json:"wh"`  // 响应头部
+	WebRequestBody     string            `json:"wrb"` // 请求参数
+	WebResponseBody    string            `json:"wpb"` // 输出参数
+	WebRequestIp       string            `json:"wip"` // 客户端IP
 }
 
 func (receiver WebContext) IsNil() bool {
@@ -97,7 +98,7 @@ func (receiver WatchKeyContext) IsNil() bool {
 	return receiver.WatchKey == ""
 }
 
-func (receiver *TraceContext) SetBody(requestBody string, statusCode int, responseBody string) {
+func (receiver *TraceContext) SetBody(requestBody string, statusCode int, responseBody string, responseHead map[string]string) {
 	// 限制响应报文最多存储4096长度
 	if len(responseBody) > 4096 {
 		responseBody = responseBody[:4096]
@@ -105,6 +106,7 @@ func (receiver *TraceContext) SetBody(requestBody string, statusCode int, respon
 	receiver.WebContext.WebRequestBody = requestBody
 	receiver.WebContext.WebStatusCode = statusCode
 	receiver.WebContext.WebResponseBody = responseBody
+	receiver.WebContext.WebResponseHeaders = responseHead
 }
 
 func (receiver *TraceContext) SetResponseBody(responseBody string) {
