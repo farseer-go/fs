@@ -117,6 +117,7 @@ func (receiver *TraceContext) SetResponseBody(responseBody string) {
 	receiver.WebContext.WebResponseBody = responseBody
 }
 
+// 取消链路
 func (receiver *TraceContext) Ignore() {
 	receiver.ignore = true
 }

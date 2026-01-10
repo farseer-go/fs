@@ -3,6 +3,11 @@ package trace
 type EmptyManager struct {
 }
 
+func (receiver *EmptyManager) Ignore() {}
+
+func (receiver *EmptyManager) GetTraceContext() (*TraceContext, bool) {
+	return &TraceContext{}, true
+}
 func (*EmptyManager) EntryWebApi(domain string, path string, method string, contentType string, header map[string]string, requestIp string) *TraceContext {
 	return &TraceContext{List: make([]*TraceDetail, 0)}
 }

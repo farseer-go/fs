@@ -2,6 +2,10 @@ package trace
 
 // IManager 链路追踪管理
 type IManager interface {
+	// 获取当前上下文
+	GetTraceContext() (*TraceContext, bool)
+	// 取消链路
+	Ignore()
 	// EntryWebApi 创建webapi的链路追踪入口
 	EntryWebApi(domain string, path string, method string, contentType string, headerDictionary map[string]string, requestIp string) *TraceContext
 	// EntryWebSocket 创建WebSocket的链路追踪入口
