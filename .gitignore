@@ -17,5 +17,5 @@
 go.sum
 go.work.sum
 go.work
-/test/log/
+/_test/log/
 *.DS_Store
