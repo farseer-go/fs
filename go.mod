@@ -1,8 +1,6 @@
 module github.com/farseer-go/fs
 
-go 1.23.0
-
-toolchain go1.23.3
+go 1.18.0
 
 require (
 	github.com/json-iterator/go v1.1.12
