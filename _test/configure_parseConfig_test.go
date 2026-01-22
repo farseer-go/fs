@@ -37,7 +37,7 @@ type serverConfig struct {
 func TestParseString(t *testing.T) {
 	conf := "dataType=MySql,PoolMaxSize=5,poolMinSize=1,connectionString=root:steden@123@tcp(mysql:3306)/fops?charset=utf8&parseTime=True&loc=Local,UsePool=true"
 	dbConfig := configure.ParseString[testConfig](conf)
-	assert.Equal(t, dbConfig.PoolMaxSize, 50)
+	assert.Equal(t, dbConfig.PoolMaxSize, 5)
 	assert.Equal(t, dbConfig.PoolMinSize, 1)
 	assert.Equal(t, dbConfig.DataType, "MySql")
 	assert.Equal(t, dbConfig.UsePool, true)

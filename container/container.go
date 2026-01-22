@@ -116,7 +116,7 @@ func (r *container) resolveField(interfaceType reflect.Type, name string) (any, 
 		for i := 0; i < len(comModels); i++ {
 			// 找到了实现类
 			if comModels[i].name == name {
-				return r.getOrCreateIns(interfaceType, i), nil
+				return r.getOrCreateIns(comModels[i]), nil
 			}
 		}
 		return nil, fmt.Errorf("container：%s Unregistered，name=%s", interfaceType.String(), name)
@@ -144,18 +144,16 @@ func (r *container) resolveAll(interfaceType reflect.Type) []any {
 	}
 
 	var ins []any
-	for i := 0; i < len(componentModels.([]*componentModel)); i++ {
+	comModels := componentModels.([]*componentModel)
+	for i := 0; i < len(comModels); i++ {
 		// 找到了实现类
-		ins = append(ins, r.getOrCreateIns(interfaceType, i))
+		ins = append(ins, r.getOrCreateIns(comModels[i]))
 	}
 	return ins
 }
 
 // 根据lifecycle获取实例
-func (r *container) getOrCreateIns(interfaceType reflect.Type, index int) any {
-	componentModels, _ := r.dependency.Load(interfaceType)
-	comModels := componentModels.([]*componentModel)
-	curComModel := comModels[index]
+func (r *container) getOrCreateIns(curComModel *componentModel) any {
 	// 更新实例访问时间
 	curComModel.lastVisitAt.Store(time.Now())
 	// 单例
@@ -202,7 +200,7 @@ func (r *container) resolveDefaultOrFirstComponent(interfaceType reflect.Type) a
 			findIndex = i
 		}
 	}
-	return r.getOrCreateIns(interfaceType, findIndex)
+	return r.getOrCreateIns(comModels[findIndex])
 }
 
 // 解析注入
@@ -210,16 +208,21 @@ func (r *container) inject(ins any) any {
 	if ins == nil {
 		return ins
 	}
-	insVal := reflect.Indirect(reflect.ValueOf(ins))
+	insVal := reflect.ValueOf(ins)
+	if insVal.Kind() != reflect.Pointer {
+		panic(fmt.Sprintf("container：%s mast be Pointer", insVal.Type().String()))
+	}
+	insVal = reflect.Indirect(insVal)
 	for i := 0; i < insVal.NumField(); i++ {
 		field := insVal.Type().Field(i)
-		if field.IsExported() && field.Type.Kind() == reflect.Interface && insVal.Field(i).IsNil() {
+		fieldVal := insVal.Field(i)
+		if field.IsExported() && field.Type.Kind() == reflect.Interface && fieldVal.IsNil() {
 			fieldIns, err := r.resolveField(field.Type, field.Tag.Get("inject"))
 			if err != nil {
 				_ = flog.Error(err)
 				continue
 			}
-			insVal.Field(i).Set(reflect.ValueOf(fieldIns))
+			fieldVal.Set(reflect.ValueOf(fieldIns))
 		}
 	}
 	return ins
@@ -265,7 +268,10 @@ func (r *container) removeComponent(interfaceType reflect.Type, name string) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	componentModels, _ := r.dependency.Load(interfaceType)
+	componentModels, exists := r.dependency.Load(interfaceType)
+	if !exists {
+		return
+	}
 	comModels := componentModels.([]*componentModel)
 	// 遍历已注册的实例列表
 	for index := 0; index < len(comModels); index++ {
@@ -282,7 +288,11 @@ func (r *container) removeUnused(interfaceType reflect.Type, ttl time.Duration) 
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	componentModels, _ := r.dependency.Load(interfaceType)
+	componentModels, exists := r.dependency.Load(interfaceType)
+	if !exists {
+		return
+	}
+
 	comModels := componentModels.([]*componentModel)
 	// 遍历已注册的实例列表
 	for index := 0; index < len(comModels); index++ {
