@@ -37,7 +37,8 @@ func TestTrace(t *testing.T) {
 	eumCallType.Hand.ToString()
 
 	detail := TraceDetail{}
-	detail.TraceDetailHttp.SetHttpRequest("", nil, nil, "", "", 0)
+	detail.TraceDetailHttp.SetRequest("", nil, "")
+	detail.TraceDetailHttp.SetResponse(nil, "", 0)
 	detail.End(fmt.Errorf(""))
 	detail.Ignore()
 	detail.IsIgnore()

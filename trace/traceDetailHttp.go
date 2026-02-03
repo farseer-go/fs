@@ -14,15 +14,18 @@ type TraceDetailHttp struct {
 	HttpStatusCode      int               // 状态码
 }
 
-func (receiver *TraceDetailHttp) SetHttpRequest(url string, reqHead map[string]any, rspHead map[string]string, requestBody string, responseBody string, statusCode int) {
+func (receiver *TraceDetailHttp) SetRequest(url string, reqHead map[string]any, requestBody string) {
 	receiver.HttpUrl = url
 	receiver.HttpHeaders = make(map[string]string)
 	receiver.HttpRequestBody = requestBody
-	receiver.HttpResponseBody = responseBody
-	receiver.HttpStatusCode = statusCode
 	for k, v := range reqHead {
 		receiver.HttpHeaders[k] = parse.ToString(v)
 	}
+}
+
+func (receiver *TraceDetailHttp) SetResponse(rspHead map[string]string, responseBody string, statusCode int) {
+	receiver.HttpResponseBody = responseBody
+	receiver.HttpStatusCode = statusCode
 
 	if rspHead != nil {
 		receiver.HttpResponseHeaders = rspHead
