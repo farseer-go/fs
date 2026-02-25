@@ -84,28 +84,38 @@ type UploadRequest struct {
 	List []*LogData
 }
 
+// 1. 定义一个全局复用的 Client（只需要初始化一次）
+var logHttpClient = &http.Client{
+	Timeout: 10 * time.Second, // 必须设置总超时
+	Transport: &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true}, // 不验证 HTTPS 证书
+		MaxIdleConns:    100,
+		IdleConnTimeout: 90 * time.Second,
+	},
+}
+
 func (r *fopsLoggerPersistent) upload(lstLog []*LogData) error {
 	bodyByte, _ := snc.Marshal(UploadRequest{List: lstLog})
 	url := r.fopsServer + "flog/upload"
+
 	newRequest, _ := http.NewRequest("POST", url, bytes.NewReader(bodyByte))
 	newRequest.Header.Set("Content-Type", "application/json")
-	// 链路追踪
-	client := &http.Client{
-		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true, // 不验证 HTTPS 证书
-			},
-		},
-	}
-	rsp, err := client.Do(newRequest)
+
+	// 2. 使用全局 Client 发起请求
+	rsp, err := logHttpClient.Do(newRequest)
 	if err != nil {
 		return fmt.Errorf("上传日志到FOPS失败：%s", err.Error())
 	}
 
+	// 3. 关键点：使用 defer 确保 Body 最终被关闭
+	// 即使后面的业务逻辑报错，连接也会回到池中
+	defer rsp.Body.Close()
+
+	// 4. 读取数据（注意：NewApiResponseByReader 内部读取完后，外面依然要 Close）
 	apiRsp := core.NewApiResponseByReader[any](rsp.Body)
 	if apiRsp.StatusCode != 200 {
 		return fmt.Errorf("上传日志到FOPS失败（%v）：%s", rsp.StatusCode, apiRsp.StatusMessage)
 	}
 
-	return err
+	return nil
 }

@@ -1,11 +1,13 @@
 package test
 
 import (
-	"github.com/farseer-go/fs/async"
-	"github.com/stretchr/testify/assert"
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
+
+	"github.com/farseer-go/fs/async"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAsync_ContinueWith(t *testing.T) {
@@ -94,4 +96,27 @@ func TestAsync_Error(t *testing.T) {
 	err = worker.Wait()
 
 	assert.NotEqual(t, err, nil)
+}
+
+func TestSingleDo(t *testing.T) {
+	s := &async.Single{}
+	var count int32
+	wg := sync.WaitGroup{}
+
+	for i := 0; i < 100; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			s.Do("constant-key", func() (any, error) {
+				atomic.AddInt32(&count, 1) // 理论上只会执行 1 次
+				time.Sleep(100 * time.Millisecond)
+				return "done", nil
+			})
+		}()
+	}
+	wg.Wait()
+
+	if atomic.LoadInt32(&count) != 1 {
+		t.Errorf("期望执行 1 次，实际执行了 %d 次", count)
+	}
 }
