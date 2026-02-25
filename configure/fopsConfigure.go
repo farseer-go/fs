@@ -38,6 +38,7 @@ func getFopsConfigure() ([]fopsConfigureVO, error) {
 	if err != nil {
 		return lst, fmt.Errorf("读取配置中心时失败：%s", err.Error())
 	}
+	defer rsp.Body.Close()
 
 	apiRsp := core.NewApiResponseByReader[[]fopsConfigureVO](rsp.Body)
 	if apiRsp.StatusCode != 200 {
