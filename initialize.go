@@ -149,6 +149,7 @@ func AddInitCallback(name string, fn func()) {
 
 // Run 运行应用，等待退出信号
 func Run() {
+	flog.Println("应用已成功启动!")
 	// 注册退出信号
 	exitSignal := make(chan os.Signal, 1)
 	signal.Notify(exitSignal, syscall.SIGINT, syscall.SIGTERM)
