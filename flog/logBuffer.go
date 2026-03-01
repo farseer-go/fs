@@ -3,7 +3,6 @@ package flog
 import (
 	"github.com/farseer-go/fs/core"
 	"github.com/farseer-go/fs/core/eumLogLevel"
-	"time"
 )
 
 // LogBuffer 日志缓冲区
@@ -25,5 +24,4 @@ func ClearLogBuffer(logIns core.ILog) {
 
 func CloseBuffer() {
 	close(LogBuffer)
-	time.Sleep(200 * time.Microsecond)
 }

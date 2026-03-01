@@ -3,13 +3,20 @@ package test
 import (
 	"fmt"
 	"testing"
+	"time"
 
+	"github.com/farseer-go/fs"
 	"github.com/farseer-go/fs/color"
 	"github.com/farseer-go/fs/flog"
+	"github.com/farseer-go/fs/modules"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestFlog(t *testing.T) {
+	fs.Initialize[modules.FarseerKernelModule]("unit test")
+	t.Cleanup(func() {
+		fs.Exit()
+	})
 	flog.Trace("")
 	flog.Tracef("")
 	flog.Debug("")
@@ -47,30 +54,6 @@ func TestFlog(t *testing.T) {
 	assert.Panics(t, func() {
 		flog.Panicf("test error:%s", "content")
 	})
-
-	/*
-		configure.SetDefault("Log.LogLevel", "Trace")
-		flog.InitLog()
-		flog.Print("aaa")
-
-		configure.SetDefault("Log.LogLevel", "debug")
-		flog.InitLog()
-		flog.Trace("aaa")
-
-		configure.SetDefault("Log.LogLevel", "Information")
-		flog.InitLog()
-		flog.Debug("aaa")
-
-		configure.SetDefault("Log.LogLevel", "Warning")
-		flog.InitLog()
-		flog.Info("aaa")
-
-		configure.SetDefault("Log.LogLevel", "Error")
-		flog.InitLog()
-		flog.Warning("aaa")
-
-		configure.SetDefault("Log.LogLevel", "Critical")
-		flog.InitLog()
-		flog.Error("aaa")
-	*/
+	time.Sleep(time.Second * 3)
+	panic("")
 }

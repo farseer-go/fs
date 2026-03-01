@@ -16,22 +16,23 @@ import (
 	"github.com/farseer-go/fs/snc"
 )
 
+// BatchFileWriter 是一个高性能的批量文件写入器，支持基于时间和大小的文件滚动，以及文件数量限制。它通过异步队列和缓冲写入来优化性能，并且在关闭时确保所有数据都被正确处理。
 type BatchFileWriter struct {
-	dataChan         chan []byte   // 明确只接收处理好的字节流
-	dir              string        // 存储目录
-	fileExtension    string        // 文件扩展名
-	rollingInterval  string        // 文件滚动间隔（year/month/day/week/hour）
-	fileSizeLimitMb  int64         // 文件大小限制（MB），设置之后，只有当文件大小超过限制时才会滚动
-	fileCountLimit   int           // 文件数量限制
-	interval         time.Duration // 多长时间刷盘一次
-	currentFileIndex int           // 缓存当前的索引号
-	currentPath      string        // current文件的完整路径
-	bufferSize       int
-	exitChan         chan struct{}
-	wg               sync.WaitGroup
-	closeOnce        sync.Once // 确保 Close 方法只执行一次
-	// ... 其他字段
-	closed atomic.Bool
+	dataChan         chan []byte    // 明确只接收处理好的字节流
+	dir              string         // 存储目录
+	fileExtension    string         // 文件扩展名
+	rollingInterval  string         // 文件滚动间隔（year/month/day/week/hour）
+	fileSizeLimitMb  int64          // 文件大小限制（MB），设置之后，只有当文件大小超过限制时才会滚动
+	fileCountLimit   int            // 文件数量限制
+	interval         time.Duration  // 多长时间刷盘一次
+	currentFileIndex int            // 缓存当前的索引号
+	currentPath      string         // current文件的完整路径
+	bufferSize       int            // 写入缓冲区大小
+	appendNewLine    bool           // 是否在每条日志后添加换行符
+	wg               sync.WaitGroup // 调用Cose退出时等待所有翻转协程完成
+	closeOnce        sync.Once      // 确保 Close 方法只执行一次
+	closed           atomic.Bool    // 标志位，表示是否已关闭
+	exitChan         chan struct{}  // 退出信号
 }
 
 // dir: 存储目录
@@ -40,7 +41,7 @@ type BatchFileWriter struct {
 // fileSizeLimitMb: 限制文件大小
 // fileCountLimit: 限制文件数量
 // interval: 多长时间生成一个文件。PS: 如果开启了文件大小限制，则不生效
-func NewWriter(dir string, fileExtension string, rollingInterval string, fileSizeLimitMb int64, fileCountLimit int, interval time.Duration) *BatchFileWriter {
+func NewWriter(dir string, fileExtension string, rollingInterval string, fileSizeLimitMb int64, fileCountLimit int, interval time.Duration, appendNewLine bool) *BatchFileWriter {
 	// 创建目录
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		_ = os.MkdirAll(dir, 0755)
@@ -56,6 +57,7 @@ func NewWriter(dir string, fileExtension string, rollingInterval string, fileSiz
 		fileCountLimit:  fileCountLimit,
 		interval:        interval,
 		bufferSize:      256 * 1024,
+		appendNewLine:   appendNewLine,
 		exitChan:        make(chan struct{}),
 		currentPath:     filepath.Join(dir, fmt.Sprintf("%s.%s", "current", fileExtension)),
 	}
@@ -86,15 +88,17 @@ func (w *BatchFileWriter) Write(data any) {
 		}
 	}
 
+	if len(payload) == 0 || w.closed.Load() {
+		return
+	}
+
 	// 2. 将处理好的字节流放入异步队列
-	if len(payload) > 0 && !w.closed.Load() {
-		select {
-		case w.dataChan <- payload:
-		case <-w.exitChan:
-			fmt.Println("BatchFileWriter.Write: 已关闭，丢弃数据")
-		default:
-			fmt.Println("BatchFileWriter.Write: 由于队列已满，丢弃数据")
-		}
+	select {
+	case w.dataChan <- payload:
+	case <-w.exitChan:
+		fmt.Println("BatchFileWriter.Write: 已关闭，丢弃数据")
+	default:
+		fmt.Println("BatchFileWriter.Write: 由于队列已满，丢弃数据")
 	}
 }
 
@@ -110,6 +114,16 @@ func (w *BatchFileWriter) openFile(fileName string) (*os.File, int64, error) {
 		return nil, 0, errors.New("BatchFileWriter.openFile.Stat 统计文件失败: " + err.Error())
 	}
 	return f, fInfo.Size(), nil
+}
+
+func (w *BatchFileWriter) write(bufWriter *bufio.Writer, line []byte) int64 {
+	if w.appendNewLine {
+		bufWriter.Write(line)
+		bufWriter.WriteByte('\n')
+		return int64(len(line) + 1)
+	}
+	bufWriter.Write(line)
+	return int64(len(line))
 }
 
 // 翻转文件
@@ -134,9 +148,7 @@ func (w *BatchFileWriter) daemon() {
 	for {
 		select {
 		case line := <-w.dataChan:
-			bufWriter.Write(line)
-			bufWriter.WriteByte('\n')
-			fileSize += int64(len(line) + 1)
+			fileSize += w.write(bufWriter, line)
 
 			// 如果文件大小限制开启，且当前文件大小超过限制，则进行翻转
 			if w.fileSizeLimitMb > 0 && fileSize >= w.fileSizeLimitMb*1024*1024 {
@@ -144,16 +156,14 @@ func (w *BatchFileWriter) daemon() {
 			}
 		case <-ticker.C:
 			// 如果文件大小限制没有开启，则按照时间间隔翻转
-			if w.fileSizeLimitMb <= 0 && w.interval > 0 { // 判断w.interval > 0,是因为有可能没有设置时间间隔
+			if w.interval > 0 { // 判断w.interval > 0,是因为有可能没有设置时间间隔
 				f, fileSize = w.rotate(bufWriter, f)
 			}
 		case <-w.exitChan:
 			// 退出前排空 Channel
 			close(w.dataChan)
 			for line := range w.dataChan {
-				bufWriter.Write(line)
-				bufWriter.WriteByte('\n')
-				fileSize += int64(len(line) + 1)
+				fileSize += w.write(bufWriter, line)
 			}
 			// 如果文件大小限制开启，且当前文件大小超过限制，则进行翻转
 			if w.fileSizeLimitMb > 0 && fileSize >= w.fileSizeLimitMb*1024*1024 {
@@ -173,6 +183,7 @@ func (w *BatchFileWriter) daemon() {
 	}
 }
 
+// 写入到文件，并在需要时翻转文件
 func (w *BatchFileWriter) rotate(bufWriter *bufio.Writer, f *os.File) (*os.File, int64) {
 	bufWriter.Flush()
 	_ = f.Sync()
@@ -238,13 +249,10 @@ func (w *BatchFileWriter) getFileIndex() (maxFileIndex int) {
 	fileName := w.getFilename() + "_"
 	// 获取目录下的日志数量，用来确定FileCountLimit限制
 	logFiles := getFiles(w.dir, fmt.Sprintf("%s*.%s", fileName, w.fileExtension))
+	prefix := filepath.Join(w.dir, fileName)
 	for _, file := range logFiles {
-		if !strings.HasPrefix(file, "./") && !strings.HasPrefix(file, "/") {
-			file = "./" + file
-		}
-
-		s := file[len(filepath.Join(w.dir, fileName)):] // 移除文件名称前缀，只要文件索引号部份
-		s = s[:len(s)-len("."+w.fileExtension)]         // 移除扩展名后缀
+		s := file[len(prefix):]                 // 移除文件名称前缀，只要文件索引号部份
+		s = s[:len(s)-len("."+w.fileExtension)] // 移除扩展名后缀
 		fileIndex := parse.Convert(s, 0)
 
 		// 取最大的索引号

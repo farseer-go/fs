@@ -1,16 +1,18 @@
 package flog
 
 import (
+	"strings"
+
 	"github.com/farseer-go/fs/configure"
 	"github.com/farseer-go/fs/core"
 	"github.com/farseer-go/fs/core/eumLogLevel"
-	"strings"
 )
 
 var logConfig Config
+var factory DefaultLoggerFactory
 
 func InitLog() core.ILog {
-	factory := DefaultLoggerFactory{}
+	factory = DefaultLoggerFactory{}
 	logConfig = configure.ParseConfig[Config]("Log")
 	// 默认为yyyy-MM-dd hh:mm:ss.ffffff格式
 	if logConfig.Default.TimeFormat == "" {
@@ -44,12 +46,19 @@ func InitLog() core.ILog {
 	}
 
 	// 上传到FOPS
-	if !logConfig.Fops.Disable && configure.GetString("Fops.Server") != "" {
-		formatter, logLevel := loadLevelFormat(logConfig.Console, defaultLevel, defaultFormat, logConfig.Default)
+	if !logConfig.Fops.Disable {
+		formatter, logLevel := loadLevelFormat(logConfig.Fops, defaultLevel, defaultFormat, logConfig.Default)
 		factory.AddProviderFormatter(&FopsProvider{}, formatter, logLevel)
 	}
 	log = factory.CreateLogger("")
 	return log
+}
+
+func ExitLog() {
+	// 关闭日志提供者
+	for _, loggerPersistent := range factory.loggerPersistentList {
+		loggerPersistent.Close()
+	}
 }
 
 // 使用具体配置还是默认配置

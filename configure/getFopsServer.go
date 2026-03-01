@@ -15,7 +15,7 @@ func GetFopsServer() string {
 
 	if fopsServer = strings.ToLower(GetString("Fops.Server")); fopsServer != "" {
 		if !strings.HasPrefix(fopsServer, "http") {
-			panic("[farseer.yaml]Fops.Server配置不正确，示例：https://fops.fsgit.com")
+			panic("[farseer.yaml]Fops.Server配置不正确, 示例: https://fops.fsgit.com")
 		}
 		if !strings.HasSuffix(fopsServer, "/") {
 			fopsServer += "/"

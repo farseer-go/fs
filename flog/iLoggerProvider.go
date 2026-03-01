@@ -13,4 +13,6 @@ type ILoggerPersistent interface {
 	IsEnabled(logLevel eumLogLevel.Enum) bool
 	// Log 日志记录
 	Log(LogLevel eumLogLevel.Enum, log *LogData, exception error)
+	// Close 关闭日志记录器，释放资源
+	Close()
 }

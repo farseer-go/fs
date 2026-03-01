@@ -31,6 +31,10 @@ func (r *consoleLoggerPersistent) Log(LogLevel eumLogLevel.Enum, log *LogData, e
 	}
 }
 
+func (r *consoleLoggerPersistent) Close() {
+
+}
+
 // ClearColor 清除颜色
 func ClearColor(content string) string {
 	return mustCompile.ReplaceAllString(content, "")

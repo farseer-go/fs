@@ -42,3 +42,8 @@ func (module FarseerKernelModule) PreInitialize() {
 		container.Register(func() trace.IManager { return &trace.EmptyManager{} })
 	}
 }
+
+func (module FarseerKernelModule) Shutdown() {
+	// 关闭日志
+	flog.ExitLog()
+}

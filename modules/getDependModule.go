@@ -3,8 +3,11 @@ package modules
 import (
 	"fmt"
 	"reflect"
+	"strconv"
+	"sync"
 
 	"github.com/farseer-go/fs/color"
+	"github.com/farseer-go/fs/core"
 	"github.com/farseer-go/fs/flog"
 	"github.com/farseer-go/fs/stopwatch"
 )
@@ -67,7 +70,7 @@ func StartModules(farseerModules []FarseerModule) {
 			sw := stopwatch.StartNew()
 			moduleName := reflect.TypeOf(farseerModule).String()
 			module.PreInitialize()
-			flog.LogBuffer <- fmt.Sprint("Elapsed time：" + sw.GetText() + " " + moduleName + color.Yellow(".PreInitialize()"))
+			flog.LogBuffer <- fmt.Sprint("Elapsed time: " + sw.GetText() + " " + moduleName + color.Yellow(".PreInitialize()"))
 			moduleMap[moduleName] += sw.ElapsedDuration()
 		}
 	}
@@ -77,7 +80,7 @@ func StartModules(farseerModules []FarseerModule) {
 			sw := stopwatch.StartNew()
 			moduleName := reflect.TypeOf(farseerModule).String()
 			module.Initialize()
-			flog.LogBuffer <- fmt.Sprint("Elapsed time：" + sw.GetText() + " " + moduleName + color.Blue(".Initialize()"))
+			flog.LogBuffer <- fmt.Sprint("Elapsed time: " + sw.GetText() + " " + moduleName + color.Blue(".Initialize()"))
 			moduleMap[moduleName] += sw.ElapsedDuration()
 		}
 	}
@@ -87,21 +90,35 @@ func StartModules(farseerModules []FarseerModule) {
 			sw := stopwatch.StartNew()
 			moduleName := reflect.TypeOf(farseerModule).String()
 			module.PostInitialize()
-			flog.LogBuffer <- fmt.Sprint("Elapsed time：" + sw.GetText() + " " + moduleName + color.Green(".PostInitialize()"))
+			flog.LogBuffer <- fmt.Sprint("Elapsed time: " + sw.GetText() + " " + moduleName + color.Green(".PostInitialize()"))
 			moduleMap[moduleName] += sw.ElapsedDuration()
 		}
 	}
 }
 
+var onceExit sync.Once
+
 // ShutdownModules 关闭模块
 func ShutdownModules(farseerModules []FarseerModule) {
-	flog.Println("Modules close...")
-	for _, farseerModule := range farseerModules {
-		if module, ok := farseerModule.(FarseerShutdownModule); ok {
-			sw := stopwatch.StartNew()
-			moduleName := reflect.TypeOf(farseerModule).String()
-			module.Shutdown()
-			flog.Println("Elapsed time：" + sw.GetMillisecondsText() + " " + moduleName + color.Red(".Shutdown()"))
+	onceExit.Do(func() {
+		flog.Println("Modules close...")
+		for _, farseerModule := range farseerModules {
+			if module, ok := farseerModule.(FarseerShutdownModule); ok {
+				sw := stopwatch.StartNew()
+				moduleName := reflect.TypeOf(farseerModule).String()
+				module.Shutdown()
+				flog.Println("Elapsed time: " + sw.GetMillisecondsText() + " " + moduleName + color.Red(".Shutdown()"))
+			}
 		}
-	}
+
+		if len(core.CallbackExitList) > 0 {
+			sw := stopwatch.StartNew()
+			for index, fn := range core.CallbackExitList {
+				sw.Restart()
+				fn.F()
+				flog.Println("Run " + strconv.Itoa(index+1) + ": " + fn.Name + ", Use: " + sw.GetText())
+			}
+			flog.Println("---------------------------------------")
+		}
+	})
 }
