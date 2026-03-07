@@ -25,11 +25,12 @@ type BatchFileWriter struct {
 	fileSizeLimitMb  int64          // 文件大小限制（MB），设置之后，只有当文件大小超过限制时才会滚动
 	fileCountLimit   int            // 文件数量限制
 	interval         time.Duration  // 多长时间刷盘一次
-	currentFileIndex int            // 缓存当前的索引号
-	currentPath      string         // current文件的完整路径
+	currentFileIndex int            // 当前时间段的文件索引号
+	currentFileName  string         // 当前文件名（不含扩展名）
+	currentPath      string         // 当前文件的完整路径
 	bufferSize       int            // 写入缓冲区大小
 	appendNewLine    bool           // 是否在每条日志后添加换行符
-	wg               sync.WaitGroup // 调用Cose退出时等待所有翻转协程完成
+	wg               sync.WaitGroup // 调用Close退出时等待所有翻转协程完成
 	closeOnce        sync.Once      // 确保 Close 方法只执行一次
 	closed           atomic.Bool    // 标志位，表示是否已关闭
 	exitChan         chan struct{}  // 退出信号
@@ -37,10 +38,10 @@ type BatchFileWriter struct {
 
 // dir: 存储目录
 // fileExtension: 文件扩展名
-// rollingInterval: 文件滚动间隔（year/month/day/week/hour）
+// rollingInterval: 文件的名称定义规则（year/month/day/week/hour）
 // fileSizeLimitMb: 限制文件大小
 // fileCountLimit: 限制文件数量
-// interval: 多长时间生成一个文件。PS: 如果开启了文件大小限制，则不生效
+// interval: 多长时间刷盘(不翻转文件)
 func NewWriter(dir string, fileExtension string, rollingInterval string, fileSizeLimitMb int64, fileCountLimit int, interval time.Duration, appendNewLine bool) *BatchFileWriter {
 	// 创建目录
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
@@ -48,6 +49,7 @@ func NewWriter(dir string, fileExtension string, rollingInterval string, fileSiz
 	}
 	// 移除扩展名前缀.
 	fileExtension = strings.TrimPrefix(fileExtension, ".")
+
 	w := &BatchFileWriter{
 		dataChan:        make(chan []byte, 20000),
 		dir:             dir,
@@ -59,15 +61,22 @@ func NewWriter(dir string, fileExtension string, rollingInterval string, fileSiz
 		bufferSize:      256 * 1024,
 		appendNewLine:   appendNewLine,
 		exitChan:        make(chan struct{}),
-		currentPath:     filepath.Join(dir, fmt.Sprintf("%s.%s", "current", fileExtension)),
 	}
-	// 初始化：获取文件索引和当前大小
+
+	// 初始化：获取当前时间段的文件名和索引
+	w.currentFileName = w.getFilename()
 	w.currentFileIndex = w.getFileIndex()
+	w.currentPath = w.getCurrentFilePath()
 
 	// 开启翻转协程
 	w.wg.Add(1)
 	go w.daemon()
 	return w
+}
+
+// getCurrentFilePath 获取当前文件的完整路径
+func (w *BatchFileWriter) getCurrentFilePath() string {
+	return filepath.Join(w.dir, fmt.Sprintf("%s_%d.%s", w.currentFileName, w.currentFileIndex, w.fileExtension))
 }
 
 // Write 方法在业务协程中完成类型转换，利用并发 CPU 提高吞吐量
@@ -155,28 +164,34 @@ func (w *BatchFileWriter) daemon() {
 				f, fileSize = w.rotate(bufWriter, f)
 			}
 		case <-ticker.C:
-			// 如果文件大小限制没有开启，则按照时间间隔翻转
-			if w.interval > 0 { // 判断w.interval > 0,是因为有可能没有设置时间间隔
+			// 检查时间段是否变化
+			newFileName := w.getFilename()
+			if newFileName != w.currentFileName {
+				// 时间段变化，翻转到新文件
 				f, fileSize = w.rotate(bufWriter, f)
+			} else if w.interval > 0 { // 时间到了,则只刷盘,不用翻转文件
+				bufWriter.Flush()
+				_ = f.Sync()
 			}
 		case <-w.exitChan:
 			// 退出前排空 Channel
 			close(w.dataChan)
 			for line := range w.dataChan {
 				fileSize += w.write(bufWriter, line)
-			}
-			// 如果文件大小限制开启，且当前文件大小超过限制，则进行翻转
-			if w.fileSizeLimitMb > 0 && fileSize >= w.fileSizeLimitMb*1024*1024 {
-				f, fileSize = w.rotate(bufWriter, f)
-			} else {
-				bufWriter.Flush()
-				_ = f.Sync()
-				_ = f.Close()
 
-				// 如果开启了文件数量限制，则在翻转时检查是否需要删除旧文件
-				if w.fileCountLimit > 0 {
-					w.removeLimitFile()
+				// 如果文件大小限制开启，且当前文件大小超过限制，则进行翻转
+				if w.fileSizeLimitMb > 0 && fileSize >= w.fileSizeLimitMb*1024*1024 {
+					f, fileSize = w.rotate(bufWriter, f)
 				}
+			}
+
+			bufWriter.Flush()
+			_ = f.Sync()
+			_ = f.Close()
+
+			// 如果开启了文件数量限制，则在翻转时检查是否需要删除旧文件
+			if w.fileCountLimit > 0 {
+				w.removeLimitFile()
 			}
 			return
 		}
@@ -189,11 +204,17 @@ func (w *BatchFileWriter) rotate(bufWriter *bufio.Writer, f *os.File) (*os.File,
 	_ = f.Sync()
 	_ = f.Close()
 
-	if info, err := os.Stat(w.currentPath); err == nil && info.Size() > 0 {
-		dispatchName := fmt.Sprintf("%s_%d.%s", w.getFilename(), w.currentFileIndex, w.fileExtension)
-		_ = os.Rename(w.currentPath, filepath.Join(w.dir, dispatchName))
+	// 检查时间段是否变化
+	newFileName := w.getFilename()
+	if newFileName != w.currentFileName {
+		// 时间段变化，更新文件名并重置索引
+		w.currentFileName = newFileName
+		w.currentFileIndex = w.getFileIndex()
+	} else {
+		// 时间段没变，索引+1
 		w.currentFileIndex++
 	}
+	w.currentPath = w.getCurrentFilePath()
 
 	// 支持重试打开文件，避免因磁盘暂时不可用导致的翻转失败
 	var err error
@@ -201,7 +222,7 @@ func (w *BatchFileWriter) rotate(bufWriter *bufio.Writer, f *os.File) (*os.File,
 		if f, _, err = w.openFile(w.currentPath); err == nil {
 			break
 		}
-		fmt.Println("BatchFileWriter.rotate: 打开文件失败，3秒后重试: " + err.Error())
+		fmt.Println("BatchFileWriter.rotate: 打开文件失败, 3秒后重试: " + err.Error())
 		time.Sleep(3 * time.Second)
 	}
 	bufWriter.Reset(f)
@@ -246,7 +267,7 @@ func (w *BatchFileWriter) getFilename() string {
 // 获取文件索引号
 func (w *BatchFileWriter) getFileIndex() (maxFileIndex int) {
 	// 文件名和索引之间有个间隔符号
-	fileName := w.getFilename() + "_"
+	fileName := w.currentFileName + "_"
 	// 获取目录下的日志数量，用来确定FileCountLimit限制
 	logFiles := getFiles(w.dir, fmt.Sprintf("%s*.%s", fileName, w.fileExtension))
 	prefix := filepath.Join(w.dir, fileName)
@@ -309,8 +330,7 @@ func (w *BatchFileWriter) removeLimitFile() {
 	// 1. 获取目录下所有符合后缀的文件
 	files := getFiles(w.dir, "*."+w.fileExtension)
 
-	// 如果文件总数未超标，直接返回（注意排除 current 文件）
-	// 这里减 1 是因为 getFiles 可能会扫到正在写的 current 文件
+	// 如果文件总数未超标，直接返回
 	if len(files) <= w.fileCountLimit {
 		return
 	}
@@ -319,7 +339,7 @@ func (w *BatchFileWriter) removeLimitFile() {
 	var fileList []fileInfo
 	for _, f := range files {
 		// 排除当前正在写入的文件，不参与清理
-		if strings.HasSuffix(f, "current."+w.fileExtension) {
+		if f == w.currentPath {
 			continue
 		}
 
