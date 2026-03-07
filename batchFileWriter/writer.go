@@ -65,8 +65,7 @@ func NewWriter(dir string, fileExtension string, rollingInterval string, fileSiz
 
 	// 初始化：获取当前时间段的文件名和索引
 	w.currentFileName = w.getFilename()
-	w.currentFileIndex = w.getFileIndex()
-	w.currentPath = w.getCurrentFilePath()
+	w.currentFileIndex, w.currentPath = w.initCurrentFile()
 
 	// 开启翻转协程
 	w.wg.Add(1)
@@ -170,8 +169,12 @@ func (w *BatchFileWriter) daemon() {
 				// 时间段变化，翻转到新文件
 				f, fileSize = w.rotate(bufWriter, f)
 			} else if w.interval > 0 { // 时间到了,则只刷盘,不用翻转文件
-				bufWriter.Flush()
-				_ = f.Sync()
+				if err := bufWriter.Flush(); err != nil {
+					fmt.Println("BatchFileWriter: Flush失败:", err.Error())
+				}
+				if err := f.Sync(); err != nil {
+					fmt.Println("BatchFileWriter: Sync失败:", err.Error())
+				}
 			}
 		case <-w.exitChan:
 			// 退出前排空 Channel
@@ -185,8 +188,12 @@ func (w *BatchFileWriter) daemon() {
 				}
 			}
 
-			bufWriter.Flush()
-			_ = f.Sync()
+			if err := bufWriter.Flush(); err != nil {
+				fmt.Println("BatchFileWriter: Flush失败:", err.Error())
+			}
+			if err := f.Sync(); err != nil {
+				fmt.Println("BatchFileWriter: Sync失败:", err.Error())
+			}
 			_ = f.Close()
 
 			// 如果开启了文件数量限制，则在翻转时检查是否需要删除旧文件
@@ -200,21 +207,25 @@ func (w *BatchFileWriter) daemon() {
 
 // 写入到文件，并在需要时翻转文件
 func (w *BatchFileWriter) rotate(bufWriter *bufio.Writer, f *os.File) (*os.File, int64) {
-	bufWriter.Flush()
-	_ = f.Sync()
+	if err := bufWriter.Flush(); err != nil {
+		fmt.Println("BatchFileWriter: Flush失败:", err.Error())
+	}
+	if err := f.Sync(); err != nil {
+		fmt.Println("BatchFileWriter: Sync失败:", err.Error())
+	}
 	_ = f.Close()
 
 	// 检查时间段是否变化
 	newFileName := w.getFilename()
 	if newFileName != w.currentFileName {
-		// 时间段变化，更新文件名并重置索引
+		// 时间段变化，查找新时间段的最新文件
 		w.currentFileName = newFileName
-		w.currentFileIndex = w.getFileIndex()
+		w.currentFileIndex, w.currentPath = w.initCurrentFile()
 	} else {
 		// 时间段没变，索引+1
 		w.currentFileIndex++
+		w.currentPath = w.getCurrentFilePath()
 	}
-	w.currentPath = w.getCurrentFilePath()
 
 	// 支持重试打开文件，避免因磁盘暂时不可用导致的翻转失败
 	var err error
@@ -222,7 +233,7 @@ func (w *BatchFileWriter) rotate(bufWriter *bufio.Writer, f *os.File) (*os.File,
 		if f, _, err = w.openFile(w.currentPath); err == nil {
 			break
 		}
-		fmt.Println("BatchFileWriter.rotate: 打开文件失败, 3秒后重试: " + err.Error())
+		fmt.Println("BatchFileWriter.rotate: 打开文件失败, 3秒后重试:", err.Error())
 		time.Sleep(3 * time.Second)
 	}
 	bufWriter.Reset(f)
@@ -264,27 +275,42 @@ func (w *BatchFileWriter) getFilename() string {
 	return fileName
 }
 
-// 获取文件索引号
-func (w *BatchFileWriter) getFileIndex() (maxFileIndex int) {
-	// 文件名和索引之间有个间隔符号
+// 初始化当前文件：查找最新文件，如果未超过大小限制则复用，否则创建新文件
+func (w *BatchFileWriter) initCurrentFile() (int, string) {
 	fileName := w.currentFileName + "_"
-	// 获取目录下的日志数量，用来确定FileCountLimit限制
 	logFiles := getFiles(w.dir, fmt.Sprintf("%s*.%s", fileName, w.fileExtension))
 	prefix := filepath.Join(w.dir, fileName)
+
+	// 找到最大索引号的文件
+	maxIndex := 0
 	for _, file := range logFiles {
 		s := file[len(prefix):]                 // 移除文件名称前缀，只要文件索引号部份
 		s = s[:len(s)-len("."+w.fileExtension)] // 移除扩展名后缀
 		fileIndex := parse.Convert(s, 0)
-
-		// 取最大的索引号
-		if fileIndex > maxFileIndex {
-			maxFileIndex = fileIndex
+		if fileIndex > maxIndex {
+			maxIndex = fileIndex
 		}
 	}
 
-	// 增加索引号
-	maxFileIndex++
-	return
+	// 如果没有文件，创建索引为1的新文件
+	if maxIndex == 0 {
+		path := filepath.Join(w.dir, fmt.Sprintf("%s_1.%s", w.currentFileName, w.fileExtension))
+		return 1, path
+	}
+
+	// 检查最大索引文件的大小
+	latestPath := filepath.Join(w.dir, fmt.Sprintf("%s_%d.%s", w.currentFileName, maxIndex, w.fileExtension))
+	if info, err := os.Stat(latestPath); err == nil {
+		// 如果文件大小未超过限制，复用该文件
+		if w.fileSizeLimitMb <= 0 || info.Size() < w.fileSizeLimitMb*1024*1024 {
+			return maxIndex, latestPath
+		}
+	}
+
+	// 文件大小超过限制或无法获取文件信息，创建新文件
+	newIndex := maxIndex + 1
+	path := filepath.Join(w.dir, fmt.Sprintf("%s_%d.%s", w.currentFileName, newIndex, w.fileExtension))
+	return newIndex, path
 }
 
 // 优化后的 getFiles，专注于高性能单层目录扫描
