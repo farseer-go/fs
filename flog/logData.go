@@ -28,8 +28,3 @@ type LogData struct {
 func newLogData(logLevel eumLogLevel.Enum, content string, component string) *LogData {
 	return &LogData{Content: content, CreateAt: dateTime.Now(), LogLevel: logLevel, Component: component, newLine: true}
 }
-
-//// 清除颜色
-//func (receiver *LogData) clearColor() {
-//	receiver.Content = mustCompile.ReplaceAllString(receiver.Content, "")
-//}
