@@ -39,7 +39,7 @@ type BatchFileWriter struct {
 // dir: 存储目录
 // fileExtension: 文件扩展名
 // rollingInterval: 文件的名称定义规则（year/month/day/week/hour）
-// fileSizeLimitMb: 限制文件大小
+// fileSizeLimitMb: 限制文件大小(单位MB)
 // fileCountLimit: 限制文件数量
 // interval: 多长时间刷盘(不翻转文件)
 func NewWriter(dir string, fileExtension string, rollingInterval string, fileSizeLimitMb int64, fileCountLimit int, interval time.Duration, appendNewLine bool) *BatchFileWriter {
@@ -383,8 +383,8 @@ func (w *BatchFileWriter) removeLimitFile() {
 	})
 
 	// 4. 计算需要删除的数量并批量处理
-	// 剩余需要保留的文件数量 = w.fileCountLimit
-	overCount := len(fileList) - w.fileCountLimit
+	// 当前文件必须保留，所以其他文件最多保留 fileCountLimit - 1 个
+	overCount := len(fileList) - (w.fileCountLimit - 1)
 	if overCount > 0 {
 		for i := 0; i < overCount; i++ {
 			_ = os.Remove(fileList[i].path)
