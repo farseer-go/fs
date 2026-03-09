@@ -163,4 +163,5 @@ func Run() {
 
 	// 关闭模块
 	modules.ShutdownModules(dependModules)
+	flog.Println("应用已退出!")
 }
