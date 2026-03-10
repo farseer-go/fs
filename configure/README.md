@@ -2,7 +2,7 @@
 ## Configuration file path
 ```
 In the root of your executable
-./farseer.yaml
+./config.yaml
 ```
 
 ## Get Configuration

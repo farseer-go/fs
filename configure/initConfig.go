@@ -12,9 +12,9 @@ import (
 func InitConfig() {
 	var ymlFile string
 	if fsEnv := os.Getenv("fsenv"); fsEnv != "" {
-		ymlFile = fmt.Sprintf("./farseer.%s.yaml", fsEnv)
+		ymlFile = fmt.Sprintf("./config.%s.yaml", fsEnv)
 	} else {
-		ymlFile = "./farseer.yaml"
+		ymlFile = "./config.yaml"
 	}
 	configurationBuilder.AddYamlFile(ymlFile)
 	configurationBuilder.AddEnvironmentVariables()

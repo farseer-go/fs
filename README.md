@@ -32,7 +32,7 @@ years and is great
 
 ## Features
 
-- `Unified configuration`: all configurations are consolidated into `. /farseer.yaml`
+- `Unified configuration`: all configurations are consolidated into `. /config.yaml`
 
 - `Elegant`: all modules follow the principle of developer experience first.
 

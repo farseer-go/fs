@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-// defaultTimingWheel 在farseer.yaml配置时间轮大小、格数
+// defaultTimingWheel 在config.yaml配置时间轮大小、格数
 var defaultTimingWheel *timingWheel
 
 func NewDefault(interval time.Duration, bucketsNum int) {
