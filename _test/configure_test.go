@@ -24,7 +24,7 @@ func TestGetArray(t *testing.T) {
 	configure.SetDefault("a.b.c", "123")
 	assert.Equal(t, "123", configure.GetString("a.b.c"))
 
-	assert.Equal(t, "DataType=mysql,PoolMaxSize=5,PoolMinSize=1,ConnectionString=root:steden@123@tcp(192.168.1.8:3306)/fSchedule_demo?charset=utf8&parseTime=True&loc=Local", configure.GetString("Database.default"))
+	assert.Equal(t, "DataType=mysql,PoolMaxSize=5,PoolMinSize=1,ConnectionString=root:qwe123@tcp(192.168.1.8:3306)/fSchedule_demo?charset=utf8&parseTime=True&loc=Local", configure.GetString("Database.default"))
 
 	arr := configure.GetSlice("A")
 	assert.Len(t, arr, 3)
@@ -46,7 +46,7 @@ func TestConfigureGet(t *testing.T) {
 	assert.Len(t, configure.GetSubNodes("A.B"), 0)
 	assert.Len(t, configure.GetSlice("A.B"), 0)
 
-	assert.Equal(t, "DataType=mysql,PoolMaxSize=5,PoolMinSize=1,ConnectionString=root:steden@123@tcp(192.168.1.8:3306)/fSchedule_demo?charset=utf8&parseTime=True&loc=Local", configure.GetString("Database.default"))
+	assert.Equal(t, "DataType=mysql,PoolMaxSize=5,PoolMinSize=1,ConnectionString=root:qwe123@tcp(192.168.1.8:3306)/fSchedule_demo?charset=utf8&parseTime=True&loc=Local", configure.GetString("Database.default"))
 	_ = os.Setenv("Database_default", "aaa")
 	assert.Equal(t, "aaa", configure.GetString("Database.default"))
 

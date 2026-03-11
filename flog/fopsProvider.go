@@ -1,6 +1,7 @@
 package flog
 
 import (
+	"os"
 	"strconv"
 	"time"
 
@@ -11,12 +12,21 @@ import (
 	"github.com/farseer-go/fs/trace"
 )
 
+// getLogBasePath 获取日志基础路径
+// 如果 /var/ 目录存在，返回 /var/log/flog/，否则返回 ./flog/
+func getLogBasePath() string {
+	if _, err := os.Stat("/var/"); err == nil {
+		return "/var/log/flog/"
+	}
+	return "./flog/"
+}
+
 // FopsProvider 上传到FOPS
 type FopsProvider struct {
 }
 
 func (r *FopsProvider) CreateLogger(categoryName string, formatter IFormatter, logLevel eumLogLevel.Enum) ILoggerPersistent {
-	writer := batchFileWriter.NewWriter("/var/log/flog/"+core.AppName+"/", "log", "hour", 10, 0, time.Second*5, true)
+	writer := batchFileWriter.NewWriter(getLogBasePath()+core.AppName+"/", "log", "hour", 10, 0, time.Second*5, true)
 	persistent := &fopsLoggerPersistent{formatter, writer}
 	return persistent
 }
