@@ -2,70 +2,70 @@ package stopwatch
 
 import (
 	"strconv"
-	"strings"
 	"time"
+	_ "unsafe"
 
 	"github.com/farseer-go/fs/color"
 )
 
+// nanotime 直接读取 monotonic clock，跳过 wall clock 的采集开销
+//
+//go:linkname nanotime runtime.nanotime
+func nanotime() int64
+
 type Watch struct {
-	// 执行起点时间
-	startTime time.Time
+	// monotonic 起点时间（纳秒）
+	startNano int64
+	// 累计已用时间（纳秒）
+	elapsed int64
 	// 是否正在运行
 	isRunning bool
-	d         time.Duration
-	// // 上次停止时已执行的时间点（毫秒）
-	// lastElapsedMilliseconds int64
-	// // 上次停止时已执行的时间点（微秒）
-	// lastElapsedMicroseconds int64
-	// // 上次停止时已执行的时间点（纳秒）
-	// lastElapsedNanoseconds int64
 }
 
 // StartNew 创建计时器，并开始计时
 func StartNew() *Watch {
 	return &Watch{
-		startTime: time.Now(),
+		startNano: nanotime(),
 		isRunning: true,
-		d:         time.Duration(0),
 	}
 }
 
-// New 创建计时器，并开始计时
+// New 创建计时器，不开始计时
 func New() *Watch {
-	return &Watch{
-		startTime: time.Time{},
-		isRunning: false,
-		d:         time.Duration(0),
-	}
+	return &Watch{}
 }
 
-// Restart 重置计时器
+// Restart 重置计时器并重新开始
 func (sw *Watch) Restart() {
-	sw.startTime = time.Now()
+	sw.elapsed = 0
+	sw.startNano = nanotime()
 	sw.isRunning = true
-	sw.d = time.Duration(0)
 }
 
-// Start 继续计时
+// Start 开始/继续计时（已在运行时忽略）
 func (sw *Watch) Start() {
-	sw.startTime = time.Now()
+	if sw.isRunning {
+		return
+	}
+	sw.startNano = nanotime()
 	sw.isRunning = true
 }
 
-// Stop 停止计时
+// Stop 停止计时（已停止时忽略）
 func (sw *Watch) Stop() {
-	sub := time.Since(sw.startTime)
-	sw.d += sub
+	if !sw.isRunning {
+		return
+	}
+	sw.elapsed += nanotime() - sw.startNano
 	sw.isRunning = false
 }
 
 // ElapsedDuration 返回当前已计时的时间
 func (sw *Watch) ElapsedDuration() time.Duration {
 	if sw.isRunning {
-		return (time.Since(sw.startTime) + sw.d)
+		return time.Duration(nanotime() - sw.startNano + sw.elapsed)
 	}
-	return sw.d
+	return time.Duration(sw.elapsed)
 }
 
 // GetMillisecondsText 返回当前已计时的时间（毫秒）
@@ -83,22 +83,21 @@ func (sw *Watch) GetNanosecondsText() string {
 	return color.Red(strconv.FormatInt(sw.ElapsedDuration().Nanoseconds(), 10) + " ns")
 }
 
-// GetNanosecondsText 返回当前已计时的时间
+// GetText 返回当前已计时的时间（可读格式，精度保留2位小数）
 func (sw *Watch) GetText() string {
-	t := sw.ElapsedDuration().String()
-	if ts := strings.Split(t, "."); len(ts) == 2 && len(ts[1]) > 4 {
-		unit := ts[1][len(ts[1])-2:]
-		switch unit {
-		case "ms", "µs", "ns", "ps", "as", "zs", "ys":
-			ts[1] = ts[1][:2] + unit
-		case "\xb5s":
-			ts[1] = ts[1][:2] + "µs"
-		default:
-			if strings.HasSuffix(unit, "s") {
-				ts[1] = ts[1][:2] + "s"
-			}
-		}
-		t = ts[0] + "." + ts[1]
+	ns := sw.ElapsedDuration().Nanoseconds()
+	var text string
+	switch {
+	case ns < int64(time.Microsecond):
+		text = strconv.FormatInt(ns, 10) + " ns"
+	case ns < int64(time.Millisecond):
+		text = strconv.FormatFloat(float64(ns)/1e3, 'f', 2, 64) + " µs"
+	case ns < int64(time.Second):
+		text = strconv.FormatFloat(float64(ns)/1e6, 'f', 2, 64) + " ms"
+	case ns < int64(time.Minute):
+		text = strconv.FormatFloat(float64(ns)/1e9, 'f', 2, 64) + " s"
+	default:
+		text = time.Duration(ns).String()
 	}
-	return color.Red(t)
+	return color.Red(text)
 }
