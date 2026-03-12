@@ -2,12 +2,12 @@ package timingWheel
 
 import (
 	"context"
-	"github.com/farseer-go/fs/sonyflake"
 	"math"
-	"strconv"
-	"strings"
+	"sort"
 	"sync"
 	"time"
+
+	"github.com/farseer-go/fs/sonyflake"
 )
 
 // OpOption 选项
@@ -30,16 +30,16 @@ type timingWheel struct {
 	bucketsNum    int             // 一圈的格子数量
 	totalDuration time.Duration   // 第一层的时长 duration * bucketsNum
 	onceStart     sync.Once       // 保证只执行一次
-	timerQueue    chan *Timer     // 到达时间的任务，会立即放到此队列中
 	clock         []timeHand      // 时钟模型（数组索引 = wheelLevel）
 	clockLock     *sync.RWMutex   // 锁
 	// 数组索引 = wheelLevel
 	// 当前时间轮的层数的时间格做为MAP KEY
 	// 根据当前时间轮层数 + 时间格子 ，就能找出对应的Timer
 	timeHandTimer []map[timeHand][]*Timer
-	timerLock     *sync.RWMutex   // 锁
-	startAt       time.Time       // 开始时间
-	ctx           context.Context // 用于停止时间轮
+	timerLock     *sync.RWMutex // 锁
+	ctx           context.Context
+	cancel        context.CancelFunc
+	stopped       chan struct{} // 停止完成的信号
 }
 
 // New 初始化
@@ -52,7 +52,6 @@ func New(interval time.Duration, bucketsNum int) *timingWheel {
 		timerLock:     &sync.RWMutex{},
 		clockLock:     &sync.RWMutex{},
 		timeHandTimer: []map[timeHand][]*Timer{make(map[timeHand][]*Timer)},
-		timerQueue:    make(chan *Timer, 1000),
 		clock:         []timeHand{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 	}
 }
@@ -62,11 +61,20 @@ func (receiver *timingWheel) Start() {
 	receiver.onceStart.Do(func() {
 		receiver.initLevelTimeHandDuration(10)
 		receiver.ticker = time.NewTicker(receiver.duration[0])
-		receiver.startAt = time.Now()
+		receiver.ctx, receiver.cancel = context.WithCancel(context.Background())
+		receiver.stopped = make(chan struct{})
 
 		// 启动时间轮盘
 		go receiver.turning()
 	})
+}
+
+// Stop 停止时间轮
+func (receiver *timingWheel) Stop() {
+	if receiver.cancel != nil {
+		receiver.cancel()
+		<-receiver.stopped
+	}
 }
 
 // Add 添加一个定时任务
@@ -85,10 +93,9 @@ func (receiver *timingWheel) Add(d time.Duration, opts ...OpOption) *Timer {
 		isPrecision:       op.IsPrecision,
 	}
 
-	// 计算第几层第几格、剩余时长
+	// 计算第几层第几格、剩余时长（需要持有 clockLock，因为 rewind 会读写 clock）
+	receiver.clockLock.Lock()
 	level, curLevelTimeHand, remainingDuration := receiver.rewind(d)
-	receiver.clockLock.RLock()
-	defer receiver.clockLock.RUnlock()
 	curLevelTimeHand += receiver.clock[level]
 
 	// 超出了桶，则跳到下一级
@@ -99,24 +106,21 @@ func (receiver *timingWheel) Add(d time.Duration, opts ...OpOption) *Timer {
 	}
 
 	t.remainingDuration = remainingDuration
+	immediateRun := t.remainingDuration < 0 || t.PlanAt.Before(time.Now())
+	sameSlot := level == 0 && curLevelTimeHand == receiver.clock[0]
+	receiver.clockLock.Unlock()
 
 	// 晚于当前时间，需要立即推送
-	if t.remainingDuration < 0 || t.PlanAt.Before(time.Now()) {
+	if immediateRun {
 		receiver.popTimer(t)
 		return t
 	}
 
 	// 在同一格，说明需要立即执行
-	if level == 0 && curLevelTimeHand == receiver.clock[0] {
+	if sameSlot {
 		go receiver.popTimer(t)
 		return t
 	}
-
-	var builder strings.Builder
-	for i := len(receiver.clock) - 1; i >= 0; i-- {
-		builder.WriteString(strconv.Itoa(receiver.clock[i]) + ".")
-	}
-	//flog.Debugf("添加时间(%d):+%s %s 第%d层 第%d格 剩余%s，当前指针：%s", t.Id, t.duration.String(), t.PlanAt.Format("15:04:05.000"), level, curLevelTimeHand, t.remainingDuration.String(), builder.String())
 
 	// 初始化所在层的任务队列
 	receiver.initTimeHandTimer(level)
@@ -150,8 +154,15 @@ func (receiver *timingWheel) AddTimePrecision(t time.Time) *Timer {
 
 // 时间轮开始转动
 func (receiver *timingWheel) turning() {
-	//flog.Debugf("当前指针，%d.%d.%d", receiver.clock[2], receiver.clock[1], receiver.getClockVal(0))
+	defer close(receiver.stopped)
 	for {
+		select {
+		case <-receiver.ctx.Done():
+			receiver.ticker.Stop()
+			return
+		default:
+		}
+
 		tHand := receiver.clock[0]
 		receiver.timerLock.Lock()
 		// 取出当前格子的任务
@@ -168,9 +179,9 @@ func (receiver *timingWheel) turning() {
 
 		go func(timers []*Timer) {
 			for i := 0; i < len(timers); i++ {
-				if !timers[i].isStop {
-					//flog.Debugf("休眠时间(%d):+%s %d us", timers[i].Id, timers[i].PlanAt.Format("15:04:05.000"), timers[i].PlanAt.Sub(time.Now()).Microseconds())
-					receiver.popTimer(timers[i])
+				if !timers[i].isStopped() {
+					// 每个 timer 独立 goroutine，避免阻塞连锁
+					go receiver.popTimer(timers[i])
 				}
 			}
 		}(timers)
@@ -248,42 +259,25 @@ func (receiver *timingWheel) getLevel(d time.Duration) int {
 
 // 将到达时间的任务推送给C
 func (receiver *timingWheel) popTimer(timer *Timer) {
-	microseconds := timer.PlanAt.Sub(time.Now()).Microseconds()
-	if microseconds > 0 {
-		//flog.Debugf("休眠时间(%d):+%s %d us", timer.Id, timer.PlanAt.Format("15:04:05.000"), timer.PlanAt.Sub(time.Now()).Microseconds())
-		// 使用精确的时间
+	remaining := timer.PlanAt.Sub(time.Now())
+	if remaining > 0 {
 		if timer.isPrecision {
+			// 高精度模式：先 Sleep 大部分时间，最后 busy-wait
 			timer.precision()
+			// precision 已经 spin 到目标时间，不再调用 time.Sleep
+		} else {
+			// 普通模式：直接 Sleep
+			time.Sleep(remaining)
 		}
-		time.Sleep(timer.PlanAt.Sub(time.Now()))
 	}
 	timer.C <- time.Now()
-	//flog.Debugf("推送时间(%d):+%s 精确度：%v", timer.Id, timer.PlanAt.Format("15:04:05.000"), timer.isPrecision)
 }
 
 // 排序任务，按时间从小到大
 func (receiver *timingWheel) order(lst []*Timer) {
-	// 首先拿数组第0个出来做为左边值
-	for leftIndex := 0; leftIndex < len(lst); leftIndex++ {
-		// 拿这个值与后面的值作比较
-		leftValue := lst[leftIndex].duration
-
-		// 再拿出左边值索引后面的值一一对比
-		for rightIndex := leftIndex + 1; rightIndex < len(lst); rightIndex++ {
-			rightValue := lst[rightIndex].duration // 这个就是后面的值，会陆续跟数组后面的值做比较
-			rightItem := lst[rightIndex]
-
-			// 后面的值比前面的值小，说明要交换数据
-			if leftValue >= rightValue {
-				// 开始交换数据，先从后面交换到前面
-				for swapIndex := rightIndex; swapIndex > leftIndex; swapIndex-- {
-					lst[swapIndex] = lst[swapIndex-1]
-				}
-				lst[leftIndex] = rightItem
-				leftValue = lst[leftIndex].duration
-			}
-		}
-	}
+	sort.Slice(lst, func(i, j int) bool {
+		return lst[i].duration < lst[j].duration
+	})
 }
 
 // 初始化这一层的一格时长
@@ -325,10 +319,9 @@ func (receiver *timingWheel) rewind(duration time.Duration) (wheelLevel, timeHan
 	}
 
 	// 这里+1，是因为在后面执行的时候，有可能会跳到下一层
+	// 注意：调用方需保证已持有 clockLock
 	for level+1 >= len(receiver.clock) {
-		receiver.clockLock.Lock()
 		receiver.clock = append(receiver.clock, 0)
-		receiver.clockLock.Unlock()
 	}
 
 	return level, curLevelTimeHand, remainingDuration

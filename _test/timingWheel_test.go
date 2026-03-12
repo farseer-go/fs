@@ -1,14 +1,16 @@
 package test
 
 import (
-	"github.com/farseer-go/fs/timingWheel"
-	"github.com/stretchr/testify/assert"
+	"fmt"
 	"testing"
 	"time"
+
+	"github.com/lb188/lib/fs/timingWheel"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestTimingWheel(t *testing.T) {
-	//	fs.Initialize[modules.FarseerKernelModule]("unit test")
+	//	fs.Initialize[modules.libKernelModule]("unit test")
 	/*
 			0： 100 * 60 = 6000 ms						0.12s
 			1： 100 * 60 * 60 = 1440 ms					1.44s
@@ -21,26 +23,37 @@ func TestTimingWheel(t *testing.T) {
 				  78秒 123：第1层，第2格，3
 					201秒
 	*/
-	timingWheel.NewDefault(10*time.Millisecond, 12)
-	timingWheel.Start()
-	<-timingWheel.AddPrecision(-1 * time.Millisecond).C
-	<-timingWheel.AddPrecision(1 * time.Millisecond).C
-	time.Sleep(131 * time.Millisecond)
-	timingWheel.AddPrecision(123 * time.Millisecond)
-	timer4 := timingWheel.AddPrecision(122 * time.Millisecond)
-	timer5 := timingWheel.AddPrecision(1003 * time.Millisecond)
-	timer6 := timingWheel.AddPrecision(1443 * time.Millisecond)
-	timingWheel.AddPrecision(-35 * time.Millisecond).Stop()
-	timingWheel.Add(102 * time.Millisecond)
-	timingWheel.AddTime(time.Now().Add(1304 * time.Millisecond))
-	timer1 := timingWheel.AddPrecision(12 * time.Millisecond)
-	assert.WithinDuration(t, timer1.PlanAt, <-timer1.C, time.Millisecond)
+	for i := 0; i < 10; i++ {
+		fmt.Printf("测试10轮,当前第%d轮:", i+1)
+		timingWheel.NewDefault(10*time.Millisecond, 12)
+		timingWheel.Start()
+		<-timingWheel.AddPrecision(-1 * time.Millisecond).C
+		<-timingWheel.AddPrecision(1 * time.Millisecond).C
+		time.Sleep(131 * time.Millisecond)
+		timingWheel.AddPrecision(123 * time.Millisecond)
+		timer4 := timingWheel.AddPrecision(122 * time.Millisecond)
+		timer5 := timingWheel.AddPrecision(1003 * time.Millisecond)
+		timer6 := timingWheel.AddPrecision(1443 * time.Millisecond)
+		timingWheel.AddPrecision(-35 * time.Millisecond).Stop()
+		timingWheel.Add(102 * time.Millisecond)
+		timingWheel.AddTime(time.Now().Add(1304 * time.Millisecond))
+		timer1 := timingWheel.AddPrecision(12 * time.Millisecond)
 
-	timer2 := timingWheel.AddPrecision(1102 * time.Millisecond)
-	timer3 := timingWheel.AddTimePrecision(time.Now().Add(1203 * time.Millisecond))
-	assert.WithinDuration(t, timer2.PlanAt, <-timer2.C, time.Millisecond)
-	assert.WithinDuration(t, timer3.PlanAt, <-timer3.C, time.Millisecond)
-	assert.WithinDuration(t, timer4.PlanAt, <-timer4.C, time.Millisecond)
-	assert.WithinDuration(t, timer5.PlanAt, <-timer5.C, time.Millisecond)
-	assert.WithinDuration(t, timer6.PlanAt, <-timer6.C, time.Millisecond)
+		assert.Equal(t, timer1.PlanAt.Sub(<-timer1.C).Milliseconds(), int64(0))
+		//assert.WithinDuration(t, timer1.PlanAt, <-timer1.C, time.Millisecond)
+
+		timer2 := timingWheel.AddPrecision(1102 * time.Millisecond)
+		timer3 := timingWheel.AddTimePrecision(time.Now().Add(1203 * time.Millisecond))
+		assert.Equal(t, timer2.PlanAt.Sub(<-timer2.C).Milliseconds(), int64(0))
+		assert.Equal(t, timer3.PlanAt.Sub(<-timer3.C).Milliseconds(), int64(0))
+		assert.Equal(t, timer4.PlanAt.Sub(<-timer4.C).Milliseconds(), int64(0))
+		assert.Equal(t, timer5.PlanAt.Sub(<-timer5.C).Milliseconds(), int64(0))
+		assert.Equal(t, timer6.PlanAt.Sub(<-timer6.C).Milliseconds(), int64(0))
+		fmt.Println("通过!")
+	}
+	// assert.WithinDuration(t, timer2.PlanAt, <-timer2.C, time.Millisecond)
+	// assert.WithinDuration(t, timer3.PlanAt, <-timer3.C, time.Millisecond)
+	// assert.WithinDuration(t, timer4.PlanAt, <-timer4.C, time.Millisecond)
+	// assert.WithinDuration(t, timer5.PlanAt, <-timer5.C, time.Millisecond)
+	// assert.WithinDuration(t, timer6.PlanAt, <-timer6.C, time.Millisecond)
 }
