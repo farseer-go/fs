@@ -1,7 +1,7 @@
 package flog
 
 import (
-	"os"
+	"runtime"
 	"strconv"
 	"time"
 
@@ -15,7 +15,7 @@ import (
 // getLogBasePath 获取日志基础路径
 // 如果 /var/ 目录存在，返回 /var/log/flog/，否则返回 ./flog/
 func getLogBasePath() string {
-	if _, err := os.Stat("/var/"); err == nil {
+	if runtime.GOOS == "linux" {
 		return "/var/log/flog/"
 	}
 	return "./flog/"
