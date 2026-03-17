@@ -387,6 +387,7 @@ func (w *BatchFileWriter) removeLimitFile() {
 	overCount := len(fileList) - (w.fileCountLimit - 1)
 	if overCount > 0 {
 		for i := 0; i < overCount; i++ {
+			fmt.Println("BatchFileWriter: 移除文件", fileList[i].path)
 			_ = os.Remove(fileList[i].path)
 		}
 	}
