@@ -4,10 +4,11 @@ import (
 	"sync"
 
 	"github.com/farseer-go/fs/fastReflect"
+	"github.com/timandy/routine"
 )
 
 // 在一次请求中共享数据（适用于多层架构中不同层之间的数据共享，省去传值）
-var routineContext AsyncLocal[*sync.Map] = New[*sync.Map]()
+var routineContext routine.ThreadLocal[*sync.Map] = New[*sync.Map]()
 
 // InitContext 初始化同一协程上下文，避免在同一协程中多次初始化
 func InitContext() *sync.Map {
