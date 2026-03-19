@@ -65,9 +65,9 @@ type WebContext struct {
 	WebRequestIp       string            `json:"wip,omitempty"`   // 客户端IP
 }
 
-func (receiver WebContext) IsNil() bool {
-	return receiver.WebDomain == "" && receiver.WebPath == "" && receiver.WebMethod == "" && receiver.WebContentType == "" && receiver.WebStatusCode == 0
-}
+// func (receiver WebContext) IsNil() bool {
+// 	return receiver.WebDomain == "" && receiver.WebPath == "" && receiver.WebMethod == "" && receiver.WebContentType == "" && receiver.WebStatusCode == 0
+// }
 
 type ConsumerContext struct {
 	ConsumerServer     string `json:"cs,omitempty"` // MQ服务器
@@ -75,9 +75,9 @@ type ConsumerContext struct {
 	ConsumerRoutingKey string `json:"cr,omitempty"` // 路由KEY
 }
 
-func (receiver ConsumerContext) IsNil() bool {
-	return receiver.ConsumerServer == "" && receiver.ConsumerQueueName == "" && receiver.ConsumerRoutingKey == ""
-}
+// func (receiver ConsumerContext) IsNil() bool {
+// 	return receiver.ConsumerServer == "" && receiver.ConsumerQueueName == "" && receiver.ConsumerRoutingKey == ""
+// }
 
 type TaskContext struct {
 	TaskName      string            `json:"tn,omitempty"`   // 任务名称
@@ -86,17 +86,17 @@ type TaskContext struct {
 	TaskData      map[string]string `json:"td,omitempty"`   // 任务数据
 }
 
-func (receiver TaskContext) IsNil() bool {
-	return receiver.TaskName == "" && receiver.TaskGroupName == "" && receiver.TaskId == 0
-}
+// func (receiver TaskContext) IsNil() bool {
+// 	return receiver.TaskName == "" && receiver.TaskGroupName == "" && receiver.TaskId == 0
+// }
 
 type WatchKeyContext struct {
 	WatchKey string `json:"wk,omitempty"` // 监控的 Key 名
 }
 
-func (receiver WatchKeyContext) IsNil() bool {
-	return receiver.WatchKey == ""
-}
+// func (receiver WatchKeyContext) IsNil() bool {
+// 	return receiver.WatchKey == ""
+// }
 
 func (receiver *TraceContext) SetBody(requestBody string, statusCode int, responseBody string, responseHead map[string]string) {
 	// 限制响应报文最多存储4096长度
@@ -132,7 +132,9 @@ func (receiver *TraceContext) IgnoreDetail(f func()) {
 	}()
 
 	traceDetail := NewTraceDetail(eumCallType.Hand, "")
-	traceDetail.TraceDetailHand.HandName = "忽略明细"
+	traceDetail.TraceDetailHand = &TraceDetailHand{
+		HandName: "忽略明细",
+	}
 	traceDetail.Comment = "忽略明细"
 	traceDetail.Timeline = time.Duration(traceDetail.StartTs-receiver.StartTs) * time.Microsecond
 	if len(receiver.List) > 0 {
