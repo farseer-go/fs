@@ -12,27 +12,27 @@ import (
 )
 
 type TraceContext struct {
-	TraceId       string            `json:"tid"` // 上下文ID
-	AppId         string            `json:"aid"` // 应用ID
-	AppName       string            `json:"an"`  // 应用名称
-	AppIp         string            `json:"aip"` // 应用IP
-	ParentAppName string            `json:"pn"`  // 上游应用
-	TraceLevel    int               `json:"tl"`  // 逐层递增（显示上下游顺序）
-	StartTs       int64             `json:"st"`  // 调用开始时间戳（微秒）
-	EndTs         int64             `json:"et"`  // 调用结束时间戳（微秒）
-	UseTs         time.Duration     `json:"ut"`  // 总共使用时间（微秒）
-	UseDesc       string            `json:"ud"`  // 总共使用时间（描述）
-	TraceType     eumTraceType.Enum `json:"tt"`  // 状态码
-	List          []*TraceDetail    `json:"l"`   // 调用的上下文trace.TraceDetail
-	TraceCount    int               `json:"tc"`  // 追踪明细数量
-	ignore        bool              // 忽略这次的链路追踪
-	ignoreDetail  bool              // 忽略链路明细
-	Exception     *ExceptionStack   `json:"e"` // 异常信息
-	WebContext
-	ConsumerContext
-	TaskContext
-	WatchKeyContext
-	CreateAt dateTime.DateTime `json:"ca"` // 请求时间
+	TraceId          string            `json:"tid"` // 上下文ID
+	AppId            string            `json:"aid"` // 应用ID
+	AppName          string            `json:"an"`  // 应用名称
+	AppIp            string            `json:"aip"` // 应用IP
+	ParentAppName    string            `json:"pn"`  // 上游应用
+	TraceLevel       int               `json:"tl"`  // 逐层递增（显示上下游顺序）
+	StartTs          int64             `json:"st"`  // 调用开始时间戳（微秒）
+	EndTs            int64             `json:"et"`  // 调用结束时间戳（微秒）
+	UseTs            time.Duration     `json:"ut"`  // 总共使用时间（微秒）
+	UseDesc          string            `json:"ud"`  // 总共使用时间（描述）
+	TraceType        eumTraceType.Enum `json:"tt"`  // 状态码
+	List             []*TraceDetail    `json:"l"`   // 调用的上下文trace.TraceDetail
+	TraceCount       int               `json:"tc"`  // 追踪明细数量
+	ignore           bool              // 忽略这次的链路追踪
+	ignoreDetail     bool              // 忽略链路明细
+	Exception        *ExceptionStack   `json:"e,omitempty"` // 异常信息
+	*WebContext      `json:",omitempty"`
+	*ConsumerContext `json:",omitempty"`
+	*TaskContext     `json:",omitempty"`
+	*WatchKeyContext `json:",omitempty"`
+	CreateAt         dateTime.DateTime `json:"ca"` // 请求时间
 }
 
 func NewTraceContext() *TraceContext {
@@ -53,16 +53,16 @@ func NewTraceContext() *TraceContext {
 }
 
 type WebContext struct {
-	WebDomain          string            `json:"wd"`    // 请求域名
-	WebPath            string            `json:"wp"`    // 请求地址
-	WebMethod          string            `json:"wm"`    // 请求方式
-	WebContentType     string            `json:"wct"`   // 请求内容类型
-	WebStatusCode      int               `json:"wsc"`   // 状态码
-	WebHeaders         map[string]string `json:"wh"`    // 请求头部
-	WebResponseHeaders map[string]string `json:"wrsph"` // 响应头部
-	WebRequestBody     string            `json:"wrb"`   // 请求参数
-	WebResponseBody    string            `json:"wpb"`   // 输出参数
-	WebRequestIp       string            `json:"wip"`   // 客户端IP
+	WebDomain          string            `json:"wd,omitempty"`    // 请求域名
+	WebPath            string            `json:"wp,omitempty"`    // 请求地址
+	WebMethod          string            `json:"wm,omitempty"`    // 请求方式
+	WebContentType     string            `json:"wct,omitempty"`   // 请求内容类型
+	WebStatusCode      int               `json:"wsc,omitempty"`   // 状态码
+	WebHeaders         map[string]string `json:"wh,omitempty"`    // 请求头部
+	WebResponseHeaders map[string]string `json:"wrsph,omitempty"` // 响应头部
+	WebRequestBody     string            `json:"wrb,omitempty"`   // 请求参数
+	WebResponseBody    string            `json:"wpb,omitempty"`   // 输出参数
+	WebRequestIp       string            `json:"wip,omitempty"`   // 客户端IP
 }
 
 func (receiver WebContext) IsNil() bool {
@@ -70,9 +70,9 @@ func (receiver WebContext) IsNil() bool {
 }
 
 type ConsumerContext struct {
-	ConsumerServer     string `json:"cs"` // MQ服务器
-	ConsumerQueueName  string `json:"cq"` // 队列名称
-	ConsumerRoutingKey string `json:"cr"` // 路由KEY
+	ConsumerServer     string `json:"cs,omitempty"` // MQ服务器
+	ConsumerQueueName  string `json:"cq,omitempty"` // 队列名称
+	ConsumerRoutingKey string `json:"cr,omitempty"` // 路由KEY
 }
 
 func (receiver ConsumerContext) IsNil() bool {
@@ -80,10 +80,10 @@ func (receiver ConsumerContext) IsNil() bool {
 }
 
 type TaskContext struct {
-	TaskName      string            `json:"tn"`  // 任务名称
-	TaskGroupName string            `json:"tgn"` // 任务组ID
-	TaskId        int64             `json:"tid"` // 任务ID
-	TaskData      map[string]string `json:"td"`  // 任务数据
+	TaskName      string            `json:"tn,omitempty"`   // 任务名称
+	TaskGroupName string            `json:"tgn,omitempty"`  // 任务组名称
+	TaskId        int64             `json:"tkid,omitempty"` // 任务ID (改为 tkid 避免与 TraceId 的 tid 冲突)
+	TaskData      map[string]string `json:"td,omitempty"`   // 任务数据
 }
 
 func (receiver TaskContext) IsNil() bool {
@@ -91,7 +91,7 @@ func (receiver TaskContext) IsNil() bool {
 }
 
 type WatchKeyContext struct {
-	WatchKey string `json:"wk"` // KEY
+	WatchKey string `json:"wk,omitempty"` // 监控的 Key 名
 }
 
 func (receiver WatchKeyContext) IsNil() bool {

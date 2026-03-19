@@ -17,36 +17,31 @@ import (
 
 // TraceDetail 埋点明细（基类）
 type TraceDetail struct {
-	// TraceId    string // 上下文ID
-	// AppId          string            // 应用ID
-	// AppName        string            // 应用名称
-	// AppIp          string            // 应用IP
-	// ParentAppName  string            // 上游应用
-	TraceLevel     int               // 逐层递增（显示上下游顺序）
-	DetailId       string            // 明细ID
-	ParentDetailId string            // 父级明细ID
-	Level          int               // 当前层级（入口为0层）
-	Comment        string            // 调用注释
-	MethodName     string            // 调用方法
-	CallType       eumCallType.Enum  // 调用类型
-	Timeline       time.Duration     // 从入口开始统计（微秒）
-	UnTraceTs      time.Duration     // 上一次结束到现在开始之间未Trace的时间（微秒）
-	StartTs        int64             // 调用开始时间戳（微秒）
-	EndTs          int64             // 调用停止时间戳（微秒）
-	ignore         bool              // 忽略这次的链路追踪
-	Exception      *ExceptionStack   // 异常信息
-	CreateAt       dateTime.DateTime // 请求时间
-	TraceDetailHand
-	TraceDetailDatabase
-	TraceDetailEs
-	TraceDetailEtcd
-	TraceDetailEvent
-	TraceDetailGrpc
-	TraceDetailHttp
-	TraceDetailMq
-	TraceDetailRedis
-	// UseTs          time.Duration     // 总共使用时间微秒
-	// UseDesc        string            // 总共使用时间（描述）
+	TraceLevel     int               `json:",omitempty"`
+	DetailId       string            `json:"omitempty"`
+	ParentDetailId string            `json:",omitempty"`
+	Level          int               `json:",omitempty"`
+	Comment        string            `json:",omitempty"`
+	MethodName     string            `json:",omitempty"`
+	CallType       eumCallType.Enum  `json:",omitempty"`
+	Timeline       time.Duration     `json:",omitempty"`
+	UnTraceTs      time.Duration     `json:",omitempty"`
+	StartTs        int64             `json:",omitempty"`
+	EndTs          int64             `json:",omitempty"`
+	ignore         bool              `json:"-"` // 忽略字段不进入JSON
+	Exception      *ExceptionStack   `json:",omitempty"`
+	CreateAt       dateTime.DateTime `json:",omitempty"`
+
+	// 指针嵌套配合 omitempty，当指针为 nil 时，整个分类及其内部字段都不会出现在 JSON 中
+	*TraceDetailHand     `json:",omitempty"`
+	*TraceDetailDatabase `json:",omitempty"`
+	*TraceDetailEs       `json:",omitempty"`
+	*TraceDetailEtcd     `json:",omitempty"`
+	*TraceDetailEvent    `json:",omitempty"`
+	*TraceDetailGrpc     `json:",omitempty"`
+	*TraceDetailHttp     `json:",omitempty"`
+	*TraceDetailMq       `json:",omitempty"`
+	*TraceDetailRedis    `json:",omitempty"`
 }
 
 type ExceptionStack struct {

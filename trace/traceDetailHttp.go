@@ -5,13 +5,13 @@ import (
 )
 
 type TraceDetailHttp struct {
-	HttpMethod          string            // post/get/put/delete
-	HttpUrl             string            // url
-	HttpHeaders         map[string]string // 头部
-	HttpRequestBody     string            // 入参
-	HttpResponseBody    string            // 出参
-	HttpResponseHeaders map[string]string // 响应头部
-	HttpStatusCode      int               // 状态码
+	HttpMethod          string            `json:",omitempty"` // post/get/put/delete
+	HttpUrl             string            `json:",omitempty"` // url
+	HttpHeaders         map[string]string `json:",omitempty"` // 头部
+	HttpRequestBody     string            `json:",omitempty"` // 入参
+	HttpResponseBody    string            `json:",omitempty"` // 出参
+	HttpResponseHeaders map[string]string `json:",omitempty"` // 响应头部
+	HttpStatusCode      int               `json:",omitempty"` // 状态码
 }
 
 func (receiver *TraceDetailHttp) SetRequest(url string, reqHead map[string]any, requestBody string) {
