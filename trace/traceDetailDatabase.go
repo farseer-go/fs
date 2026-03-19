@@ -5,7 +5,7 @@ type TraceDetailDatabase struct {
 	DbTableName        string `json:",omitempty"` // 表名
 	DbSql              string `json:",omitempty"` // SQL
 	DbConnectionString string `json:",omitempty"` // 连接字符串
-	DbRowsAffected     int64  `json:"omitempty"`  // 影响行数
+	DbRowsAffected     int64  `json:",omitempty"` // 影响行数
 }
 
 func (receiver *TraceDetailDatabase) SetSql(connectionString string, DbName string, tableName string, sql string, rowsAffected int64) {

@@ -18,7 +18,7 @@ import (
 // TraceDetail 埋点明细（基类）
 type TraceDetail struct {
 	TraceLevel     int               `json:",omitempty"`
-	DetailId       string            `json:"omitempty"`
+	DetailId       string            `json:",omitempty"`
 	ParentDetailId string            `json:",omitempty"`
 	Level          int               `json:",omitempty"`
 	Comment        string            `json:",omitempty"`
