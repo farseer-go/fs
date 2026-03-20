@@ -14,6 +14,15 @@ import (
 
 	"github.com/farseer-go/fs/parse"
 	"github.com/farseer-go/fs/snc"
+	"google.golang.org/protobuf/proto"
+)
+
+// SerializeType 序列化方式
+type SerializeType int
+
+const (
+	SerializeJSON     SerializeType = iota // 使用 JSON 序列化（默认）
+	SerializeProtobuf                      // 使用 Protobuf 序列化
 )
 
 // BatchFileWriter 是一个高性能的批量文件写入器，支持基于时间和大小的文件滚动，以及文件数量限制。它通过异步队列和缓冲写入来优化性能，并且在关闭时确保所有数据都被正确处理。
@@ -30,6 +39,7 @@ type BatchFileWriter struct {
 	currentPath      string         // 当前文件的完整路径
 	bufferSize       int            // 写入缓冲区大小
 	appendNewLine    bool           // 是否在每条日志后添加换行符
+	serializeType    SerializeType  // 序列化方式（JSON 或 Protobuf）
 	wg               sync.WaitGroup // 调用Close退出时等待所有翻转协程完成
 	closeOnce        sync.Once      // 确保 Close 方法只执行一次
 	closed           atomic.Bool    // 标志位，表示是否已关闭
@@ -42,7 +52,8 @@ type BatchFileWriter struct {
 // fileSizeLimitMb: 限制文件大小(单位MB)
 // fileCountLimit: 限制文件数量
 // interval: 多长时间刷盘(不翻转文件)
-func NewWriter(dir string, fileExtension string, rollingInterval string, fileSizeLimitMb int64, fileCountLimit int, interval time.Duration, appendNewLine bool) *BatchFileWriter {
+// serializeType: 序列化方式（SerializeJSON 或 SerializeProtobuf）
+func NewWriter(dir string, fileExtension string, rollingInterval string, fileSizeLimitMb int64, fileCountLimit int, interval time.Duration, appendNewLine bool, serializeType SerializeType) *BatchFileWriter {
 	// 创建目录
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		_ = os.MkdirAll(dir, 0755)
@@ -60,6 +71,7 @@ func NewWriter(dir string, fileExtension string, rollingInterval string, fileSiz
 		interval:        interval,
 		bufferSize:      256 * 1024,
 		appendNewLine:   appendNewLine,
+		serializeType:   serializeType,
 		exitChan:        make(chan struct{}),
 	}
 
@@ -90,9 +102,22 @@ func (w *BatchFileWriter) Write(data any) {
 		payload = []byte(v)
 	default:
 		var err error
-		payload, err = snc.Marshal(v)
-		if err != nil {
-			fmt.Println("BatchFileWriter转成json时失败: ", err.Error())
+		if w.serializeType == SerializeProtobuf {
+			// Protobuf 序列化：要求数据实现 proto.Message 接口
+			if msg, ok := data.(proto.Message); ok {
+				payload, err = proto.Marshal(msg)
+				if err != nil {
+					fmt.Println("BatchFileWriter转成protobuf时失败: ", err.Error())
+				}
+			} else {
+				fmt.Println("BatchFileWriter转成protobuf时失败: 数据未实现 proto.Message 接口")
+			}
+		} else {
+			// 默认 JSON 序列化
+			payload, err = snc.Marshal(v)
+			if err != nil {
+				fmt.Println("BatchFileWriter转成json时失败: ", err.Error())
+			}
 		}
 	}
 
@@ -386,7 +411,7 @@ func (w *BatchFileWriter) removeLimitFile() {
 	// 当前文件必须保留，所以其他文件最多保留 fileCountLimit - 1 个
 	overCount := len(fileList) - (w.fileCountLimit - 1)
 	if overCount > 0 {
-		for i := 0; i < overCount; i++ {
+		for i := range overCount {
 			fmt.Println("BatchFileWriter: 移除文件", fileList[i].path)
 			_ = os.Remove(fileList[i].path)
 		}

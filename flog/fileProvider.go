@@ -18,7 +18,7 @@ func (r *FileProvider) CreateLogger(categoryName string, formatter IFormatter, l
 		r.config.RefreshInterval = 1
 	}
 
-	writer := batchFileWriter.NewWriter(r.config.Path, "log", r.config.RollingInterval, r.config.FileSizeLimitMb, r.config.FileCountLimit, time.Second*time.Duration(r.config.RefreshInterval), false)
+	writer := batchFileWriter.NewWriter(r.config.Path, "log", r.config.RollingInterval, r.config.FileSizeLimitMb, r.config.FileCountLimit, time.Second*time.Duration(r.config.RefreshInterval), false, batchFileWriter.SerializeJSON)
 	persistent := &fileLoggerPersistent{formatter, logLevel, r.config, writer}
 	return persistent
 }

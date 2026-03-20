@@ -26,7 +26,7 @@ type FopsProvider struct {
 }
 
 func (r *FopsProvider) CreateLogger(categoryName string, formatter IFormatter, logLevel eumLogLevel.Enum) ILoggerPersistent {
-	writer := batchFileWriter.NewWriter(getLogBasePath()+core.AppName+"/", "log", "hour", 10, 0, time.Second*5, true)
+	writer := batchFileWriter.NewWriter(getLogBasePath()+core.AppName+"/", "log", "hour", 10, 0, time.Second*5, true, batchFileWriter.SerializeProtobuf)
 	persistent := &fopsLoggerPersistent{formatter, writer}
 	return persistent
 }
