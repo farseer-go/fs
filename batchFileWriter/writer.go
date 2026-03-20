@@ -14,15 +14,17 @@ import (
 
 	"github.com/farseer-go/fs/parse"
 	"github.com/farseer-go/fs/snc"
-	"google.golang.org/protobuf/proto"
+	"github.com/vmihailenco/msgpack/v5"
+	// "google.golang.org/protobuf/proto"
 )
 
 // SerializeType 序列化方式
 type SerializeType int
 
 const (
-	SerializeJSON     SerializeType = iota // 使用 JSON 序列化（默认）
-	SerializeProtobuf                      // 使用 Protobuf 序列化
+	SerializeJSON        SerializeType = iota // 使用 JSON 序列化（默认）
+	SerializeMessagePack                      // 使用 MessagePack 序列化
+	//SerializeProtobuf                         // 使用 Protobuf 序列化
 )
 
 // BatchFileWriter 是一个高性能的批量文件写入器，支持基于时间和大小的文件滚动，以及文件数量限制。它通过异步队列和缓冲写入来优化性能，并且在关闭时确保所有数据都被正确处理。
@@ -102,17 +104,24 @@ func (w *BatchFileWriter) Write(data any) {
 		payload = []byte(v)
 	default:
 		var err error
-		if w.serializeType == SerializeProtobuf {
-			// Protobuf 序列化：要求数据实现 proto.Message 接口
-			if msg, ok := data.(proto.Message); ok {
-				payload, err = proto.Marshal(msg)
-				if err != nil {
-					fmt.Println("BatchFileWriter转成protobuf时失败: ", err.Error())
-				}
-			} else {
-				fmt.Println("BatchFileWriter转成protobuf时失败: 数据未实现 proto.Message 接口")
+		switch w.serializeType {
+		// case SerializeProtobuf:
+		// 	// Protobuf 序列化：要求数据实现 proto.Message 接口
+		// 	if msg, ok := data.(proto.Message); ok {
+		// 		payload, err = proto.Marshal(msg)
+		// 		if err != nil {
+		// 			fmt.Println("BatchFileWriter转成protobuf时失败: ", err.Error())
+		// 		}
+		// 	} else {
+		// 		fmt.Println("BatchFileWriter转成protobuf时失败: 数据未实现 proto.Message 接口")
+		// 	}
+		case SerializeMessagePack:
+			// MessagePack 序列化
+			payload, err = msgpack.Marshal(v)
+			if err != nil {
+				fmt.Println("BatchFileWriter转成msgpack时失败: ", err.Error())
 			}
-		} else {
+		default:
 			// 默认 JSON 序列化
 			payload, err = snc.Marshal(v)
 			if err != nil {
