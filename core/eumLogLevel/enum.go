@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/farseer-go/fs/snc"
+	"github.com/vmihailenco/msgpack/v5"
 )
 
 // Enum 日志等级
@@ -69,4 +70,30 @@ func (receiver *Enum) UnmarshalJSON(b []byte) error {
 	err := snc.Unmarshal(b, &numStr)
 	*receiver = GetEnum(numStr)
 	return err
+}
+
+// MarshalMsgpack 将 Enum 转为字符串二进制
+// 同样不建议用指针接收者，确保值传递时也能触发
+func (receiver Enum) MarshalMsgpack() ([]byte, error) {
+	// 1. 获取枚举的字符串表示
+	s := receiver.ToString()
+
+	// 2. 序列化为 Msgpack 字符串 (会自动处理长度标识，不带引号)
+	return msgpack.Marshal(s)
+}
+
+// UnmarshalMsgpack 从二进制中恢复 Enum
+func (receiver *Enum) UnmarshalMsgpack(b []byte) error {
+	var numStr string
+
+	// 1. 解出字符串
+	err := msgpack.Unmarshal(b, &numStr)
+	if err != nil {
+		return err
+	}
+
+	// 2. 通过你现有的工厂函数还原枚举值
+	*receiver = GetEnum(numStr)
+
+	return nil
 }

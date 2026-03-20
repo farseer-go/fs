@@ -2,6 +2,7 @@ package batchFileWriter
 
 import (
 	"bufio"
+	"encoding/binary"
 	"errors"
 	"fmt"
 	"os"
@@ -159,6 +160,17 @@ func (w *BatchFileWriter) openFile(fileName string) (*os.File, int64, error) {
 }
 
 func (w *BatchFileWriter) write(bufWriter *bufio.Writer, line []byte) int64 {
+	if w.serializeType == SerializeMessagePack {
+		// msgpack 是二进制格式，内部可能含有 0x0A（'\n'）字节。
+		// 不能依赖换行符分隔记录，改用 4 字节大端长度前缀分帧：
+		//   [uint32 BE: N][N bytes msgpack payload]
+		// 读取端只需先读 4 字节得到长度，再精确读取 N 字节即可还原完整记录。
+		var lenBuf [4]byte
+		binary.BigEndian.PutUint32(lenBuf[:], uint32(len(line)))
+		bufWriter.Write(lenBuf[:])
+		bufWriter.Write(line)
+		return int64(4 + len(line))
+	}
 	if w.appendNewLine {
 		bufWriter.Write(line)
 		bufWriter.WriteByte('\n')

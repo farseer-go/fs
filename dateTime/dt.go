@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/farseer-go/fs/snc"
+	"github.com/vmihailenco/msgpack/v5"
 )
 
 type DateTime struct {
@@ -228,6 +229,38 @@ func (receiver *DateTime) UnmarshalJSON(b []byte) error {
 		}
 	}
 	return fmt.Errorf("时间：%s 无法转换成time.Time类型", string(b))
+}
+
+// MarshalMsgpack 将 DateTime 转为二进制字符串
+// 同样不使用指针接收者，确保序列化逻辑始终触发
+func (receiver DateTime) MarshalMsgpack() ([]byte, error) {
+	// 1. 获取格式化后的时间字符串
+	s := receiver.ToString("yyyy-MM-dd hh:mm:ss")
+
+	// 2. 序列化为 Msgpack 字符串 (二进制格式，不带引号)
+	return msgpack.Marshal(s)
+}
+
+// UnmarshalMsgpack 从二进制中恢复 DateTime
+func (receiver *DateTime) UnmarshalMsgpack(b []byte) error {
+	var tStr string
+	// 1. 先解出字符串 (msgpack 会自动处理二进制到 string 的转换)
+	err := msgpack.Unmarshal(b, &tStr)
+	if err != nil {
+		return err
+	}
+
+	// 2. 多格式兼容解析逻辑 (复用你之前的逻辑，但去掉了 JSON 的 Trim 引号步骤)
+	layouts := []string{"2006-01-02 15:04:05", "2006-01-02", "2006-01-02T15:04:05Z07:00"}
+
+	for _, layout := range layouts {
+		parse, err := time.ParseInLocation(layout, tStr, time.Local)
+		if err == nil {
+			receiver.time = parse
+			return nil
+		}
+	}
+	return fmt.Errorf("时间：%s 无法转换成 DateTime 类型", tStr)
 }
 
 // Value return json value, implement driver.Valuer interface
