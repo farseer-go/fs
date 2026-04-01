@@ -2,7 +2,6 @@ package modules
 
 import (
 	"fmt"
-	"reflect"
 	"sync"
 	"time"
 
@@ -17,8 +16,9 @@ func IsLoad(module FarseerModule) bool {
 	moduleMapLocker.RLock()
 	defer moduleMapLocker.RUnlock()
 
-	moduleName := reflect.TypeOf(module).String()
-	_, isExists := moduleMap[moduleName]
+	fullModuleName := getFullModuleName(module)
+
+	_, isExists := moduleMap[fullModuleName]
 	return isExists
 }
 
@@ -26,7 +26,7 @@ func IsLoad(module FarseerModule) bool {
 func ThrowIfNotLoad(module FarseerModule) {
 	load := IsLoad(module)
 	if !load {
-		moduleName := reflect.TypeOf(module).String()
-		panic(fmt.Sprintf("When using the %s module, you need to depend on the %s module in the startup module", color.Colors[4](moduleName), color.Colors[4](moduleName)))
+		fullModuleName := getFullModuleName(module)
+		panic(fmt.Sprintf("When using the %s module, you need to depend on the %s module in the startup module", color.Colors[4](fullModuleName), color.Colors[4](fullModuleName)))
 	}
 }

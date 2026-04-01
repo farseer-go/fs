@@ -8,7 +8,8 @@ import (
 	jsoniter "github.com/json-iterator/go"
 )
 
-//var snc sonic.API
+// var snc sonic.API
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 func init() {
 	// 设置较小的缓冲区，以减少内存使用
@@ -26,13 +27,17 @@ func init() {
 
 // 将json转换成对象（反序列化）
 func Unmarshal(data []byte, v any) error {
-	// d := json.NewDecoder(bytes.NewReader(data))
-	// d.UseNumber()
-	// return d.Decode(v)
-	//return snc.Unmarshal(data, v)
 	d := jsoniter.NewDecoder(bytes.NewReader(data))
 	d.UseNumber()
 	return d.Decode(v)
+
+	// 下次要测试这种写法,上面的jsoniter.NewDecoder需要创建临时对象
+	//return json.Unmarshal(data, v)
+}
+
+// 将json转换成对象（反序列化）
+func UnmarshalFromString(data string, v any) error {
+	return json.UnmarshalFromString(data, v)
 }
 
 // 将对象转换成json（序列化）
