@@ -10,6 +10,33 @@ import (
 var Cache = make(map[string][]int)
 var lock sync.RWMutex
 
+// methodIndexCache 以 reflect.Type + 后缀 作为 key，避免昂贵的 lstValue.String() 调用
+// key: reflect.Type（类型指针，可直接比较），value: int（方法索引）
+type methodKey struct {
+	t   reflect.Type
+	tag uint8 // 0=Add, 1=ToArray, 2=ToArrayAny, 3=New, 4=MapperInit
+}
+
+var methodCache sync.Map // map[methodKey]int
+
+const (
+	tagAdd         uint8 = 0
+	tagToArray     uint8 = 1
+	tagToArrayAny  uint8 = 2
+	tagNew         uint8 = 3
+	tagMapperInit  uint8 = 4
+)
+
+func getMethodIndex(t reflect.Type, tag uint8, methodName string) int {
+	key := methodKey{t: t, tag: tag}
+	if v, ok := methodCache.Load(key); ok {
+		return v.(int)
+	}
+	method, _ := t.MethodByName(methodName)
+	methodCache.Store(key, method.Index)
+	return method.Index
+}
+
 // ListNew 动态创建一个新的List
 func ListNew(lstType reflect.Type, cap int) reflect.Value {
 	key := lstType.String() + ".New"
@@ -43,14 +70,11 @@ func ListAddValue(lstValue reflect.Value, itemValue reflect.Value) {
 }
 
 // GetAddMethod 获取动态添加元素的Method
+// 原来用 lstValue.String() 作 key 非常昂贵（format 操作），改为用类型指针
 func GetAddMethod(lstValue reflect.Value) reflect.Value {
-	// 初始化反射Method
-	key := lstValue.String() + ".Add"
-	if _, isExists := getCache(key); !isExists {
-		method, _ := lstValue.Type().MethodByName("Add")
-		setCache(key, []int{method.Index})
-	}
-	return lstValue.Method(getCacheVal(key)[0])
+	t := lstValue.Type()
+	idx := getMethodIndex(t, tagAdd, "Add")
+	return lstValue.Method(idx)
 }
 
 // GetListItemArrayType 获取List的原始数组类型
@@ -87,35 +111,25 @@ func GetListItemType(lstType reflect.Type) reflect.Type {
 
 // GetListToArray 在集合中获取数据
 func GetListToArray(lstValue reflect.Value) []any {
-	key := lstValue.String() + ".ToArrayAny"
-	if _, isExists := getCache(key); !isExists {
-		method, _ := lstValue.Type().MethodByName("ToArrayAny")
-		setCache(key, []int{method.Index})
-	}
-	arrValue := lstValue.Method(getCacheVal(key)[0]).Call(nil)[0]
+	t := lstValue.Type()
+	idx := getMethodIndex(t, tagToArrayAny, "ToArrayAny")
+	arrValue := lstValue.Method(idx).Call(nil)[0]
 	return arrValue.Interface().([]any)
 }
 
 // GetListToArrayValue 在集合中获取数据
+// 原来用 lstValue.String() 作 key 非常昂贵，改为用 reflect.Type 指针作 key
 func GetListToArrayValue(lstValue reflect.Value) reflect.Value {
-	key := lstValue.String() + ".ToArray"
-	if _, isExists := getCache(key); !isExists {
-		method, _ := lstValue.Type().MethodByName("ToArray")
-		setCache(key, []int{method.Index})
-	}
-
-	return lstValue.Method(getCacheVal(key)[0]).Call(nil)[0]
+	t := lstValue.Type()
+	idx := getMethodIndex(t, tagToArray, "ToArray")
+	return lstValue.Method(idx).Call(nil)[0]
 }
 
 // ExecuteMapperInit 在集合中获取数据
 func ExecuteMapperInit(targetVal reflect.Value) {
-	key := targetVal.String() + ".MapperInit"
-	if _, isExists := getCache(key); !isExists {
-		method, _ := targetVal.Type().MethodByName("MapperInit")
-		setCache(key, []int{method.Index})
-	}
-
-	targetVal.Method(getCacheVal(key)[0]).Call([]reflect.Value{})
+	t := targetVal.Type()
+	idx := getMethodIndex(t, tagMapperInit, "MapperInit")
+	targetVal.Method(idx).Call([]reflect.Value{})
 }
 
 func setCache(key string, val []int) {

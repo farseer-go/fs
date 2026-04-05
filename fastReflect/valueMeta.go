@@ -8,8 +8,6 @@ import (
 
 type FieldType int
 
-var lock sync.RWMutex
-
 const (
 	List        FieldType = iota // 集合类型
 	PageList                     // 集合类型
@@ -67,7 +65,17 @@ func PointerOfValue(val reflect.Value) PointerMeta {
 	return valueMeta
 }
 
-// PointerOf 传入任意变量类型的值，得出该值对应的类型
+// PointerOfValueWithMeta 已知 TypeMeta 时的快速路径：跳过 sync.Map 查找，只取 PointerValue
+// 适用于热路径中类型已经通过 FieldTypeMetas 缓存的场景
+func PointerOfValueWithMeta(val reflect.Value, tm *TypeMeta) PointerMeta {
+	inf := (*EmptyInterface)(unsafe.Pointer(&val))
+	return PointerMeta{
+		TypeMeta:     tm,
+		PointerValue: inf.Value,
+		HashCode:     tm.HashCode,
+	}
+}
+
 func PointerOf(val any) PointerMeta {
 	inf := (*EmptyInterface)(unsafe.Pointer(&val))
 	valueMeta := PointerMeta{PointerValue: inf.Value, HashCode: inf.Typ.hash}
