@@ -60,8 +60,17 @@ func PointerOfValue(val reflect.Value) PointerMeta {
 		valueMeta.TypeMeta = typeMeta.(*TypeMeta)
 		return valueMeta
 	}
-	valueMeta.TypeMeta = typeOf(val.Type(), inf)
-	cacheTyp.Store(valueMeta.HashCode, valueMeta.TypeMeta)
+
+	// 先占位写入缓存，防止自引用结构体（如 *VO 含 Top *VO）导致 parseType 无限递归
+	placeholder := &TypeMeta{ReflectType: val.Type(), HashCode: inf.Typ.hash}
+	cacheTyp.Store(valueMeta.HashCode, placeholder)
+
+	tm := typeOf(val.Type(), inf)
+	// 原地更新 placeholder 的字段，而非替换指针。
+	// 这样所有已通过缓存命中拿到 placeholder 指针的地方（如 FieldTypeMetas）
+	// 也会自动看到完整的 TypeMeta，避免自引用类型的字段被识别为零值 Type（List）。
+	*placeholder = *tm
+	valueMeta.TypeMeta = placeholder
 	return valueMeta
 }
 

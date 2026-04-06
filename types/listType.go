@@ -32,9 +32,37 @@ func getMethodIndex(t reflect.Type, tag uint8, methodName string) int {
 	if v, ok := methodCache.Load(key); ok {
 		return v.(int)
 	}
-	method, _ := t.MethodByName(methodName)
+	method, ok := t.MethodByName(methodName)
+	if !ok {
+		// 方法不在值类型方法集中（可能是指针接收器方法），返回 -1 表示未找到
+		methodCache.Store(key, -1)
+		return -1
+	}
 	methodCache.Store(key, method.Index)
 	return method.Index
+}
+
+// resolveMethod 获取 lstValue 上 methodName 对应的 reflect.Value（Method）。
+// 若值类型方法集中找不到（指针接收器方法），则自动取指针后重试。
+func resolveMethod(lstValue reflect.Value, tag uint8, methodName string) reflect.Value {
+	t := lstValue.Type()
+	idx := getMethodIndex(t, tag, methodName)
+	if idx >= 0 {
+		return lstValue.Method(idx)
+	}
+	// 值类型没有此方法，尝试指针接收器
+	if lstValue.CanAddr() {
+		ptrVal := lstValue.Addr()
+		pt := ptrVal.Type()
+		idx = getMethodIndex(pt, tag, methodName)
+		return ptrVal.Method(idx)
+	}
+	// 不可寻址时创建临时指针副本
+	ptrVal := reflect.New(t)
+	ptrVal.Elem().Set(lstValue)
+	pt := ptrVal.Type()
+	idx = getMethodIndex(pt, tag, methodName)
+	return ptrVal.Method(idx)
 }
 
 // ListNew 动态创建一个新的List
@@ -72,9 +100,7 @@ func ListAddValue(lstValue reflect.Value, itemValue reflect.Value) {
 // GetAddMethod 获取动态添加元素的Method
 // 原来用 lstValue.String() 作 key 非常昂贵（format 操作），改为用类型指针
 func GetAddMethod(lstValue reflect.Value) reflect.Value {
-	t := lstValue.Type()
-	idx := getMethodIndex(t, tagAdd, "Add")
-	return lstValue.Method(idx)
+	return resolveMethod(lstValue, tagAdd, "Add")
 }
 
 // GetListItemArrayType 获取List的原始数组类型
@@ -111,25 +137,19 @@ func GetListItemType(lstType reflect.Type) reflect.Type {
 
 // GetListToArray 在集合中获取数据
 func GetListToArray(lstValue reflect.Value) []any {
-	t := lstValue.Type()
-	idx := getMethodIndex(t, tagToArrayAny, "ToArrayAny")
-	arrValue := lstValue.Method(idx).Call(nil)[0]
+	arrValue := resolveMethod(lstValue, tagToArrayAny, "ToArrayAny").Call(nil)[0]
 	return arrValue.Interface().([]any)
 }
 
 // GetListToArrayValue 在集合中获取数据
 // 原来用 lstValue.String() 作 key 非常昂贵，改为用 reflect.Type 指针作 key
 func GetListToArrayValue(lstValue reflect.Value) reflect.Value {
-	t := lstValue.Type()
-	idx := getMethodIndex(t, tagToArray, "ToArray")
-	return lstValue.Method(idx).Call(nil)[0]
+	return resolveMethod(lstValue, tagToArray, "ToArray").Call(nil)[0]
 }
 
 // ExecuteMapperInit 在集合中获取数据
 func ExecuteMapperInit(targetVal reflect.Value) {
-	t := targetVal.Type()
-	idx := getMethodIndex(t, tagMapperInit, "MapperInit")
-	targetVal.Method(idx).Call([]reflect.Value{})
+	resolveMethod(targetVal, tagMapperInit, "MapperInit").Call([]reflect.Value{})
 }
 
 func setCache(key string, val []int) {
