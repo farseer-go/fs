@@ -99,22 +99,26 @@ type WatchKeyContext struct {
 // }
 
 func (receiver *TraceContext) SetBody(requestBody string, statusCode int, responseBody string, responseHead map[string]string) {
-	// 限制响应报文最多存储4096长度
-	if len(responseBody) > 4096 {
-		responseBody = responseBody[:4096]
+	if receiver.WebContext != nil {
+		// 限制响应报文最多存储4096长度
+		if len(responseBody) > 4096 {
+			responseBody = responseBody[:4096]
+		}
+		receiver.WebContext.WebRequestBody = requestBody
+		receiver.WebContext.WebStatusCode = statusCode
+		receiver.WebContext.WebResponseBody = responseBody
+		receiver.WebContext.WebResponseHeaders = responseHead
 	}
-	receiver.WebContext.WebRequestBody = requestBody
-	receiver.WebContext.WebStatusCode = statusCode
-	receiver.WebContext.WebResponseBody = responseBody
-	receiver.WebContext.WebResponseHeaders = responseHead
 }
 
 func (receiver *TraceContext) SetResponseBody(responseBody string) {
-	// 限制响应报文最多存储4096长度
-	if len(responseBody) > 4096 {
-		responseBody = responseBody[:4096]
+	if receiver.WebContext != nil {
+		// 限制响应报文最多存储4096长度
+		if len(responseBody) > 4096 {
+			responseBody = responseBody[:4096]
+		}
+		receiver.WebContext.WebResponseBody = responseBody
 	}
-	receiver.WebContext.WebResponseBody = responseBody
 }
 
 // 取消链路
