@@ -200,6 +200,16 @@ func (receiver DateTime) Sub(dt DateTime) time.Duration {
 // ToTime 获取time.Time类型
 func (receiver DateTime) ToTime() time.Time { return receiver.time }
 
+// 两个时间对象是否相等
+func (receiver DateTime) Equal(dt DateTime) bool {
+	return receiver.time.Equal(dt.time)
+}
+
+// 两个时间对象是否不等
+func (receiver DateTime) NotEqual(dt DateTime) bool {
+	return !receiver.time.Equal(dt.time)
+}
+
 // After 是否比dt时间大（晚）
 func (receiver DateTime) After(dt DateTime) bool {
 	return receiver.time.After(dt.time)
