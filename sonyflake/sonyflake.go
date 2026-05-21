@@ -44,7 +44,7 @@ const (
 // MachineID returns the unique ID of the Sonyflake instance.
 // If MachineID returns an error, Sonyflake is not created.
 // If MachineID is nil, default MachineID is used.
-// Default MachineID returns the lower 16 bits of the private IP address.
+// Default MachineID returns the lower 16 bits of the private IP address, or public IP address if no private IP exists.
 //
 // CheckMachineID validates the uniqueness of the machine ID.
 // If CheckMachineID returns false, Sonyflake is not created.
@@ -186,6 +186,19 @@ func privateIPv4(interfaceAddrs InterfaceAddrs) (net.IP, error) {
 			return ip, nil
 		}
 	}
+
+	for _, a := range as {
+		ipnet, ok := a.(*net.IPNet)
+		if !ok || ipnet.IP.IsLoopback() {
+			continue
+		}
+
+		ip := ipnet.IP.To4()
+		if ip != nil {
+			return ip, nil
+		}
+	}
+
 	return nil, ErrNoPrivateAddress
 }
 
