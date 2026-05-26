@@ -22,7 +22,7 @@ type TraceContext struct {
 	EndTs            int64             `json:"et"`           // 调用结束时间戳（微秒）
 	UseTs            time.Duration     `json:"ut"`           // 总共使用时间（微秒）
 	UseDesc          string            `json:"ud,omitempty"` // 总共使用时间（描述）
-	TraceType        eumTraceType.Enum `json:"tt,omitempty"` // 状态码
+	TraceType        eumTraceType.Enum `json:"tt,omitempty"` // 链路调用类型
 	List             []*TraceDetail    `json:"l,omitempty"`  // 调用的上下文trace.TraceDetail
 	TraceCount       int               `json:"tc,omitempty"` // 追踪明细数量
 	ignore           bool              // 忽略这次的链路追踪
