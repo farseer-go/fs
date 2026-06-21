@@ -1,10 +1,11 @@
 package test
 
 import (
-	"github.com/farseer-go/fs/container"
-	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
+
+	"github.com/farseer-go/fs/container"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestContainerRemove_test(t *testing.T) {
@@ -32,10 +33,11 @@ func TestContainerRemove_test(t *testing.T) {
 
 func TestContainerRemoveUnused_test(t *testing.T) {
 	container.InitContainer()
-	// 注册一个默认的
-	container.Register(func() IDatabase { return &mysql{} })
+	// 注册一个默认的（临时生命周期：RemoveUnused 的访问时间淘汰仅对临时实例有意义，
+	// 单例创建后常驻、不再刷新访问时间）
+	container.RegisterTransient(func() IDatabase { return &mysql{} })
 	// 注册一个testName
-	container.Register(func() IDatabase { return &mysql{} }, "testName")
+	container.RegisterTransient(func() IDatabase { return &mysql{} }, "testName")
 	assert.Equal(t, 2, len(container.ResolveAll[IDatabase]()))
 	assert.Equal(t, true, container.IsRegister[IDatabase]())
 	assert.Equal(t, true, container.IsRegister[IDatabase]("testName"))

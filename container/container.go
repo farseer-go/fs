@@ -154,17 +154,17 @@ func (r *container) resolveAll(interfaceType reflect.Type) []any {
 
 // 根据lifecycle获取实例
 func (r *container) getOrCreateIns(curComModel *componentModel) any {
-	// 更新实例访问时间
-	curComModel.lastVisitAt.Store(time.Now())
-	// 单例
+	// 单例：实例在首次创建后常驻，访问时间无需更新（注册时已写入一次，
+	// 避免每个请求都执行 time.Now() 装箱进 atomic.Value 造成的堆分配与GC压力）
 	if curComModel.lifecycle == eumLifecycle.Single {
 		if curComModel.instance == nil {
 			curComModel.instance = r.createIns(curComModel)
 		}
 		return curComModel.instance
-	} else {
-		return r.createIns(curComModel)
 	}
+	// 临时生命周期：每次创建新实例，并更新访问时间用于TTL淘汰
+	curComModel.lastVisitAt.Store(time.Now())
+	return r.createIns(curComModel)
 }
 
 // 根据类型，动态创建实例
@@ -258,6 +258,27 @@ func (r *container) isRegister(interfaceType reflect.Type, name string) bool {
 		// 找到了实现类
 		if comModels[i].name == name {
 			return true
+		}
+	}
+	return false
+}
+
+// isSingle 判断指定接口类型+别名是否注册为单例（未注册则返回false）
+func (r *container) isSingle(interfaceType reflect.Type, name string) bool {
+	if interfaceType.Kind() == reflect.Pointer {
+		interfaceType = interfaceType.Elem()
+	}
+	r.lock.RLock()
+	componentModels, exists := r.dependency.Load(interfaceType)
+	r.lock.RUnlock()
+	if !exists {
+		return false
+	}
+	comModels := componentModels.([]*componentModel)
+	for i := 0; i < len(comModels); i++ {
+		// 找到对应别名的实现类，返回其生命周期是否为单例
+		if comModels[i].name == name {
+			return comModels[i].lifecycle == eumLifecycle.Single
 		}
 	}
 	return false

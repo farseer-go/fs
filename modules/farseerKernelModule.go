@@ -39,7 +39,10 @@ func (module FarseerKernelModule) PreInitialize() {
 
 	// 注册空的链路实现
 	if !container.IsRegister[trace.IManager]() {
-		container.Register(func() trace.IManager { return &trace.EmptyManager{} })
+		emptyManager := &trace.EmptyManager{}
+		container.Register(func() trace.IManager { return emptyManager })
+		// 缓存单例，供热路径直接复用（避免每请求多次容器查找）
+		trace.SetManager(emptyManager)
 	}
 }
 
